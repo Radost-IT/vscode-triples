@@ -1,0 +1,199 @@
+{
+  "name": "triples",
+  "displayName": "Triples",
+  "description": "%description%",
+  "version": "0.1.0",
+  "publisher": "radost-it",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Radost-IT/vscode-triples.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Radost-IT/vscode-triples/issues"
+  },
+  "homepage": "https://github.com/Radost-IT/vscode-triples#readme",
+  "icon": "media/icon.png",
+  "engines": {
+    "vscode": "^1.140.0"
+  },
+  "categories": [
+    "Visualization",
+    "Programming Languages",
+    "Other"
+  ],
+  "keywords": [
+    "rdf",
+    "owl",
+    "ontology",
+    "turtle",
+    "semantic web",
+    "json-ld",
+    "graph",
+    "diff"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "commands": [
+      {
+        "command": "triples.openVisualizer",
+        "title": "%command.openVisualizer%",
+        "category": "Triples",
+        "icon": "$(type-hierarchy)"
+      },
+      {
+        "command": "triples.compareWithHead",
+        "title": "%command.compareWithHead%",
+        "category": "Triples"
+      },
+      {
+        "command": "triples.compareWithRevision",
+        "title": "%command.compareWithRevision%",
+        "category": "Triples"
+      },
+      {
+        "command": "triples.compareTwoFiles",
+        "title": "%command.compareTwoFiles%",
+        "category": "Triples"
+      },
+      {
+        "command": "triples.viewOntologyChanges",
+        "title": "%command.viewOntologyChanges%",
+        "category": "Triples",
+        "icon": "$(type-hierarchy)"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "triples.openVisualizer",
+          "when": "!isInDiffEditor && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "group": "navigation"
+        },
+        {
+          "command": "triples.viewOntologyChanges",
+          "when": "isInDiffEditor && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "group": "navigation"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "triples.openVisualizer",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "group": "navigation@90"
+        },
+        {
+          "command": "triples.compareWithHead",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i && config.git.enabled",
+          "group": "3_compare@90"
+        },
+        {
+          "command": "triples.compareTwoFiles",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "group": "3_compare@91"
+        }
+      ],
+      "scm/resourceState/context": [
+        {
+          "command": "triples.viewOntologyChanges",
+          "when": "scmProvider == git && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "group": "navigation@90"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "triples.openVisualizer",
+          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i"
+        },
+        {
+          "command": "triples.compareWithHead",
+          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i"
+        },
+        {
+          "command": "triples.compareWithRevision",
+          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i"
+        },
+        {
+          "command": "triples.viewOntologyChanges",
+          "when": "isInDiffEditor"
+        }
+      ]
+    },
+    "customEditors": [
+      {
+        "viewType": "triples.visualizer",
+        "displayName": "%customEditor.displayName%",
+        "priority": "option",
+        "selector": [
+          {
+            "filenamePattern": "*.ttl"
+          },
+          {
+            "filenamePattern": "*.owl"
+          },
+          {
+            "filenamePattern": "*.rdf"
+          },
+          {
+            "filenamePattern": "*.nt"
+          },
+          {
+            "filenamePattern": "*.nq"
+          },
+          {
+            "filenamePattern": "*.n3"
+          },
+          {
+            "filenamePattern": "*.trig"
+          },
+          {
+            "filenamePattern": "*.jsonld"
+          }
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "build:production": "node scripts/build.mjs --production",
+    "watch": "node scripts/build.mjs --watch",
+    "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.webview.json && tsc -p tsconfig.worker.json",
+    "lint": "eslint . && npm run typecheck",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "pretest:vscode": "npm run build && node scripts/build-tests.mjs",
+    "test:vscode": "node out/test/integration/runTest.js",
+    "vscode:prepublish": "npm run build:production",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "cytoscape": "^3.34.3",
+    "cytoscape-dagre": "^4.0.1",
+    "cytoscape-fcose": "^2.2.0",
+    "jsonld-streaming-parser": "^5.0.2",
+    "n3": "^2.13.12",
+    "rdfxml-streaming-parser": "^3.3.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@rdfjs/types": "^2.0.1",
+    "@types/cytoscape-dagre": "^2.3.4",
+    "@types/cytoscape-fcose": "^2.2.5",
+    "@types/mocha": "^10.0.10",
+    "@types/n3": "^1.26.4",
+    "@types/node": "^22.20.5",
+    "@types/vscode": "^1.140.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^10.12.0",
+    "globals": "^17.13.0",
+    "mocha": "^12.0.3",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.2",
+    "vite": "^8.3.4",
+    "vitest": "^5.0.4"
+  }
+}

@@ -1,0 +1,9 @@
+**
+!dist/extension.js
+!dist/webview/**
+!media/icon.png
+!package.json
+!package.nls.json
+!README.md
+!CHANGELOG.md
+!LICENSE

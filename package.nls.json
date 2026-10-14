@@ -1,0 +1,9 @@
+{
+  "description": "Visualize RDF and OWL ontologies as an interactive graph and hierarchy, and see semantic diffs between versions.",
+  "command.openVisualizer": "Open Visualizer",
+  "command.compareWithHead": "Compare Ontology with HEAD",
+  "command.compareWithRevision": "Compare Ontology with Branch, Tag or Commit...",
+  "command.compareTwoFiles": "Compare Two Ontologies",
+  "command.viewOntologyChanges": "View Ontology Changes",
+  "customEditor.displayName": "Triples Visualizer"
+}
