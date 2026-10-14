@@ -1,0 +1,505 @@
+import type { AnalysisRequest, AnalysisResult, SourceProblem } from '../core/analyze';
+import type { ChangeStatus, DiffResult } from '../core/diff/diff';
+import type { OntologyModel } from '../core/model/types';
+import type { HostMessage, ViewMode, WebviewMessage } from '../core/protocol';
+import { neighborhood } from '../core/view/neighborhood';
+import {
+  DEFAULT_VIEW_OPTIONS,
+  projectGraph,
+  type NodeKind,
+  type ProjectedGraph,
+  type ViewOptions,
+} from '../core/view/project';
+import { renderDetails, indexEdges, type DetailsContext } from './detailsPanel';
+import { renderDiffPanel } from './diffPanel';
+import { h } from './dom';
+import { renderFilters, type FilterState } from './filtersPanel';
+import { createGraphView } from './graphView';
+import { createHierarchyView, type HierarchySettings } from './hierarchyView';
+import type { LayoutName } from './layout';
+import { renderLegend } from './legend';
+import { createSearchBox } from './searchBox';
+import { strings } from './strings';
+import { exportSvg } from './svgExport';
+import { onThemeChange, readPalette } from './theme';
+import type { WorkerRequest, WorkerResponse } from './workerProtocol';
+
+interface VsCodeApi {
+  postMessage(message: WebviewMessage): void;
+  getState(): unknown;
+  setState(state: PersistedState): void;
+}
+
+declare function acquireVsCodeApi(): VsCodeApi;
+
+interface PersistedState {
+  readonly options: ViewOptions;
+  readonly layout: LayoutName;
+  readonly hops: number;
+  readonly selectedId: string | null;
+  readonly hierarchy: HierarchySettings;
+  readonly panels: {
+    readonly filters: boolean;
+    readonly legend: boolean;
+    readonly details: boolean;
+    readonly changes: boolean;
+  };
+}
+
+interface Loaded {
+  readonly request: AnalysisRequest;
+  readonly model: OntologyModel;
+  readonly diff: DiffResult | null;
+  readonly details: DetailsContext;
+}
+
+const DEFAULT_STATE: PersistedState = {
+  options: DEFAULT_VIEW_OPTIONS,
+  layout: 'force',
+  hops: 1,
+  selectedId: null,
+  hierarchy: { tab: 'classes', mode: 'outline', direction: 'LR' },
+  panels: { filters: false, legend: true, details: true, changes: true },
+};
+
+const vscode = acquireVsCodeApi();
+let state: PersistedState = {
+  ...DEFAULT_STATE,
+  ...(vscode.getState() as Partial<PersistedState> | undefined),
+};
+let viewMode: ViewMode = 'graph';
+let loaded: Loaded | null = null;
+let projected: ProjectedGraph = { nodes: [], edges: [], hiddenEntityCount: 0 };
+let nodeEntity = new Map<string, string>();
+let focusNodeId: string | null = null;
+let graphDirty = false;
+let latestRequestId = 0;
+
+function saveState(change: Partial<PersistedState>): void {
+  state = { ...state, ...change };
+  vscode.setState(state);
+}
+
+const graphHost = h('div', {
+  class: 'graph',
+  tabindex: 0,
+  role: 'application',
+  'aria-label': strings.graph,
+});
+const graph = createGraphView(graphHost, {
+  onSelect: (nodeId) => setSelection(nodeId ? (nodeEntity.get(nodeId) ?? null) : null, false),
+  onFocus: (nodeId) => {
+    focusNodeId = nodeId;
+    drawGraph(false);
+  },
+});
+const hierarchy = createHierarchyView(state.hierarchy, {
+  onSelect: (entityId) => setSelection(entityId, false),
+  onSettingsChange: (settings) => saveState({ hierarchy: settings }),
+});
+const search = createSearchBox((entityId) => setSelection(entityId, true));
+
+const viewButtons = (['graph', 'hierarchy'] as const).map((mode) =>
+  h(
+    'button',
+    { class: 'segment', 'data-mode': mode, onclick: () => switchView(mode, true) },
+    mode === 'graph' ? strings.graph : strings.hierarchy,
+  ),
+);
+const layoutSelect = h(
+  'select',
+  {
+    'aria-label': strings.layoutLabel,
+    onchange: () => {
+      saveState({ layout: layoutSelect.value as LayoutName });
+      drawGraph(false);
+    },
+  },
+  h('option', { value: 'force' }, strings.layoutForce),
+  h('option', { value: 'layered' }, strings.layoutLayered),
+);
+const iconButton = (label: string, text: string, onclick: () => void) =>
+  h('button', { class: 'icon-button', title: label, 'aria-label': label, onclick }, text);
+const panelToggle = (panel: keyof PersistedState['panels'], label: string) =>
+  h(
+    'button',
+    {
+      class: 'text-button',
+      'aria-pressed': String(state.panels[panel]),
+      onclick: () => togglePanel(panel),
+    },
+    label,
+  );
+const filtersButton = panelToggle('filters', strings.filters);
+const legendButton = panelToggle('legend', strings.legend);
+const detailsButton = panelToggle('details', strings.details);
+const changesButton = panelToggle('changes', strings.diffSummary);
+const exportSvgButton = h(
+  'button',
+  { class: 'text-button', onclick: () => exportView('svg') },
+  strings.exportSvg,
+);
+const exportPngButton = h(
+  'button',
+  { class: 'text-button', onclick: () => exportView('png') },
+  strings.exportPng,
+);
+const stats = h('span', { class: 'stats', 'aria-live': 'polite' });
+const graphControls = h(
+  'span',
+  { class: 'group' },
+  layoutSelect,
+  iconButton(strings.zoomOut, '−', () => graph.zoomBy(1 / 1.25)),
+  iconButton(strings.zoomIn, '+', () => graph.zoomBy(1.25)),
+  iconButton(strings.fit, '⤢', () => graph.fit()),
+);
+
+const toolbar = h(
+  'header',
+  { class: 'toolbar', role: 'toolbar', 'aria-label': strings.viewSwitch },
+  h(
+    'span',
+    { class: 'segmented', role: 'group', 'aria-label': strings.viewSwitch },
+    ...viewButtons,
+  ),
+  search.element,
+  graphControls,
+  filtersButton,
+  legendButton,
+  detailsButton,
+  changesButton,
+  exportSvgButton,
+  exportPngButton,
+  stats,
+);
+const focusText = h('span', {});
+const banner = h(
+  'div',
+  { class: 'banner', role: 'status', hidden: true },
+  focusText,
+  h(
+    'button',
+    {
+      class: 'text-button',
+      onclick: () => {
+        focusNodeId = null;
+        drawGraph(false);
+      },
+    },
+    strings.showAll,
+  ),
+);
+const changesPanel = h('aside', { class: 'panel changes', 'aria-label': strings.diffSummary });
+const filtersPanel = h('aside', { class: 'panel popover filters', 'aria-label': strings.filters });
+const legendPanel = h('aside', { class: 'panel popover legend', 'aria-label': strings.legend });
+const detailsPanel = h('aside', {
+  class: 'panel details',
+  'aria-label': strings.details,
+  'aria-live': 'polite',
+});
+const overlay = h('div', { class: 'overlay', role: 'alert' });
+const stage = h(
+  'div',
+  { class: 'stage' },
+  graphHost,
+  hierarchy.element,
+  filtersPanel,
+  legendPanel,
+  overlay,
+);
+document.body.append(
+  toolbar,
+  banner,
+  h('main', { class: 'workspace' }, changesPanel, stage, detailsPanel),
+);
+
+const workerReady = createWorker(document.body.dataset['workerUri'] ?? '');
+
+async function createWorker(url: string): Promise<Worker> {
+  // Webviews cannot start a worker from a vscode-resource URL directly, so the bundle is loaded as a blob.
+  const source = await (await fetch(url)).text();
+  const worker = new Worker(URL.createObjectURL(new Blob([source], { type: 'text/javascript' })));
+  worker.addEventListener('message', (event: MessageEvent<WorkerResponse>) =>
+    onWorkerResponse(event.data),
+  );
+  worker.addEventListener('error', (event) =>
+    showOverlay([h('h2', {}, strings.internalError), h('pre', {}, event.message)]),
+  );
+  return worker;
+}
+
+const requests = new Map<number, AnalysisRequest>();
+
+window.addEventListener('message', (event: MessageEvent<HostMessage>) => {
+  const message = event.data;
+  if (message.type !== 'analyze') return;
+  const id = ++latestRequestId;
+  requests.set(id, message.request);
+  if (!loaded) showOverlay([h('p', { class: 'muted' }, strings.loading)]);
+  switchView(message.viewMode, false);
+  void workerReady.then((worker) =>
+    worker.postMessage({ id, request: message.request } satisfies WorkerRequest),
+  );
+});
+
+function onWorkerResponse(response: WorkerResponse): void {
+  const request = requests.get(response.id);
+  requests.delete(response.id);
+  if (response.id !== latestRequestId || !request) return;
+  if ('failure' in response) {
+    showOverlay([h('h2', {}, strings.internalError), h('pre', {}, response.failure)]);
+    return;
+  }
+  applyResult(request, response.result);
+}
+
+function applyResult(request: AnalysisRequest, result: AnalysisResult): void {
+  if (result.kind === 'problems') {
+    showProblems(result.problems);
+    return;
+  }
+  const model = result.kind === 'single' ? result.model : result.diff.model;
+  const diff = result.kind === 'diff' ? result.diff : null;
+  const reuse = loaded !== null;
+  const changesById = new Map(diff?.changes.map((change) => [change.id, change]));
+  loaded = {
+    request,
+    model,
+    diff,
+    details: {
+      model,
+      edgesBySource: indexEdges(model.edges, 'source'),
+      edgesByTarget: indexEdges(model.edges, 'target'),
+      status: (entityId): ChangeStatus => diff?.entityStatus[entityId] ?? 'unchanged',
+      changesOf: (entityId) => changesById.get(entityId),
+      onNavigate: (entityId) => setSelection(entityId, true),
+    },
+  };
+  if (state.selectedId && !model.entities[state.selectedId]) saveState({ selectedId: null });
+  if (focusNodeId && !model.entities[focusNodeId]) focusNodeId = null;
+  overlay.hidden = true;
+  search.setModel(model);
+  hierarchy.setModel(model, diff?.entityStatus ?? null);
+  drawPanels();
+  drawGraph(reuse);
+  if (viewMode === 'hierarchy') hierarchy.reveal(state.selectedId);
+}
+
+function showProblems(problems: readonly SourceProblem[]): void {
+  showOverlay(
+    problems.map((problem) =>
+      h(
+        'div',
+        { class: 'problem' },
+        h('h2', {}, strings.problemTitle(problem.title)),
+        h('p', {}, problem.message),
+        problem.line !== undefined
+          ? h(
+              'button',
+              {
+                class: 'link',
+                onclick: () =>
+                  vscode.postMessage({
+                    type: 'revealLine',
+                    uri: problem.uri,
+                    line: problem.line ?? 1,
+                    column: problem.column,
+                  }),
+              },
+              strings.goToLine(problem.line),
+            )
+          : null,
+      ),
+    ),
+  );
+}
+
+function showOverlay(content: Node[]): void {
+  overlay.replaceChildren(
+    h('div', { class: `overlay-card${loaded ? ' over-graph' : ''}` }, ...content),
+  );
+  overlay.hidden = false;
+}
+
+function drawGraph(reuse: boolean): void {
+  if (!loaded) return;
+  const diffStatuses = loaded.diff ?? undefined;
+  const full = projectGraph(loaded.model, state.options, diffStatuses);
+  projected = full;
+  if (focusNodeId && full.nodes.some((node) => node.id === focusNodeId)) {
+    const keep = neighborhood(full, focusNodeId, state.hops);
+    projected = {
+      nodes: full.nodes.filter((node) => keep.has(node.id)),
+      edges: full.edges.filter((edge) => keep.has(edge.source) && keep.has(edge.target)),
+      hiddenEntityCount: full.hiddenEntityCount,
+    };
+    const label =
+      loaded.model.entities[nodeEntity.get(focusNodeId) ?? focusNodeId]?.label ?? focusNodeId;
+    focusText.textContent = strings.focusing(label, state.hops);
+  } else {
+    focusNodeId = null;
+  }
+  banner.hidden = focusNodeId === null;
+  nodeEntity = new Map(projected.nodes.map((node) => [node.id, node.entityId]));
+  stats.textContent = [
+    strings.stats(projected.nodes.length, projected.edges.length),
+    projected.hiddenEntityCount > 0 ? strings.hiddenCount(projected.hiddenEntityCount) : '',
+  ]
+    .filter(Boolean)
+    .join(' · ');
+  renderLegend(
+    legendPanel,
+    new Set<NodeKind>(projected.nodes.map((node) => node.kind)),
+    loaded.diff !== null,
+  );
+  drawEmptyNote();
+  if (viewMode !== 'graph') {
+    graphDirty = true;
+    return;
+  }
+  graphDirty = false;
+  graph.render(projected, { layout: state.layout, diff: loaded.diff !== null, reuse });
+  graph.select(state.selectedId, false);
+}
+
+function drawEmptyNote(): void {
+  if (!loaded || viewMode !== 'graph' || projected.nodes.length > 0) {
+    if (loaded && overlay.dataset['empty']) {
+      overlay.hidden = true;
+      delete overlay.dataset['empty'];
+    }
+    return;
+  }
+  const filtered = Object.keys(loaded.model.entities).length > 0;
+  showOverlay([
+    h('h2', {}, strings.emptyTitle),
+    h('p', {}, filtered ? strings.emptyFiltered : strings.emptyBody),
+  ]);
+  overlay.dataset['empty'] = 'true';
+}
+
+function drawPanels(): void {
+  if (!loaded) return;
+  const filterState: FilterState = {
+    options: state.options,
+    hops: state.hops,
+    diff: loaded.diff !== null,
+  };
+  renderFilters(filtersPanel, loaded.model, filterState, (next) => {
+    saveState({ options: next.options, hops: next.hops });
+    drawPanels();
+    drawGraph(true);
+  });
+  renderDetails(detailsPanel, state.selectedId, loaded.details);
+  if (loaded.diff && loaded.request.kind === 'diff') {
+    renderDiffPanel(
+      changesPanel,
+      loaded.diff,
+      {
+        before: loaded.request.before?.title ?? strings.missingSide,
+        after: loaded.request.after?.title ?? strings.missingSide,
+      },
+      (entityId) => setSelection(entityId, true),
+    );
+  }
+  syncPanels();
+}
+
+function syncPanels(): void {
+  const diff = loaded?.diff !== null && loaded?.diff !== undefined;
+  filtersPanel.hidden = !state.panels.filters;
+  legendPanel.hidden = !loaded || !state.panels.legend || viewMode !== 'graph';
+  detailsPanel.hidden = !state.panels.details;
+  changesPanel.hidden = !state.panels.changes || !diff;
+  changesButton.hidden = !diff;
+  filtersButton.setAttribute('aria-pressed', String(state.panels.filters));
+  legendButton.setAttribute('aria-pressed', String(state.panels.legend));
+  detailsButton.setAttribute('aria-pressed', String(state.panels.details));
+  changesButton.setAttribute('aria-pressed', String(state.panels.changes));
+  graph.resize();
+}
+
+function togglePanel(panel: keyof PersistedState['panels']): void {
+  saveState({ panels: { ...state.panels, [panel]: !state.panels[panel] } });
+  syncPanels();
+}
+
+function setSelection(entityId: string | null, center: boolean): void {
+  saveState({ selectedId: entityId });
+  if (loaded) renderDetails(detailsPanel, entityId, loaded.details);
+  if (viewMode === 'graph') graph.select(entityId && graph.has(entityId) ? entityId : null, center);
+  else hierarchy.reveal(entityId);
+}
+
+function switchView(mode: ViewMode, notifyHost: boolean): void {
+  const changed = mode !== viewMode;
+  viewMode = mode;
+  viewButtons.forEach((button) =>
+    button.setAttribute('aria-pressed', String(button.dataset['mode'] === mode)),
+  );
+  graphHost.hidden = mode !== 'graph';
+  graphControls.hidden = mode !== 'graph';
+  hierarchy.element.hidden = mode !== 'hierarchy';
+  banner.hidden = mode !== 'graph' || focusNodeId === null;
+  syncPanels();
+  if (notifyHost && changed) vscode.postMessage({ type: 'viewMode', mode });
+  if (!loaded || !changed) return;
+  if (mode === 'graph') {
+    graph.resize();
+    if (graphDirty) drawGraph(true);
+    graph.select(state.selectedId, true);
+  } else {
+    hierarchy.show();
+    hierarchy.reveal(state.selectedId);
+  }
+  drawEmptyNote();
+}
+
+function exportView(format: 'svg' | 'png'): void {
+  if (!loaded) return;
+  const diagram = viewMode === 'hierarchy' ? hierarchy.diagram() : null;
+  if (viewMode === 'hierarchy' && !diagram) {
+    showToast(strings.exportNeedsDiagram);
+    return;
+  }
+  const background = readPalette().background;
+  const data = diagram
+    ? format === 'svg'
+      ? exportSvg(diagram, background)
+      : diagram.png({ output: 'base64uri', full: true, scale: 2, bg: background })
+    : format === 'svg'
+      ? graph.svg()
+      : graph.png();
+  const source =
+    loaded.request.kind === 'single'
+      ? loaded.request.source
+      : (loaded.request.after ?? loaded.request.before);
+  const baseName = (source?.fileName.split(/[\\/]/).pop() ?? 'ontology').replace(/\.[^.]+$/, '');
+  vscode.postMessage({
+    type: 'export',
+    format,
+    data,
+    suggestedName: `${baseName}-${viewMode}.${format}`,
+  });
+}
+
+function showToast(text: string): void {
+  const toast = h('div', { class: 'toast', role: 'status' }, text);
+  document.body.append(toast);
+  setTimeout(() => toast.remove(), 3000);
+}
+
+onThemeChange(() => {
+  graph.applyTheme();
+  hierarchy.applyTheme();
+  if (loaded)
+    renderLegend(
+      legendPanel,
+      new Set<NodeKind>(projected.nodes.map((node) => node.kind)),
+      loaded.diff !== null,
+    );
+});
+
+layoutSelect.value = state.layout;
+switchView('graph', false);
+vscode.postMessage({ type: 'ready' });

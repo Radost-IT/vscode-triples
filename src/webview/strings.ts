@@ -1,0 +1,122 @@
+import type { ChangeStatus, SummaryCategory } from '../core/diff/diff';
+import type { EntityKind } from '../core/model/types';
+import type { NodeKind } from '../core/view/project';
+
+/** Every string the webview shows, kept in one place for localization. */
+export const strings = {
+  graph: 'Graph',
+  hierarchy: 'Hierarchy',
+  viewSwitch: 'View',
+  searchPlaceholder: 'Search by label or IRI',
+  searchLabel: 'Search entities',
+  noSearchResults: 'No matches',
+  layoutForce: 'Force layout',
+  layoutLayered: 'Layered layout',
+  layoutLabel: 'Layout',
+  zoomIn: 'Zoom in',
+  zoomOut: 'Zoom out',
+  fit: 'Fit to screen',
+  filters: 'Filters',
+  legend: 'Legend',
+  exportSvg: 'Export SVG',
+  exportPng: 'Export PNG',
+  exportNeedsDiagram: 'Switch to the graph or the tree diagram to export',
+  details: 'Details',
+  closePanel: 'Close',
+  loading: 'Reading ontology…',
+  emptyTitle: 'Nothing to show',
+  emptyBody: 'The file has no triples yet.',
+  emptyFiltered: 'Every node is hidden by the current filters.',
+  problemTitle: (title: string) => `Could not read ${title}`,
+  goToLine: (line: number) => `Go to line ${line}`,
+  internalError: 'Something went wrong while reading the ontology:',
+  declutter: 'Declutter',
+  showOwlThing: 'Show owl:Thing and owl:Nothing',
+  showAnnotationLinks: 'Show annotation links',
+  showLiterals: 'Draw data values as nodes',
+  propertiesAsEdges: 'Draw properties as arrows between domain and range',
+  onlyChanges: 'Show only changes',
+  nodeKinds: 'Node kinds',
+  namespaces: 'Namespaces',
+  relations: 'Relations',
+  focusHops: 'Focus depth (hops)',
+  focusing: (label: string, hops: number) =>
+    `Focused on ${label}, ${hops} ${hops === 1 ? 'hop' : 'hops'}`,
+  showAll: 'Show all',
+  hiddenCount: (count: number) => `${count} hidden`,
+  stats: (nodes: number, edges: number) => `${nodes} nodes, ${edges} edges`,
+  classesTab: 'Classes',
+  propertiesTab: 'Properties',
+  outline: 'Outline',
+  diagram: 'Tree diagram',
+  leftToRight: 'Left to right',
+  topDown: 'Top down',
+  expandAll: 'Expand all',
+  collapseAll: 'Collapse all',
+  filterTree: 'Filter tree',
+  instances: (count: number) => `${count} ${count === 1 ? 'instance' : 'instances'}`,
+  alsoUnder: (labels: string) => `Also under ${labels}`,
+  showMore: (count: number) => `Show ${count} more`,
+  emptyHierarchy: 'No hierarchy in this file.',
+  iri: 'IRI',
+  kind: 'Kind',
+  compactName: 'Name',
+  annotations: 'Annotations',
+  values: 'Data values',
+  outgoing: 'Relations',
+  incoming: 'Used by',
+  changes: 'Changes',
+  noDetails: 'Select a node to see its details.',
+  diffSummary: 'Changes',
+  diffTitle: (before: string, after: string) => `${before} → ${after}`,
+  noChanges: 'No semantic changes. The two versions describe the same triples.',
+  tripleCounts: (added: number, removed: number) => `${added} triples added, ${removed} removed`,
+  missingSide: 'does not exist',
+  ontologyHeader: 'Ontology header',
+} as const;
+
+export const kindNames: Record<NodeKind, string> = {
+  class: 'Class',
+  objectProperty: 'Object property',
+  datatypeProperty: 'Datatype property',
+  annotationProperty: 'Annotation property',
+  property: 'Property',
+  individual: 'Individual',
+  datatype: 'Datatype',
+  expression: 'Class expression',
+  resource: 'Resource',
+  literal: 'Data value',
+};
+
+export const statusNames: Record<ChangeStatus, string> = {
+  added: 'Added',
+  removed: 'Removed',
+  modified: 'Modified',
+  unchanged: 'Unchanged',
+};
+
+export const categoryNames: Record<SummaryCategory, string> = {
+  classes: 'Classes',
+  properties: 'Properties',
+  individuals: 'Individuals',
+  other: 'Other',
+};
+
+export const edgeLegend = {
+  subClassOf: 'Subclass of (hollow arrow)',
+  property: 'Property or relation',
+  type: 'Instance of (dotted)',
+  restriction: 'Restriction (dashed)',
+} as const;
+
+export const filterableKinds: readonly EntityKind[] = [
+  'class',
+  'objectProperty',
+  'datatypeProperty',
+  'annotationProperty',
+  'property',
+  'individual',
+  'datatype',
+  'expression',
+  'resource',
+];
