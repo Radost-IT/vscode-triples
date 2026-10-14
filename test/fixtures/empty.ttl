@@ -1,0 +1,2 @@
+# An ontology file with no triples yet.
+@prefix ex: <http://example.org/> .

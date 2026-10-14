@@ -1,0 +1,5 @@
+{
+  "@context": "https://schema.org/",
+  "@id": "http://example.org/a",
+  "name": "A"
+}

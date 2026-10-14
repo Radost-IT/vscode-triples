@@ -1,0 +1,6 @@
+@prefix zoo: <http://example.org/zoo#> .
+@prefix o: <http://www.w3.org/2002/07/owl#> .
+
+zoo:Animal a o:Class .
+<http://example.org/zoo#Mammal> a o:Class ;
+    <http://www.w3.org/2000/01/rdf-schema#subClassOf> zoo:Animal .

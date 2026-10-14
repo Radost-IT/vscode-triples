@@ -1,0 +1,14 @@
+{
+  "@context": {
+    "foaf": "http://xmlns.com/foaf/0.1/",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#",
+    "ex": "http://example.org/people#",
+    "name": "foaf:name",
+    "knows": { "@id": "foaf:knows", "@type": "@id" }
+  },
+  "@graph": [
+    { "@id": "ex:Person", "@type": "rdfs:Class", "rdfs:label": { "@value": "Person", "@language": "en" } },
+    { "@id": "ex:alice", "@type": "ex:Person", "name": "Alice", "knows": "ex:bob" },
+    { "@id": "ex:bob", "@type": "ex:Person", "name": "Bob" }
+  ]
+}

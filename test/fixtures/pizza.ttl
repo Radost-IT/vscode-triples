@@ -1,0 +1,74 @@
+@prefix : <http://example.org/pizza#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/pizza> a owl:Ontology ;
+    rdfs:label "Pizza ontology"@en ;
+    owl:versionInfo "1.0" .
+
+:Food a owl:Class ;
+    rdfs:subClassOf owl:Thing ;
+    rdfs:label "Food"@en, "Essen"@de .
+
+:Pizza a owl:Class ;
+    rdfs:subClassOf :Food ;
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty :hasBase ; owl:someValuesFrom :PizzaBase ] ;
+    rdfs:label "Pizza"@en ;
+    rdfs:comment "A dish of Italian origin."@en .
+
+:PizzaBase a owl:Class ;
+    rdfs:subClassOf :Food ;
+    rdfs:label "Pizza base"@en .
+
+:Topping a owl:Class ;
+    rdfs:subClassOf :Food ;
+    rdfs:label "Topping"@en .
+
+:CheeseTopping a owl:Class ;
+    rdfs:subClassOf :Topping ;
+    rdfs:label "Cheese topping"@en .
+
+:VegetableTopping a owl:Class ;
+    rdfs:subClassOf :Topping ;
+    owl:disjointWith :CheeseTopping .
+
+:VegetarianPizza a owl:Class ;
+    owl:equivalentClass [
+        a owl:Class ;
+        owl:intersectionOf ( :Pizza [ a owl:Restriction ; owl:onProperty :hasTopping ;
+            owl:allValuesFrom [ a owl:Class ; owl:unionOf ( :CheeseTopping :VegetableTopping ) ] ] )
+    ] .
+
+:Margherita a owl:Class ;
+    rdfs:subClassOf :VegetarianPizza, :NamedPizza .
+
+:NamedPizza a owl:Class ;
+    rdfs:subClassOf :Pizza .
+
+:hasTopping a owl:ObjectProperty ;
+    rdfs:label "has topping"@en ;
+    rdfs:domain :Pizza ;
+    rdfs:range :Topping .
+
+:hasBase a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:subPropertyOf :hasIngredient ;
+    rdfs:domain :Pizza ;
+    rdfs:range :PizzaBase .
+
+:hasIngredient a owl:ObjectProperty .
+
+:calories a owl:DatatypeProperty ;
+    rdfs:domain :Food ;
+    rdfs:range xsd:integer .
+
+:origin a owl:AnnotationProperty .
+
+:myMargherita a owl:NamedIndividual, :Margherita ;
+    rdfs:label "My Margherita"@en ;
+    :calories 850 ;
+    :origin "Naples" ;
+    :hasTopping :mozzarella .
+
+:mozzarella a :CheeseTopping .

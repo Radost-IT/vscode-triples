@@ -1,0 +1,247 @@
+import type { ChangeStatus } from '../diff/diff';
+import { PROPERTY_KINDS } from '../model/kinds';
+import type { Edge, EdgeKind, Entity, EntityKind, OntologyModel } from '../model/types';
+import { owl } from '../vocab';
+
+export interface ViewOptions {
+  readonly showOwlThing: boolean;
+  readonly showAnnotationLinks: boolean;
+  readonly showLiterals: boolean;
+  readonly propertiesAsEdges: boolean;
+  readonly onlyChanges: boolean;
+  readonly hiddenKinds: readonly EntityKind[];
+  readonly hiddenNamespaces: readonly string[];
+  readonly hiddenPredicates: readonly string[];
+}
+
+export const DEFAULT_VIEW_OPTIONS: ViewOptions = {
+  showOwlThing: false,
+  showAnnotationLinks: false,
+  showLiterals: false,
+  propertiesAsEdges: true,
+  onlyChanges: false,
+  hiddenKinds: [],
+  hiddenNamespaces: [],
+  hiddenPredicates: [],
+};
+
+export type NodeKind = EntityKind | 'literal';
+
+export interface VisibleNode {
+  readonly id: string;
+  /** The entity shown in the details panel when this node is selected. */
+  readonly entityId: string;
+  readonly kind: NodeKind;
+  readonly label: string;
+  readonly status: ChangeStatus;
+  /** Unchanged neighbor kept for orientation in "only changes" mode. */
+  readonly context: boolean;
+}
+
+export interface VisibleEdge {
+  readonly id: string;
+  readonly source: string;
+  readonly target: string;
+  readonly label: string;
+  readonly kind: EdgeKind | 'property';
+  readonly predicate: string;
+  readonly status: ChangeStatus;
+}
+
+export interface ProjectedGraph {
+  readonly nodes: VisibleNode[];
+  readonly edges: VisibleEdge[];
+  readonly hiddenEntityCount: number;
+}
+
+export interface DiffStatuses {
+  readonly entityStatus: Readonly<Record<string, ChangeStatus>>;
+  readonly edgeStatus: Readonly<Record<string, ChangeStatus>>;
+}
+
+const TOP_AND_BOTTOM: ReadonlySet<string> = new Set([owl.Thing, owl.Nothing]);
+
+/** Decides what the graph view draws. Pure, so the declutter rules can be unit tested. */
+export function projectGraph(
+  model: OntologyModel,
+  options: ViewOptions,
+  diff?: DiffStatuses,
+): ProjectedGraph {
+  const entityStatus = (id: string): ChangeStatus => diff?.entityStatus[id] ?? 'unchanged';
+  const edgeStatus = (id: string): ChangeStatus => diff?.edgeStatus[id] ?? 'unchanged';
+  const entities = Object.values(model.entities);
+  const candidates = new Set(
+    entities.filter((entity) => isCandidate(entity, options)).map((entity) => entity.id),
+  );
+
+  let edges: VisibleEdge[] = model.edges
+    .filter(
+      (edge) =>
+        candidates.has(edge.source) && candidates.has(edge.target) && isEdgeShown(edge, options),
+    )
+    .map((edge) => ({ ...edge, status: edgeStatus(edge.id) }));
+
+  const hiddenProperties = new Set<string>();
+  if (options.propertiesAsEdges) {
+    edges = foldPropertiesIntoEdges(model, edges, hiddenProperties);
+  }
+
+  const connected = new Set(edges.flatMap((edge) => [edge.source, edge.target]));
+  let nodes: VisibleNode[] = entities
+    .filter((entity) => candidates.has(entity.id) && !hiddenProperties.has(entity.id))
+    .filter((entity) => !entity.referencedOnly || connected.has(entity.id))
+    .map((entity) => ({
+      id: entity.id,
+      entityId: entity.id,
+      kind: entity.kind,
+      label: entity.label,
+      status: entityStatus(entity.id),
+      context: false,
+    }));
+
+  if (options.showLiterals) {
+    const literalGraph = literalNodes(model, nodes);
+    nodes = nodes.concat(literalGraph.nodes);
+    edges = edges.concat(literalGraph.edges);
+  }
+
+  const nodeIds = new Set(nodes.map((node) => node.id));
+  edges = edges.filter((edge) => nodeIds.has(edge.source) && nodeIds.has(edge.target));
+
+  if (options.onlyChanges && diff) {
+    ({ nodes, edges } = keepChangesWithContext(nodes, edges));
+  }
+  return {
+    nodes,
+    edges,
+    hiddenEntityCount: entities.length - nodes.filter((node) => node.kind !== 'literal').length,
+  };
+}
+
+function isCandidate(entity: Entity, options: ViewOptions): boolean {
+  if (!options.showOwlThing && entity.iri && TOP_AND_BOTTOM.has(entity.iri)) return false;
+  if (options.hiddenKinds.includes(entity.kind)) return false;
+  return !options.hiddenNamespaces.includes(entity.namespace);
+}
+
+function isEdgeShown(edge: Edge, options: ViewOptions): boolean {
+  if (edge.kind === 'annotation' && !options.showAnnotationLinks) return false;
+  return !options.hiddenPredicates.includes(edge.predicate);
+}
+
+/**
+ * Draws a property with a domain and a range as an arrow from domain to range,
+ * the way people sketch ontologies on a whiteboard. The property node is dropped
+ * when nothing else connects to it.
+ */
+function foldPropertiesIntoEdges(
+  model: OntologyModel,
+  edges: VisibleEdge[],
+  hiddenProperties: Set<string>,
+): VisibleEdge[] {
+  const domainsOf = groupTargets(edges, 'domain');
+  const rangesOf = groupTargets(edges, 'range');
+  const folded: VisibleEdge[] = [];
+  const foldedProperties = new Set<string>();
+
+  for (const [propertyId, domains] of domainsOf) {
+    const property = model.entities[propertyId];
+    const ranges = rangesOf.get(propertyId);
+    if (!property || !ranges || !PROPERTY_KINDS.has(property.kind)) continue;
+    foldedProperties.add(propertyId);
+    for (const domain of domains) {
+      for (const range of ranges) {
+        folded.push({
+          id: `property ${propertyId} ${domain.target} ${range.target}`,
+          source: domain.target,
+          target: range.target,
+          label: property.label,
+          kind: 'property',
+          predicate: propertyId,
+          status: combineStatus(domain.status, range.status),
+        });
+      }
+    }
+  }
+
+  const remaining = edges.filter(
+    (edge) =>
+      !(foldedProperties.has(edge.source) && (edge.kind === 'domain' || edge.kind === 'range')),
+  );
+  const stillConnected = new Set(remaining.flatMap((edge) => [edge.source, edge.target]));
+  for (const propertyId of foldedProperties) {
+    if (!stillConnected.has(propertyId)) hiddenProperties.add(propertyId);
+  }
+  return remaining.concat(folded);
+}
+
+function groupTargets(edges: readonly VisibleEdge[], kind: EdgeKind): Map<string, VisibleEdge[]> {
+  const groups = new Map<string, VisibleEdge[]>();
+  for (const edge of edges) {
+    if (edge.kind !== kind) continue;
+    const list = groups.get(edge.source) ?? [];
+    list.push(edge);
+    groups.set(edge.source, list);
+  }
+  return groups;
+}
+
+function combineStatus(a: ChangeStatus, b: ChangeStatus): ChangeStatus {
+  if (a === b) return a;
+  if (a === 'removed' || b === 'removed')
+    return a === 'added' || b === 'added' ? 'modified' : 'removed';
+  return a === 'unchanged' ? b : b === 'unchanged' ? a : 'modified';
+}
+
+function literalNodes(
+  model: OntologyModel,
+  nodes: readonly VisibleNode[],
+): Pick<ProjectedGraph, 'nodes' | 'edges'> {
+  const literalNodeList: VisibleNode[] = [];
+  const literalEdges: VisibleEdge[] = [];
+  for (const node of nodes) {
+    const entity = model.entities[node.entityId];
+    entity?.literals.forEach((fact, index) => {
+      if (fact.isAnnotation) return;
+      const id = `literal ${entity.id} ${index}`;
+      literalNodeList.push({
+        id,
+        entityId: entity.id,
+        kind: 'literal',
+        label: fact.value,
+        status: node.status === 'modified' ? 'unchanged' : node.status,
+        context: false,
+      });
+      literalEdges.push({
+        id: `${id} edge`,
+        source: entity.id,
+        target: id,
+        label: fact.predicateLabel,
+        kind: 'relation',
+        predicate: fact.predicate,
+        status: node.status === 'modified' ? 'unchanged' : node.status,
+      });
+    });
+  }
+  return { nodes: literalNodeList, edges: literalEdges };
+}
+
+function keepChangesWithContext(
+  nodes: VisibleNode[],
+  edges: VisibleEdge[],
+): Pick<ProjectedGraph, 'nodes' | 'edges'> {
+  const changed = new Set(
+    nodes.filter((node) => node.status !== 'unchanged').map((node) => node.id),
+  );
+  const keptEdges = edges.filter(
+    (edge) => edge.status !== 'unchanged' || changed.has(edge.source) || changed.has(edge.target),
+  );
+  const kept = new Set(keptEdges.flatMap((edge) => [edge.source, edge.target]));
+  for (const id of changed) kept.add(id);
+  return {
+    nodes: nodes
+      .filter((node) => kept.has(node.id))
+      .map((node) => (changed.has(node.id) ? node : { ...node, context: true })),
+    edges: keptEdges,
+  };
+}

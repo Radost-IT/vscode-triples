@@ -1,0 +1,8 @@
+@prefix : <http://example.org/zoo#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+:Animal a owl:Class ; rdfs:label "Animal" .
+:Mammal a owl:Class ; rdfs:subClassOf :Animal ; rdfs:label "Mammal (warm-blooded)" .
+:Bird a owl:Class ; rdfs:subClassOf :Animal ; rdfs:label "Bird" .
+:eats a owl:ObjectProperty ; rdfs:domain :Animal ; rdfs:range :Animal .

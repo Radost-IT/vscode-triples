@@ -1,0 +1,10 @@
+@prefix : <http://example.org/zoo#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+_:livesInRestriction owl:allValuesFrom _:places ; owl:onProperty :livesIn ; a owl:Restriction .
+_:places owl:unionOf ( :Savanna :Zoo ) .
+
+:Lion rdfs:subClassOf _:livesInRestriction ;
+    rdfs:subClassOf [ owl:someValuesFrom :Meat ; owl:onProperty :eats ; a owl:Restriction ] ;
+    a owl:Class .
