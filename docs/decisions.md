@@ -1,0 +1,69 @@
+# Decisions
+
+Short notes on choices where the requirements were open or met reality. Newest last.
+
+## License: MIT
+
+The repository already had an MIT `LICENSE`. All runtime dependencies are MIT, ISC, BSD or Apache-2.0, which fit.
+
+## VS Code 1.140 or newer
+
+`engines.vscode` is `^1.140.0` to match `@types/vscode`. Older versions are not tested.
+
+## TypeScript 6.0
+
+TypeScript 6.0.3 is the newest version that `typescript-eslint` supports.
+
+## JSON-LD through `jsonld-streaming-parser`
+
+It accepts a custom document loader. Triples passes one that refuses every remote context, so a JSON-LD file never causes a network request. The user gets a clear error asking to inline the context.
+
+## `.owl` files are sniffed
+
+The extension `.owl` is used for RDF/XML, Turtle, OWL/XML and Functional Syntax. The parser looks at the start of the file. RDF/XML and Turtle work. OWL/XML, Functional Syntax and Manchester Syntax show a "not supported yet" message instead of a parse error.
+
+## Blank nodes in the diff use a structural hash
+
+OWL restrictions, unions and lists are blank-node trees. Each blank node gets an id from a hash of its own triples and its children's ids (a Merkle hash). Equal structures get equal ids, so an unchanged restriction never shows up as changed, whatever its blank node labels are. This is simpler than RDFC-1.0 and good enough because ontologies rarely contain blank-node cycles. When a cycle exists, the nodes in it fall back to their labels, which may report a spurious change.
+
+A changed restriction is reported once, on the named entity that owns it, as a readable expression such as `subClassOf [ hasTopping some Cheese ]`.
+
+## Renames are removed + added
+
+As the requirements say, no rename guessing in v1.
+
+## Properties drawn as arrows
+
+When a property has both a domain and a range, the graph draws an arrow from domain to range labeled with the property name, instead of a separate property node. This is how people sketch ontologies and halves the node count. The toggle "Draw properties as arrows between domain and range" turns it off. The property node stays visible when something else connects to it, such as a `subPropertyOf` edge.
+
+## Parsing runs in a Web Worker inside the webview
+
+The worker gets the file text from the host and returns the model or diff. This keeps the extension host free of heavy work and keeps `src/core` independent of Node. VS Code webviews cannot start a worker from a `vscode-resource` URL, so the page fetches the worker bundle and starts it from a `blob:` URL. The CSP allows `worker-src blob:` and `connect-src` for the extension's own resources only.
+
+## Strict CSP and Cytoscape's stylesheet
+
+Cytoscape inserts a `<style>` element on start, which a strict `style-src` blocks. The page ships that exact stylesheet with a nonce, so Cytoscape finds it and skips the insert. Inline style attributes are never used; dynamic values are set through the CSSOM.
+
+## Both diff sides share one base IRI
+
+Relative IRIs resolve against the file location. When comparing HEAD with the working copy, or two different files, both sides resolve against the newer file. Otherwise every relative IRI would show as changed. `SourceDocument.uri` still points at the real source, so "Go to line" opens the right document.
+
+## A missing side is an empty graph
+
+When the file does not exist at a revision (added or deleted file), that side is `null` and everything shows as added or removed. Diff editors show a missing side as an empty document, so blank text from a diff editor also counts as "no file".
+
+## Stable layouts
+
+The force layout seeds `Math.random` while it runs, so the same file gives the same picture. On refresh, node positions are reused when at least 60% of the nodes are unchanged; new nodes are placed next to a neighbor. Above 2,500 nodes the layout uses fcose draft quality, and above 3,000 nodes Cytoscape hides edges and labels while panning.
+
+## Hierarchy view expansion
+
+Below 300 nodes the tree starts fully expanded; above that only roots are expanded. Children are shown 200 at a time with a "Show more" row. A node with several parents appears under each parent with a `⑂ n` badge.
+
+## Strings
+
+Webview strings are in `src/webview/strings.ts`, extension strings use `vscode.l10n.t` in `src/extension/strings.ts`, and contribution titles are in `package.nls.json`. No translation bundles exist yet.
+
+## Panel state
+
+Each panel keeps context when hidden (`retainContextWhenHidden`), so large graphs do not need a new layout when the user switches tabs. The Graph/Hierarchy choice is stored per file in workspace state. Panels are not restored after a window reload.
