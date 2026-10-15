@@ -9,6 +9,7 @@ export const ENTITY_KINDS = [
   'individual',
   'datatype',
   'expression',
+  'shape',
   'resource',
 ] as const;
 

@@ -218,6 +218,7 @@ const SUMMARY_CATEGORY: Readonly<Record<EntityKind, SummaryCategory | undefined>
   individual: 'individuals',
   datatype: 'other',
   resource: 'other',
+  shape: 'other',
   expression: undefined,
 };
 

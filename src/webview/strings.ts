@@ -105,6 +105,7 @@ export const kindNames: Record<NodeKind, string> = {
   individual: t('Individual'),
   datatype: t('Datatype'),
   expression: t('Class expression'),
+  shape: t('SHACL shape'),
   resource: t('Resource'),
   literal: t('Data value'),
 };
@@ -127,7 +128,7 @@ export const edgeLegend = {
   subClassOf: t('Subclass of (hollow arrow)'),
   property: t('Property or relation'),
   type: t('Instance of (dotted)'),
-  restriction: t('Restriction (dashed)'),
+  restriction: t('Restriction or shape constraint (dashed)'),
 } as const;
 
 export const filterableKinds: readonly EntityKind[] = [
@@ -139,5 +140,6 @@ export const filterableKinds: readonly EntityKind[] = [
   'individual',
   'datatype',
   'expression',
+  'shape',
   'resource',
 ];

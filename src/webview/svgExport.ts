@@ -155,6 +155,14 @@ function shapePath(shape: string, center: Position, width: number, height: numbe
         [-1, 0.4],
         [-1, -0.4],
       ]);
+    case 'pentagon':
+      return polygon([
+        [0, -1],
+        [1, -0.2],
+        [0.62, 1],
+        [-0.62, 1],
+        [-1, -0.2],
+      ]);
     case 'round-tag':
       return polygon([
         [-1, -1],

@@ -9,6 +9,7 @@ export type NodeShape =
   | 'hexagon'
   | 'round-tag'
   | 'octagon'
+  | 'pentagon'
   | 'barrel';
 
 interface KindLook {
@@ -67,6 +68,12 @@ export const KIND_LOOK: Record<NodeKind, KindLook> = {
     colorVariable: '--vscode-descriptionForeground',
     fallback: '#8b8b8b',
     dashed: true,
+  },
+  shape: {
+    shape: 'pentagon',
+    colorVariable: '--vscode-terminal-ansiMagenta',
+    fallback: '#bc3fbc',
+    dashed: false,
   },
   resource: {
     shape: 'barrel',

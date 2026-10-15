@@ -1,6 +1,6 @@
 import type { ParsedGraph } from '../parse/types';
 import type { Literal, Term, Triple } from '../rdf';
-import { owl, rdf, rdfs } from '../vocab';
+import { owl, rdf, rdfs, sh } from '../vocab';
 import { indexBySubject, structuralBlankIds, subjectKey, type TriplesBySubject } from './blank';
 import {
   expressionShape,
@@ -21,6 +21,7 @@ import {
 } from './kinds';
 import { pickLabel } from './labels';
 import { createCompactor, localName, type IriCompactor } from './names';
+import { propertyShapeOf, type PropertyShape } from './shacl';
 import type {
   Edge,
   EdgeKind,
@@ -38,7 +39,7 @@ export interface BuildOptions {
 
 export const ANONYMOUS_LABEL = 'anonymous';
 
-type BlankRole = 'list' | 'axiom' | 'expression' | 'generic';
+type BlankRole = 'list' | 'axiom' | 'expression' | 'foldedPropertyShape' | 'generic';
 
 const STRUCTURAL_EDGES: Readonly<Record<string, EdgeKind>> = {
   [rdfs.subClassOf]: 'subClassOf',
@@ -76,6 +77,7 @@ class ModelBuilder {
   private readonly kinds = new Map<string, EntityKind>();
   private readonly blankRoles = new Map<string, BlankRole>();
   private readonly shapes = new Map<string, ExpressionShape>();
+  private readonly propertyShapes = new Map<string, PropertyShape>();
   private readonly entities: Record<string, Entity> = {};
   private readonly edges = new Map<string, Edge>();
   private readonly referencedBlanks = new Set<string>();
@@ -121,6 +123,8 @@ class ModelBuilder {
       const label = key.slice(2);
       const shape = expressionShape(this.bySubject, label);
       if (shape) this.shapes.set(label, shape);
+      const propertyShape = propertyShapeOf(this.bySubject, label);
+      if (propertyShape) this.propertyShapes.set(label, propertyShape);
       this.blankRoles.set(label, this.roleOf(label, shape));
     }
     for (const triple of this.graph.triples) {
@@ -133,7 +137,8 @@ class ModelBuilder {
   private roleOf(label: string, shape: ExpressionShape | undefined): BlankRole {
     if (isListNode(this.bySubject, label)) return 'list';
     if (isAxiomNode(this.bySubject, label)) return 'axiom';
-    return shape ? 'expression' : 'generic';
+    if (shape) return 'expression';
+    return this.propertyShapes.get(label)?.foldable ? 'foldedPropertyShape' : 'generic';
   }
 
   private inferKinds(): void {
@@ -183,7 +188,20 @@ class ModelBuilder {
         if (target) classOrDatatype(target);
         break;
       case owl.onProperty:
+      case sh.path:
         if (target) this.setKind(target, 'property');
+        break;
+      case sh.targetClass:
+        this.setKind(subject, 'shape');
+        if (target) this.setKind(target, 'class');
+        break;
+      case sh.class:
+        if (target) this.setKind(target, 'class');
+        break;
+      case sh.property:
+      case sh.node:
+        this.setKind(subject, 'shape');
+        if (target) this.setKind(target, 'shape');
         break;
       case owl.someValuesFrom:
       case owl.allValuesFrom:
@@ -258,6 +276,11 @@ class ModelBuilder {
       );
       return;
     }
+    const propertyShape = this.propertyShapes.get(target.value);
+    if (this.blankRoles.get(target.value) === 'foldedPropertyShape' && propertyShape?.valueType) {
+      this.addPropertyShapeEdge(sourceId, propertyShape, propertyShape.valueType);
+      return;
+    }
     const shape = this.shapes.get(target.value);
     if (
       predicate === rdfs.subClassOf &&
@@ -288,6 +311,27 @@ class ModelBuilder {
     this.ensureEntity(fillerIri, { kind: 'iri', value: fillerIri });
     const label = `${this.predicateLabel(property)} ${quantifier}`;
     this.addEdge(sourceId, property, fillerIri, 'restriction', label, quantifier);
+  }
+
+  private addPropertyShapeEdge(
+    sourceId: string,
+    propertyShape: PropertyShape,
+    valueType: string,
+  ): void {
+    this.ensureEntity(valueType, { kind: 'iri', value: valueType });
+    const label = this.propertyShapeLabel(propertyShape);
+    this.addEdge(
+      sourceId,
+      propertyShape.path,
+      valueType,
+      'restriction',
+      label,
+      propertyShape.cardinality,
+    );
+  }
+
+  private propertyShapeLabel({ path, cardinality }: PropertyShape): string {
+    return cardinality ? `${this.predicateLabel(path)} ${cardinality}` : this.predicateLabel(path);
   }
 
   private addEdge(
@@ -401,12 +445,15 @@ class ModelBuilder {
       (triple) => triple.predicate === rdf.type && triple.object.kind === 'iri',
     )?.object.value;
     const name = pickLabel(this.labelLiterals(`_:${label}`), this.options.language);
+    const propertyShape = this.propertyShapes.get(label);
     const display =
-      name ?? (typeIri ? `${ANONYMOUS_LABEL} ${this.labelOf(typeIri)}` : ANONYMOUS_LABEL);
+      name ??
+      (propertyShape && this.propertyShapeLabel(propertyShape)) ??
+      (typeIri ? `${ANONYMOUS_LABEL} ${this.labelOf(typeIri)}` : ANONYMOUS_LABEL);
     return {
       id,
       iri: null,
-      kind: blankKind(typeIri),
+      kind: propertyShape ? 'shape' : blankKind(typeIri),
       label: display,
       displayName: display,
       namespace: '',

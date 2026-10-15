@@ -8,6 +8,7 @@ const HALO_SHAPE: Record<NodeShape, 'ellipse' | 'round-rectangle'> = {
   diamond: 'ellipse',
   hexagon: 'ellipse',
   octagon: 'ellipse',
+  pentagon: 'ellipse',
   'round-rectangle': 'round-rectangle',
   rectangle: 'round-rectangle',
   'round-tag': 'round-rectangle',

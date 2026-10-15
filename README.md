@@ -29,6 +29,7 @@ The example files are in [examples/](examples/).
 - **Graph view**: classes, properties and individuals as nodes with labeled arrows. Zoom, pan, fit to screen, force or layered layout, and an optional minimap that shows the whole graph and moves the view when clicked or dragged.
 - **Hierarchy view**: class and property trees by `rdfs:subClassOf` and `rdfs:subPropertyOf`, as an outline or a tree diagram. Multiple parents are marked. Selection stays in sync with the graph view.
 - **Readable by default**: labels from `rdfs:label` in your VS Code language, collapsed prefixes (`foaf:Person`), the compact name next to labels that several nodes share (`Person (foaf:Person)`), distinct shapes and colors per kind, and a legend. `owl:Thing`, annotation links and data values are hidden until you turn them on.
+- **SHACL shapes**: node shapes are drawn as shapes, and their target classes as classes. A simple property shape becomes one arrow from the shape to its class or datatype, labeled with its path and counts, such as `name [1..1]`. A property shape with more constraints stays a node named after its path, with the constraints in the details panel.
 - **Details panel**: full IRI, annotations, data values and relations of the selected node.
 - **Search and focus**: find any node by label or IRI. Double-click a node to focus on its neighborhood.
 - **Filters**: by node kind, namespace and relation type.

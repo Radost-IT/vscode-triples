@@ -21,7 +21,7 @@ const CARDINALITIES: readonly [string, string][] = [
   [owl.maxQualifiedCardinality, 'max'],
 ];
 
-function objectsOf(bySubject: TriplesBySubject, label: string, predicate: string): Term[] {
+export function objectsOf(bySubject: TriplesBySubject, label: string, predicate: string): Term[] {
   return (bySubject.get(`_:${label}`) ?? [])
     .filter((triple) => triple.predicate === predicate)
     .map((triple) => triple.object);

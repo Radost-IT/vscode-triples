@@ -5,6 +5,7 @@ export const XSD = 'http://www.w3.org/2001/XMLSchema#';
 export const SKOS = 'http://www.w3.org/2004/02/skos/core#';
 export const DC = 'http://purl.org/dc/elements/1.1/';
 export const DCTERMS = 'http://purl.org/dc/terms/';
+export const SH = 'http://www.w3.org/ns/shacl#';
 
 export const WELL_KNOWN_PREFIXES: Readonly<Record<string, string>> = {
   rdf: RDF,
@@ -86,4 +87,17 @@ export const owl = {
 
 export const skos = {
   prefLabel: `${SKOS}prefLabel`,
+} as const;
+
+export const sh = {
+  NodeShape: `${SH}NodeShape`,
+  PropertyShape: `${SH}PropertyShape`,
+  targetClass: `${SH}targetClass`,
+  property: `${SH}property`,
+  path: `${SH}path`,
+  class: `${SH}class`,
+  datatype: `${SH}datatype`,
+  node: `${SH}node`,
+  minCount: `${SH}minCount`,
+  maxCount: `${SH}maxCount`,
 } as const;

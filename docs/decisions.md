@@ -95,3 +95,7 @@ OWL Functional Syntax, OWL/XML and Manchester Syntax are parsed into the same sm
 ## Open command title
 
 The open command reads "Open with Triples by Radost IT" instead of "Triples: Open Visualizer", as requested, so the Explorer menu and the editor title button name the extension and its maker. The command has no category, because "Triples: Open with Triples by Radost IT" would repeat the name in the Command Palette. The command ID stays `triples.openVisualizer`, so keybindings keep working.
+
+## SHACL property shapes
+
+A property shape such as `[ sh:path ex:name ; sh:datatype xsd:string ; sh:minCount 1 ]` becomes one arrow from its node shape to the datatype, labeled `name [1..*]`, the same way OWL restrictions become arrows. This only happens when the shape has a plain property path, exactly one `sh:class`, `sh:datatype` or `sh:node`, and nothing else besides counts, so no constraint is lost. Any other property shape stays a node, labeled with its path and counts instead of "anonymous". Such edges use the dashed restriction style. Complex paths (sequence, inverse) and logical constraints (`sh:or`, `sh:and`) are drawn as plain triples.

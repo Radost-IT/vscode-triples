@@ -1,4 +1,4 @@
-import { DC, DCTERMS, OWL, RDF, RDFS, XSD, owl, rdf, rdfs, skos } from '../vocab';
+import { DC, DCTERMS, OWL, RDF, RDFS, XSD, owl, rdf, rdfs, sh, skos } from '../vocab';
 import type { EntityKind } from './types';
 
 /** rdf:type objects that classify a resource instead of being drawn as a class. */
@@ -25,6 +25,8 @@ export const META_TYPES: Readonly<Record<string, EntityKind | 'ontology' | 'skip
   [owl.AllDisjointClasses]: 'skip',
   [owl.AllDifferent]: 'skip',
   [owl.AllDisjointProperties]: 'skip',
+  [sh.NodeShape]: 'shape',
+  [sh.PropertyShape]: 'shape',
 };
 
 const KIND_PRIORITY: readonly EntityKind[] = [
@@ -34,6 +36,7 @@ const KIND_PRIORITY: readonly EntityKind[] = [
   'annotationProperty',
   'property',
   'datatype',
+  'shape',
   'individual',
   'expression',
   'resource',

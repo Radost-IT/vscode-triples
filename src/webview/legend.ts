@@ -9,6 +9,7 @@ const SHAPE_POINTS: Partial<Record<string, string>> = {
   diamond: '10,1 19,8 10,15 1,8',
   hexagon: '5,1 15,1 19,8 15,15 5,15 1,8',
   octagon: '6,1 14,1 19,5 19,11 14,15 6,15 1,11 1,5',
+  pentagon: '10,1 19,7 16,15 4,15 1,7',
   'round-tag': '1,1 15,1 19,8 15,15 1,15',
 };
 
