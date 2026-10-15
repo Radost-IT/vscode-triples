@@ -1,4 +1,4 @@
-import type { StylesheetJson } from 'cytoscape';
+import type { EdgeSingular, StylesheetJson } from 'cytoscape';
 import type { NodeKind } from '../core/view/project';
 import { KIND_LOOK, type NodeShape, type Palette } from './theme';
 
@@ -83,6 +83,8 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
         'font-family': palette.fontFamily,
         'font-size': 10,
         'text-rotation': 'autorotate',
+        'text-margin-x': (edge: EdgeSingular) => (edge.data('labelDx') as number | undefined) ?? 0,
+        'text-margin-y': (edge: EdgeSingular) => (edge.data('labelDy') as number | undefined) ?? 0,
         'text-background-color': palette.background,
         'text-background-opacity': 0.9,
         'text-background-padding': '3px',

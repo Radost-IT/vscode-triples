@@ -1,5 +1,6 @@
 import cytoscape, {
   type Core,
+  type EdgeCollection,
   type ElementDefinition,
   type NodeSingular,
   type Position,
@@ -7,6 +8,7 @@ import cytoscape, {
 import type { ChangeStatus } from '../core/diff/diff';
 import type { NodeKind, ProjectedGraph } from '../core/view/project';
 import { nearestInDirection, type Direction } from './direction';
+import { edgeLabelOffset } from './edgeLabel';
 import { graphStylesheet, nodeSize } from './graphStyle';
 import { forceLayout, layeredLayout, withSeededRandom, type LayoutName } from './layout';
 import type { MinimapScene } from './minimapProjection';
@@ -113,6 +115,9 @@ function createCore(container: HTMLElement, events: GraphViewEvents, large: bool
     if (event.target === cy) events.onSelect(null);
   });
   cy.on('dbltap', 'node', (event) => events.onFocus((event.target as NodeSingular).id()));
+  cy.on('drag', 'node', (event) =>
+    placeEdgeLabels((event.target as NodeSingular).connectedEdges()),
+  );
   cy.on('viewport', () => events.onViewportChange({ zoom: cy.zoom(), pan: { ...cy.pan() } }));
   cy.on('render', () => events.onRender());
   return cy;
@@ -137,6 +142,7 @@ function render(cy: Core, graph: ProjectedGraph, settings: GraphRenderSettings):
   } else {
     runLayout(cy, settings.layout);
   }
+  cy.batch(() => placeEdgeLabels(cy.edges()));
   if (selected && cy.getElementById(selected).nonempty()) select(cy, selected, false);
 }
 
@@ -174,6 +180,14 @@ function toElements(graph: ProjectedGraph, diff: boolean): ElementDefinition[] {
     classes: [`kind-${edge.kind}`, `status-${edge.status}`, diff ? 'diff' : ''].join(' '),
   }));
   return [...nodes, ...edges];
+}
+
+/** Cytoscape keeps text margins in model space, so they follow the edge only if recomputed when nodes move. */
+function placeEdgeLabels(edges: EdgeCollection): void {
+  edges.forEach((edge) => {
+    const offset = edgeLabelOffset(edge.source().position(), edge.target().position());
+    edge.data({ labelDx: offset.x, labelDy: offset.y });
+  });
 }
 
 function runLayout(cy: Core, layout: LayoutName): void {

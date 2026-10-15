@@ -76,7 +76,11 @@ function edgeSvg(edge: EdgeSingular, shift: (point: Position) => Position): stri
     color,
   );
   const label = edge.style('label') as string;
-  const middle = shift(edge.midpoint());
+  const midpoint = shift(edge.midpoint());
+  const middle = {
+    x: midpoint.x + parseFloat(edge.style('text-margin-x') as string),
+    y: midpoint.y + parseFloat(edge.style('text-margin-y') as string),
+  };
   return [
     `<g opacity="${Number(edge.style('opacity'))}">`,
     `<path d="${path}" fill="none" stroke="${escapeXml(color)}" stroke-width="${width}"${dash}/>`,

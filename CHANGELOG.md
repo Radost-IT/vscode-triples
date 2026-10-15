@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Edge labels sit beside their line instead of on it, so the line and arrow no longer run through the text. SVG export matches.
+
 ## 1.0.3
 
 - CI tags each new `package.json` version on `main` and starts the release.
