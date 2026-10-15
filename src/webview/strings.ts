@@ -56,6 +56,11 @@ export const strings = {
   showLiterals: t('Draw data values as nodes'),
   showBusyTypeLinks: (count: number) =>
     t('Show "instance of" links to classes with more than {0} instances', count),
+  groupIndividuals: (count: number) =>
+    t(
+      'Above {0} individuals, draw each class once with a count (double-click a class to open it)',
+      count,
+    ),
   propertiesAsEdges: t('Draw properties as arrows between domain and range'),
   onlyChanges: t('Show only changes'),
   nodeKinds: t('Node kinds'),

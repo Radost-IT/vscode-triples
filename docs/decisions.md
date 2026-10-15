@@ -99,3 +99,7 @@ The open command reads "Open with Triples by Radost IT" instead of "Triples: Ope
 ## SHACL property shapes
 
 A property shape such as `[ sh:path ex:name ; sh:datatype xsd:string ; sh:minCount 1 ]` becomes one arrow from its node shape to the datatype, labeled `name [1..*]`, the same way OWL restrictions become arrows. This only happens when the shape has a plain property path, exactly one `sh:class`, `sh:datatype` or `sh:node`, and nothing else besides counts, so no constraint is lost. Any other property shape stays a node, labeled with its path and counts instead of "anonymous". Such edges use the dashed restriction style. Complex paths (sequence, inverse) and logical constraints (`sh:or`, `sh:and`) are drawn as plain triples.
+
+## Grouped individuals
+
+Instance data such as ODRL policies can hold hundreds of individuals of a handful of classes. Drawn one by one, they form a cloud where no label is readable. Above 100 visible individuals, the graph draws each class once with a count and merges edges between individuals into one edge per relation, labeled with how many it stands for. An individual typed with several classes joins the first class in the file. A class with one individual is not grouped, because the count would only hide a name. Grouping is on by default because readability comes first; the declutter filters turn it off. Double-click, which normally focuses on a neighborhood, opens and closes a group instead, because a group node has no useful neighborhood of its own until it is opened.

@@ -68,14 +68,20 @@ const DEFAULT_STATE: PersistedState = {
 
 /** Past this many nodes a full drawing makes the editor sluggish, so the user decides first. */
 const HUGE_GRAPH = 20_000;
-const NO_GRAPH: ProjectedGraph = { nodes: [], edges: [], hiddenEntityCount: 0 };
+const NO_GRAPH: ProjectedGraph = {
+  nodes: [],
+  edges: [],
+  hiddenEntityCount: 0,
+  groupedInto: new Map(),
+};
 
 const vscode = acquireVsCodeApi();
 const savedState = vscode.getState() as Partial<PersistedState> | undefined;
-// Panels added in later versions are missing from older saved state.
+// Panels and options added in later versions are missing from older saved state.
 let state: PersistedState = {
   ...DEFAULT_STATE,
   ...savedState,
+  options: { ...DEFAULT_STATE.options, ...savedState?.options },
   panels: { ...DEFAULT_STATE.panels, ...savedState?.panels },
 };
 let viewMode: ViewMode = 'graph';
@@ -104,6 +110,7 @@ const graphHost = h('div', {
 const graph = createGraphView(graphHost, {
   onSelect: (nodeId) => setSelection(nodeId ? (nodeEntity.get(nodeId) ?? null) : null, false),
   onFocus: (nodeId) => {
+    if (toggleGroup(nodeId)) return;
     focusNodeId = nodeId;
     drawGraph(false);
   },
@@ -360,6 +367,7 @@ function drawGraph(reuse: boolean): void {
       nodes: full.nodes.filter((node) => keep.has(node.id)),
       edges: full.edges.filter((edge) => keep.has(edge.source) && keep.has(edge.target)),
       hiddenEntityCount: full.hiddenEntityCount,
+      groupedInto: full.groupedInto,
     };
     const label =
       loaded.model.entities[nodeEntity.get(focusNodeId) ?? focusNodeId]?.label ?? focusNodeId;
@@ -521,7 +529,26 @@ function togglePanel(panel: keyof PersistedState['panels']): void {
   syncPanels();
 }
 
+/** Double-clicking a class opens its group of individuals, or closes it again. */
+function toggleGroup(classId: string): boolean {
+  const expanded = state.options.expandedGroups;
+  const isGroup = [...projected.groupedInto.values()].includes(classId);
+  if (!isGroup && !expanded.includes(classId)) return false;
+  setExpandedGroups(
+    isGroup ? [...expanded, classId] : expanded.filter((group) => group !== classId),
+  );
+  return true;
+}
+
+function setExpandedGroups(expandedGroups: string[]): void {
+  saveState({ options: { ...state.options, expandedGroups } });
+  drawPanels();
+  drawGraph(true);
+}
+
 function setSelection(entityId: string | null, center: boolean): void {
+  const group = entityId && center ? projected.groupedInto.get(entityId) : undefined;
+  if (group) setExpandedGroups([...state.options.expandedGroups, group]);
   saveState({ selectedId: entityId });
   if (loaded) renderDetails(detailsPanel, entityId, loaded.details);
   announceSelection(entityId);

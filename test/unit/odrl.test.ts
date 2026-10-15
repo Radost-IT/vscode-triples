@@ -4,6 +4,7 @@ import { parseRdf } from '../../src/core/parse';
 import {
   BUSY_CLASS_INSTANCES,
   DEFAULT_VIEW_OPTIONS,
+  GROUP_INDIVIDUALS_ABOVE,
   projectGraph,
 } from '../../src/core/view/project';
 import { modelOfFixture } from './helpers';
@@ -61,5 +62,44 @@ describe('busy classes', () => {
   it('keeps the links of a class with few instances', async () => {
     const graph = projectGraph(await constraintsModel(BUSY_CLASS_INSTANCES), DEFAULT_VIEW_OPTIONS);
     expect(typeLinks(graph)).toHaveLength(BUSY_CLASS_INSTANCES + 1);
+  });
+});
+
+describe('grouped individuals', () => {
+  const constraint = 'http://www.w3.org/ns/odrl/2/Constraint';
+  const labelOf = (graph: ReturnType<typeof projectGraph>, id: string) =>
+    graph.nodes.find((node) => node.id === id)?.label;
+
+  it('draws a crowded class once with its count and merges the links of its individuals', async () => {
+    const graph = projectGraph(
+      await constraintsModel(GROUP_INDIVIDUALS_ABOVE),
+      DEFAULT_VIEW_OPTIONS,
+    );
+    expect(labelOf(graph, constraint)).toBe('Constraint ×100');
+    expect(labelOf(graph, 'http://example.org/rights#policy')).toBe('policy');
+    expect(graph.groupedInto.get('http://example.org/rights#c0')).toBe(constraint);
+    const operatorLinks = graph.edges.filter((edge) => edge.label.startsWith('operator'));
+    expect(operatorLinks).toEqual([
+      expect.objectContaining({ source: constraint, label: 'operator ×100' }),
+    ]);
+  });
+
+  it('draws the individuals of an expanded class one by one', async () => {
+    const graph = projectGraph(await constraintsModel(GROUP_INDIVIDUALS_ABOVE), {
+      ...DEFAULT_VIEW_OPTIONS,
+      expandedGroups: [constraint],
+    });
+    expect(labelOf(graph, constraint)).toBe('Constraint');
+    expect(labelOf(graph, 'http://example.org/rights#c0')).toBe('c0');
+    expect(graph.groupedInto.size).toBe(0);
+  });
+
+  it('leaves graphs with fewer individuals as they are', async () => {
+    const graph = projectGraph(
+      await constraintsModel(GROUP_INDIVIDUALS_ABOVE - 1),
+      DEFAULT_VIEW_OPTIONS,
+    );
+    expect(graph.groupedInto.size).toBe(0);
+    expect(labelOf(graph, 'http://example.org/rights#c0')).toBe('c0');
   });
 });

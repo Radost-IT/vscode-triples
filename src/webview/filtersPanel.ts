@@ -1,5 +1,9 @@
 import type { EntityKind, OntologyModel } from '../core/model/types';
-import { BUSY_CLASS_INSTANCES, type ViewOptions } from '../core/view/project';
+import {
+  BUSY_CLASS_INSTANCES,
+  GROUP_INDIVIDUALS_ABOVE,
+  type ViewOptions,
+} from '../core/view/project';
 import { h } from './dom';
 import { filterableKinds, kindNames, strings } from './strings';
 
@@ -8,6 +12,7 @@ type Toggle =
   | 'showAnnotationLinks'
   | 'showLiterals'
   | 'showBusyTypeLinks'
+  | 'groupIndividuals'
   | 'propertiesAsEdges'
   | 'onlyChanges';
 
@@ -68,6 +73,7 @@ export function renderFilters(
       toggle('showAnnotationLinks', strings.showAnnotationLinks),
       toggle('showLiterals', strings.showLiterals),
       toggle('showBusyTypeLinks', strings.showBusyTypeLinks(BUSY_CLASS_INSTANCES)),
+      toggle('groupIndividuals', strings.groupIndividuals(GROUP_INDIVIDUALS_ABOVE)),
       state.diff ? toggle('onlyChanges', strings.onlyChanges) : null,
       h('label', { class: 'field' }, strings.focusHops, ' ', hops),
     ),

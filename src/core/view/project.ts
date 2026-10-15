@@ -9,6 +9,9 @@ export interface ViewOptions {
   readonly showAnnotationLinks: boolean;
   readonly showLiterals: boolean;
   readonly showBusyTypeLinks: boolean;
+  readonly groupIndividuals: boolean;
+  /** Classes whose individuals are drawn one by one although grouping is on. */
+  readonly expandedGroups: readonly string[];
   readonly propertiesAsEdges: boolean;
   readonly onlyChanges: boolean;
   readonly hiddenKinds: readonly EntityKind[];
@@ -21,6 +24,8 @@ export const DEFAULT_VIEW_OPTIONS: ViewOptions = {
   showAnnotationLinks: false,
   showLiterals: false,
   showBusyTypeLinks: false,
+  groupIndividuals: true,
+  expandedGroups: [],
   propertiesAsEdges: true,
   onlyChanges: false,
   hiddenKinds: [],
@@ -55,6 +60,8 @@ export interface ProjectedGraph {
   readonly nodes: VisibleNode[];
   readonly edges: VisibleEdge[];
   readonly hiddenEntityCount: number;
+  /** Individuals drawn inside their class node, mapped to that class. */
+  readonly groupedInto: ReadonlyMap<string, string>;
 }
 
 export interface DiffStatuses {
@@ -64,6 +71,9 @@ export interface DiffStatuses {
 
 /** A class with more instances than this pulls so many dotted lines together that they hide the rest. */
 export const BUSY_CLASS_INSTANCES = 15;
+
+/** Past this many individuals the graph shows each class once with a count instead. */
+export const GROUP_INDIVIDUALS_ABOVE = 100;
 
 const TOP_AND_BOTTOM: ReadonlySet<string> = new Set([owl.Thing, owl.Nothing]);
 
@@ -95,18 +105,33 @@ export function projectGraph(
     edges = foldPropertiesIntoEdges(model, edges, hiddenProperties);
   }
 
-  const connected = new Set(edges.flatMap((edge) => [edge.source, edge.target]));
+  const groupedInto = options.groupIndividuals
+    ? groupIndividuals(model, candidates, options.expandedGroups)
+    : new Map<string, string>();
+  if (groupedInto.size > 0) edges = edgesBetweenGroups(edges, groupedInto);
+  const members = membersByGroup(groupedInto);
+
+  // An open group keeps its class on screen, so a second double-click can close it.
+  const anchored = new Set([
+    ...edges.flatMap((edge) => [edge.source, edge.target]),
+    ...members.keys(),
+    ...options.expandedGroups,
+  ]);
   let nodes: VisibleNode[] = entities
     .filter((entity) => candidates.has(entity.id) && !hiddenProperties.has(entity.id))
-    .filter((entity) => !entity.referencedOnly || connected.has(entity.id))
-    .map((entity) => ({
-      id: entity.id,
-      entityId: entity.id,
-      kind: entity.kind,
-      label: labelOf(entity),
-      status: entityStatus(entity.id),
-      context: false,
-    }));
+    .filter((entity) => !groupedInto.has(entity.id))
+    .filter((entity) => !entity.referencedOnly || anchored.has(entity.id))
+    .map((entity) => {
+      const group = members.get(entity.id) ?? [];
+      return {
+        id: entity.id,
+        entityId: entity.id,
+        kind: entity.kind,
+        label: group.length > 0 ? `${labelOf(entity)} ×${group.length}` : labelOf(entity),
+        status: groupStatus(entityStatus(entity.id), group.map(entityStatus)),
+        context: false,
+      };
+    });
 
   if (options.showLiterals) {
     const literalGraph = literalNodes(model, nodes);
@@ -123,7 +148,9 @@ export function projectGraph(
   return {
     nodes,
     edges,
-    hiddenEntityCount: entities.length - nodes.filter((node) => node.kind !== 'literal').length,
+    hiddenEntityCount:
+      entities.length - groupedInto.size - nodes.filter((node) => node.kind !== 'literal').length,
+    groupedInto,
   };
 }
 
@@ -208,6 +235,79 @@ function groupTargets(edges: readonly VisibleEdge[], kind: EdgeKind): Map<string
     groups.set(edge.source, list);
   }
   return groups;
+}
+
+/**
+ * Puts each individual into the first class it is typed with, unless that class is expanded.
+ * Small graphs stay as they are: the counts only pay off once individuals crowd the view.
+ */
+function groupIndividuals(
+  model: OntologyModel,
+  candidates: ReadonlySet<string>,
+  expandedGroups: readonly string[],
+): Map<string, string> {
+  const groupedInto = new Map<string, string>();
+  const individuals = [...candidates].filter((id) => model.entities[id]?.kind === 'individual');
+  if (individuals.length <= GROUP_INDIVIDUALS_ABOVE) return groupedInto;
+  const individualIds = new Set(individuals);
+  const expanded = new Set(expandedGroups);
+  for (const edge of model.edges) {
+    if (edge.kind !== 'type' || !individualIds.has(edge.source) || groupedInto.has(edge.source))
+      continue;
+    if (!candidates.has(edge.target) || model.entities[edge.target]?.kind !== 'class') continue;
+    individualIds.delete(edge.source);
+    if (!expanded.has(edge.target)) groupedInto.set(edge.source, edge.target);
+  }
+  // A group of one saves nothing and hides the individual's name.
+  for (const [group, members] of membersByGroup(groupedInto)) {
+    if (members.length === 1) groupedInto.delete(members[0] ?? group);
+  }
+  return groupedInto;
+}
+
+/** Redraws edges between individuals as edges between their groups, one per relation, with a count. */
+function edgesBetweenGroups(
+  edges: readonly VisibleEdge[],
+  groupedInto: ReadonlyMap<string, string>,
+): VisibleEdge[] {
+  const merged = new Map<string, { edge: VisibleEdge; count: number }>();
+  for (const edge of edges) {
+    const source = groupedInto.get(edge.source) ?? edge.source;
+    const target = groupedInto.get(edge.target) ?? edge.target;
+    if (edge.kind === 'type' && source === target) continue;
+    if (source === edge.source && target === edge.target) {
+      merged.set(edge.id, { edge, count: 1 });
+      continue;
+    }
+    const id = `group ${source} ${edge.kind} ${edge.predicate} ${target}`;
+    const existing = merged.get(id);
+    if (existing) {
+      existing.count += 1;
+      existing.edge = {
+        ...existing.edge,
+        status: combineStatus(existing.edge.status, edge.status),
+      };
+    } else merged.set(id, { edge: { ...edge, id, source, target }, count: 1 });
+  }
+  return [...merged.values()].map(({ edge, count }) =>
+    count > 1 ? { ...edge, label: `${edge.label} ×${count}` } : edge,
+  );
+}
+
+function membersByGroup(groupedInto: ReadonlyMap<string, string>): Map<string, string[]> {
+  const members = new Map<string, string[]>();
+  for (const [member, group] of groupedInto) {
+    const list = members.get(group) ?? [];
+    list.push(member);
+    members.set(group, list);
+  }
+  return members;
+}
+
+/** A group whose class is unchanged still shows that some of its individuals changed. */
+function groupStatus(classStatus: ChangeStatus, memberStatuses: ChangeStatus[]): ChangeStatus {
+  if (classStatus !== 'unchanged') return classStatus;
+  return memberStatuses.some((status) => status !== 'unchanged') ? 'modified' : 'unchanged';
 }
 
 function combineStatus(a: ChangeStatus, b: ChangeStatus): ChangeStatus {

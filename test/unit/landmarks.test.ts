@@ -33,7 +33,7 @@ function hubs(linkCounts: readonly number[]): ProjectedGraph {
       edges.push(edge(`hub${hub}`, `hub${hub}-leaf${leaf}`));
     }
   });
-  return { nodes, edges, hiddenEntityCount: 0 };
+  return { nodes, edges, hiddenEntityCount: 0, groupedInto: new Map() };
 }
 
 describe('pickLandmarks', () => {
