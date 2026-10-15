@@ -149,13 +149,9 @@ Publishing needs accounts that only a maintainer can create:
 After the first manual release, the `Release` workflow publishes to both stores:
 
 1. In the GitHub repository, open Settings > Secrets and variables > Actions and add `VSCE_PAT` (the Azure DevOps token) and `OVSX_PAT` (the Open VSX token).
-2. Bump `version` in `package.json` and add a `CHANGELOG.md` entry. Commit and push.
-3. Tag the commit and push the tag:
+2. Bump `version` in `package.json` and add a `CHANGELOG.md` entry. Commit and push to `main`.
 
-   ```sh
-   git tag v<version>
-   git push origin v<version>
-   ```
+When CI passes on `main` and the `package.json` version has no tag yet, CI creates the `v<version>` tag and starts the `Release` workflow. Pushing a `v<version>` tag by hand also starts it.
 
 The workflow checks that the tag matches `package.json`, runs lint and all tests, publishes the `.vsix` to both stores and attaches it to a GitHub release.
 

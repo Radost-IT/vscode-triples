@@ -39,3 +39,26 @@ jobs:
         with:
           name: vsix
           path: '*.vsix'
+
+  tag:
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: write
+    steps:
+      - uses: actions/checkout@v5
+      - name: Tag a new package.json version and start the release
+        run: |
+          tag="v$(node -p "require('./package.json').version")"
+          if git ls-remote --exit-code --tags origin "refs/tags/$tag" >/dev/null; then
+            echo "$tag already exists"
+            exit 0
+          fi
+          git tag "$tag"
+          git push origin "$tag"
+          # Tags pushed with GITHUB_TOKEN do not trigger workflows, so start the release explicitly.
+          gh workflow run release.yml --ref "$tag"
+        env:
+          GH_TOKEN: ${{ github.token }}
