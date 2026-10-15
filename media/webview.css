@@ -600,3 +600,15 @@ body.vscode-high-contrast .tree-row.selected,
 body.vscode-high-contrast-light .tree-row.selected {
   outline: 1px solid var(--vscode-contrastActiveBorder);
 }
+
+.minimap {
+  position: absolute;
+  z-index: 10;
+  right: 10px;
+  bottom: 10px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: 0 6px 20px var(--vscode-widget-shadow, transparent);
+  cursor: crosshair;
+}

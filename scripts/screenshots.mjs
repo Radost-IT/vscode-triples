@@ -122,7 +122,12 @@ const diff = {
 
 /** Each shot runs `actions` in the page after the first render, then waits for the layout to settle. */
 const SHOTS = [
-  { name: 'graph-dark', theme: 'dark', request: single, actions: `sleep(0)` },
+  {
+    name: 'graph-dark',
+    theme: 'dark',
+    request: single,
+    actions: `click('.text-button', 'Minimap')`,
+  },
   { name: 'graph-light', theme: 'light', request: single, actions: `select('Latte')` },
   { name: 'hierarchy-dark', theme: 'dark', request: single, actions: `hierarchyDiagram()` },
   { name: 'diff-dark', theme: 'dark', request: diff, actions: `sleep(0)` },

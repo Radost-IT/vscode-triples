@@ -4,10 +4,12 @@ import cytoscape, {
   type NodeSingular,
   type Position,
 } from 'cytoscape';
-import type { ProjectedGraph } from '../core/view/project';
+import type { ChangeStatus } from '../core/diff/diff';
+import type { NodeKind, ProjectedGraph } from '../core/view/project';
 import { nearestInDirection, type Direction } from './direction';
 import { graphStylesheet, nodeSize } from './graphStyle';
 import { forceLayout, layeredLayout, withSeededRandom, type LayoutName } from './layout';
+import type { MinimapScene } from './minimapProjection';
 import { exportSvg } from './svgExport';
 import { STATUS_MARK, readPalette } from './theme';
 
@@ -15,6 +17,8 @@ export interface GraphViewEvents {
   readonly onSelect: (nodeId: string | null) => void;
   readonly onFocus: (nodeId: string) => void;
   readonly onViewportChange: (viewport: Viewport) => void;
+  /** Called after each frame the canvas draws, including during layout and dragging. */
+  readonly onRender: () => void;
 }
 
 export interface Viewport {
@@ -35,6 +39,8 @@ export interface GraphView {
   zoomBy(factor: number): void;
   fit(): void;
   setViewport(viewport: Viewport): void;
+  centerAt(position: Position): void;
+  minimapScene(): MinimapScene;
   applyTheme(): void;
   png(): string;
   svg(): string;
@@ -69,6 +75,8 @@ export function createGraphView(container: HTMLElement, events: GraphViewEvents)
     zoomBy: (factor) => zoomBy(cy, factor),
     fit: () => cy.fit(undefined, 40),
     setViewport: (viewport) => void cy.viewport(viewport),
+    centerAt: (position) => centerAt(cy, position),
+    minimapScene: () => minimapScene(cy),
     applyTheme: () => cy.style(graphStylesheet(readPalette())),
     png: () =>
       cy.png({
@@ -106,6 +114,7 @@ function createCore(container: HTMLElement, events: GraphViewEvents, large: bool
   });
   cy.on('dbltap', 'node', (event) => events.onFocus((event.target as NodeSingular).id()));
   cy.on('viewport', () => events.onViewportChange({ zoom: cy.zoom(), pan: { ...cy.pan() } }));
+  cy.on('render', () => events.onRender());
   return cy;
 }
 
@@ -136,7 +145,13 @@ function toElements(graph: ProjectedGraph, diff: boolean): ElementDefinition[] {
     const label = `${STATUS_MARK[node.status]}${node.label}`;
     return {
       group: 'nodes' as const,
-      data: { id: node.id, label, ...nodeSize(label, node.kind) },
+      data: {
+        id: node.id,
+        label,
+        kind: node.kind,
+        status: node.status,
+        ...nodeSize(label, node.kind),
+      },
       classes: [
         `kind-${node.kind}`,
         `status-${node.status}`,
@@ -207,6 +222,24 @@ function select(cy: Core, nodeId: string | null, center: boolean): void {
   if (center && node?.nonempty()) {
     cy.animate({ center: { eles: node }, zoom: Math.max(cy.zoom(), 1) }, { duration: 250 });
   }
+}
+
+function centerAt(cy: Core, position: Position): void {
+  cy.pan({
+    x: cy.width() / 2 - position.x * cy.zoom(),
+    y: cy.height() / 2 - position.y * cy.zoom(),
+  });
+}
+
+function minimapScene(cy: Core): MinimapScene {
+  return {
+    nodes: cy.nodes().map((node) => ({
+      ...node.position(),
+      kind: node.data('kind') as NodeKind,
+      status: node.data('status') as ChangeStatus,
+    })),
+    extent: cy.extent(),
+  };
 }
 
 function zoomBy(cy: Core, factor: number): void {

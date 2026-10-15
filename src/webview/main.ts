@@ -18,6 +18,7 @@ import { createGraphView, type Viewport } from './graphView';
 import { createHierarchyView, type HierarchySettings } from './hierarchyView';
 import type { LayoutName } from './layout';
 import { renderLegend } from './legend';
+import { createMinimap } from './minimap';
 import { createSearchBox } from './searchBox';
 import { kindNames, statusNames, strings } from './strings';
 import { exportSvg } from './svgExport';
@@ -44,6 +45,7 @@ interface PersistedState {
     readonly legend: boolean;
     readonly details: boolean;
     readonly changes: boolean;
+    readonly minimap: boolean;
   };
 }
 
@@ -61,7 +63,7 @@ const DEFAULT_STATE: PersistedState = {
   selectedId: null,
   viewport: null,
   hierarchy: { tab: 'classes', mode: 'outline', direction: 'LR' },
-  panels: { filters: false, legend: true, details: true, changes: true },
+  panels: { filters: false, legend: true, details: true, changes: true, minimap: false },
 };
 
 /** Past this many nodes a full drawing makes the editor sluggish, so the user decides first. */
@@ -69,9 +71,12 @@ const HUGE_GRAPH = 20_000;
 const NO_GRAPH: ProjectedGraph = { nodes: [], edges: [], hiddenEntityCount: 0 };
 
 const vscode = acquireVsCodeApi();
+const savedState = vscode.getState() as Partial<PersistedState> | undefined;
+// Panels added in later versions are missing from older saved state.
 let state: PersistedState = {
   ...DEFAULT_STATE,
-  ...(vscode.getState() as Partial<PersistedState> | undefined),
+  ...savedState,
+  panels: { ...DEFAULT_STATE.panels, ...savedState?.panels },
 };
 let viewMode: ViewMode = 'graph';
 let loaded: Loaded | null = null;
@@ -106,7 +111,10 @@ const graph = createGraphView(graphHost, {
     clearTimeout(viewportSaveTimer);
     viewportSaveTimer = setTimeout(() => saveState({ viewport }), 300);
   },
+  onRender: () => scheduleMinimap(),
 });
+const minimap = createMinimap(strings.minimapLabel, (center) => graph.centerAt(center));
+let minimapFrame = 0;
 const hierarchy = createHierarchyView(state.hierarchy, {
   onSelect: (entityId) => setSelection(entityId, false),
   onSettingsChange: (settings) => saveState({ hierarchy: settings }),
@@ -148,6 +156,7 @@ const filtersButton = panelToggle('filters', strings.filters);
 const legendButton = panelToggle('legend', strings.legend);
 const detailsButton = panelToggle('details', strings.details);
 const changesButton = panelToggle('changes', strings.diffSummary);
+const minimapButton = panelToggle('minimap', strings.minimap);
 const exportSvgButton = h(
   'button',
   { class: 'text-button', onclick: () => exportView('svg') },
@@ -166,6 +175,7 @@ const graphControls = h(
   iconButton(strings.zoomOut, '−', () => graph.zoomBy(1 / 1.25)),
   iconButton(strings.zoomIn, '+', () => graph.zoomBy(1.25)),
   iconButton(strings.fit, '⤢', () => graph.fit()),
+  minimapButton,
 );
 
 const toolbar = h(
@@ -219,6 +229,7 @@ const stage = h(
   hierarchy.element,
   filtersPanel,
   legendPanel,
+  minimap.element,
   overlay,
 );
 document.body.append(
@@ -484,7 +495,19 @@ function syncPanels(): void {
   legendButton.setAttribute('aria-pressed', String(state.panels.legend));
   detailsButton.setAttribute('aria-pressed', String(state.panels.details));
   changesButton.setAttribute('aria-pressed', String(state.panels.changes));
+  minimapButton.setAttribute('aria-pressed', String(state.panels.minimap));
+  minimap.element.hidden = !loaded || !state.panels.minimap || viewMode !== 'graph';
   graph.resize();
+  scheduleMinimap();
+}
+
+/** The canvas fires a render event per frame, so the minimap redraws at most once per frame too. */
+function scheduleMinimap(): void {
+  if (minimap.element.hidden || minimapFrame) return;
+  minimapFrame = requestAnimationFrame(() => {
+    minimapFrame = 0;
+    minimap.draw(graph.minimapScene(), readPalette());
+  });
 }
 
 function togglePanel(panel: keyof PersistedState['panels']): void {

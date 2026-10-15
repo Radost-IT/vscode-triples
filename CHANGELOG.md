@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.14.0
+
+- Minimap: an optional overview of the whole graph in the corner of the graph view. Click or drag on it to move the view. Toggle it with the Minimap button.
+
 ## 0.13.0
 
 - Manchester Syntax: `.omn` files, and `.owl` files written in Manchester Syntax, now open in the graph and hierarchy views and work in the semantic diff.

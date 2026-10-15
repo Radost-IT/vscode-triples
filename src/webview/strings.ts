@@ -28,6 +28,8 @@ export const strings = {
   zoomIn: t('Zoom in'),
   zoomOut: t('Zoom out'),
   fit: t('Fit to screen'),
+  minimap: t('Minimap'),
+  minimapLabel: t('Overview of the whole graph. Click or drag to move the view.'),
   filters: t('Filters'),
   legend: t('Legend'),
   exportSvg: t('Export SVG'),
