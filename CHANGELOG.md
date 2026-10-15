@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.16.0
+
+- Compare with HEAD on a new file that Git does not track yet now shows every entity as added, instead of failing with "Git relative path not found".
+
 ## 0.15.0
 
 - Tree diagram: a class with several parents sits under its first parent, and links to its other parents are drawn dashed, so edges no longer cross other branches.

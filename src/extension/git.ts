@@ -65,7 +65,11 @@ export async function showAtRef(
   }
 }
 
+/** Git reports a missing file through stderr; newer VS Code Git extensions throw before running Git. */
 function isMissingAtRef(error: unknown): boolean {
-  const stderr = (error as { stderr?: unknown }).stderr;
-  return typeof stderr === 'string' && /does not exist|exists on disk, but not in/.test(stderr);
+  const { stderr, message } = error as { stderr?: unknown; message?: unknown };
+  return (
+    (typeof stderr === 'string' && /does not exist|exists on disk, but not in/.test(stderr)) ||
+    (typeof message === 'string' && message.startsWith('Git relative path not found'))
+  );
 }
