@@ -1,0 +1,54 @@
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix ex: <http://example.org/rights#> .
+
+ex:globalLaunchDateReference a odrl:RightOperand .
+ex:localLaunchDateReference a odrl:RightOperand .
+
+ex:C_From_GlobalLaunch
+  a odrl:Constraint ;
+  odrl:leftOperand odrl:dateTime ;
+  odrl:operator odrl:gteq ;
+  odrl:rightOperand ex:globalLaunchDateReference .
+
+ex:C_Until_LocalLaunch
+  a odrl:Constraint ;
+  odrl:leftOperand odrl:dateTime ;
+  odrl:operator odrl:lt ;
+  odrl:rightOperand ex:localLaunchDateReference .
+
+ex:Perm_Read_From_GlobalLaunch
+  a odrl:Permission ;
+  odrl:action odrl:read ;
+  odrl:constraint ex:C_From_GlobalLaunch .
+
+ex:Prohib_NoShow_Until_LocalLaunch
+  a odrl:Prohibition ;
+  odrl:action odrl:display ;
+  odrl:constraint [
+    a odrl:LogicalConstraint ;
+    odrl:and ( ex:C_Until_LocalLaunch
+               [ a odrl:Constraint ;
+                 odrl:leftOperand odrl:purpose ;
+                 odrl:operator odrl:eq ;
+                 odrl:rightOperand "marketing" ] )
+  ] .
+
+ex:Policy_Lvl1_StandardProduct
+  a odrl:Set ;
+  odrl:permission ex:Perm_Read_From_GlobalLaunch ;
+  odrl:prohibition ex:Prohib_NoShow_Until_LocalLaunch .
+
+ex:Policy_Lvl2_StandardProduct
+  a odrl:Set ;
+  odrl:permission ex:Perm_Read_From_GlobalLaunch ;
+  odrl:permission [
+    a odrl:Permission ;
+    odrl:action odrl:distribute ;
+    odrl:constraint [
+      a odrl:Constraint ;
+      odrl:leftOperand odrl:delayPeriod ;
+      odrl:operator odrl:eq ;
+      odrl:rightOperand "P30D"^^xsd:duration
+    ]
+  ] .

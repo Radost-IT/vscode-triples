@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Blank nodes without a label are named after the values they hold, such as `dateTime gteq launchDate` for an ODRL constraint, instead of "anonymous".
+
 ## 1.1.0
 
 - Edge labels sit beside their line instead of on it, so the line and arrow no longer run through the text. SVG export matches.

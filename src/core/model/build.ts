@@ -38,6 +38,7 @@ export interface BuildOptions {
 }
 
 export const ANONYMOUS_LABEL = 'anonymous';
+const CONTENT_LABEL_VALUES = 3;
 
 type BlankRole = 'list' | 'axiom' | 'expression' | 'foldedPropertyShape' | 'generic';
 
@@ -449,6 +450,7 @@ class ModelBuilder {
     const display =
       name ??
       (propertyShape && this.propertyShapeLabel(propertyShape)) ??
+      this.contentLabel(triples) ??
       (typeIri ? `${ANONYMOUS_LABEL} ${this.labelOf(typeIri)}` : ANONYMOUS_LABEL);
     return {
       id,
@@ -461,6 +463,18 @@ class ModelBuilder {
       referencedOnly: triples.length === 0,
       literals: [],
     };
+  }
+
+  /**
+   * Names a blank node after the values it holds, such as `dateTime gteq launchDate` for an
+   * ODRL constraint, so a file with many of them does not show a wall of "anonymous" nodes.
+   */
+  private contentLabel(triples: readonly Triple[]): string | undefined {
+    const values = triples
+      .filter((triple) => triple.predicate !== rdf.type && triple.object.kind !== 'bnode')
+      .slice(0, CONTENT_LABEL_VALUES)
+      .map(({ object }) => (object.kind === 'iri' ? this.labelOf(object.value) : object.value));
+    return values.length > 0 ? values.join(' ') : undefined;
   }
 
   private labelLiterals(key: string): Literal[] {
