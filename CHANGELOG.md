@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- The changes panel groups changes by entity: each changed class, property or individual lists its added and removed statements underneath. Short lists start expanded.
+
 ## 0.2.1
 
 - CI: the performance budget allows for slower shared runners, and the VS Code download for integration tests is cached.

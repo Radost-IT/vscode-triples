@@ -319,6 +319,21 @@ input[type='number'] {
   font-family: var(--vscode-editor-font-family);
 }
 
+.changed-entity {
+  width: 100%;
+}
+
+.changed-entity summary {
+  cursor: pointer;
+}
+
+.changed-entity .change-lines {
+  margin: 2px 0 6px 14px;
+  padding-left: 8px;
+  border-left: 1px solid var(--hairline);
+  font-size: 0.9em;
+}
+
 .link {
   background: none;
   border: none;

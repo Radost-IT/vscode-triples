@@ -109,7 +109,7 @@ function literalList(facts: readonly LiteralFact[]): HTMLElement {
   );
 }
 
-function changeList(change: EntityChange): HTMLElement {
+export function changeList(change: EntityChange): HTMLElement {
   return h(
     'ul',
     { class: 'change-lines' },

@@ -1,7 +1,11 @@
-import type { DiffResult, SummaryCategory } from '../core/diff/diff';
+import type { DiffResult, EntityChange, SummaryCategory } from '../core/diff/diff';
+import { changeList } from './detailsPanel';
 import { h } from './dom';
 import { categoryNames, kindNames, statusNames, strings } from './strings';
 import { STATUS_MARK } from './theme';
+
+/** Short change lists start expanded; long ones would bury the entity names. */
+const OPEN_LIMIT = 10;
 
 export interface DiffTitles {
   readonly before: string;
@@ -54,26 +58,7 @@ export function renderDiffPanel(
           'ul',
           { class: 'change-list' },
           ...diff.changes.map((change) =>
-            h(
-              'li',
-              {},
-              h(
-                'button',
-                {
-                  class: `link status-${change.status}`,
-                  title: change.changes
-                    .map((line) => `${STATUS_MARK[line.status]}${line.text}`)
-                    .join('\n'),
-                  onclick: () => onNavigate(change.id),
-                },
-                `${STATUS_MARK[change.status]}${change.label}`,
-              ),
-              h(
-                'span',
-                { class: 'muted' },
-                ` ${change.kind === 'ontology' ? strings.ontologyHeader : kindNames[change.kind]}`,
-              ),
-            ),
+            h('li', {}, changedEntity(change, diff.changes.length <= OPEN_LIMIT, onNavigate)),
           ),
         );
   target.replaceChildren(
@@ -82,5 +67,38 @@ export function renderDiffPanel(
     h('p', { class: 'muted' }, strings.tripleCounts(diff.addedTriples, diff.removedTriples)),
     counts,
     list,
+  );
+}
+
+function changedEntity(
+  change: EntityChange,
+  open: boolean,
+  onNavigate: (entityId: string) => void,
+): HTMLElement {
+  return h(
+    'details',
+    { class: 'changed-entity', open },
+    h(
+      'summary',
+      {},
+      h(
+        'button',
+        {
+          class: `link status-${change.status}`,
+          onclick: (event: Event) => {
+            // Jump to the node without also folding the entry.
+            event.preventDefault();
+            onNavigate(change.id);
+          },
+        },
+        `${STATUS_MARK[change.status]}${change.label}`,
+      ),
+      h(
+        'span',
+        { class: 'muted' },
+        ` ${change.kind === 'ontology' ? strings.ontologyHeader : kindNames[change.kind]}`,
+      ),
+    ),
+    changeList(change),
   );
 }

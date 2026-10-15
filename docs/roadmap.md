@@ -8,7 +8,6 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 ## M5 follow-ups (diff)
 
-- Group the change list by entity, with each entity's triple changes nested under it.
 - Apply "show only changes" in the hierarchy view, not just the graph view.
 - Respect the staged state when comparing from the Source Control view (index vs HEAD, working tree vs index).
 
