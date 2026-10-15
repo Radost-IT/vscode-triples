@@ -1,9 +1,12 @@
 # Changelog
 
+## 1.0.2
+
+- Installs on VS Code 1.101 and newer. 1.0.0 required 1.140, which blocked older editors.
+
 ## 1.0.1
 
 - "Go to line" only opens the documents shown in the view. A crafted ontology can no longer make the visualizer open other files.
-- Installs on VS Code 1.101 and newer. 1.0.0 required 1.140, which blocked older editors.
 
 ## 1.0.0
 
