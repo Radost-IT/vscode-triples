@@ -35,11 +35,14 @@ export function attachVisualizer(
 
   const viewModeKey = `viewMode:${input.key}`;
   let timer: ReturnType<typeof setTimeout> | undefined;
+  let shownSources: readonly string[] = [];
 
   const send = async () => {
+    const request = await input.load();
+    shownSources = sourceUris(request);
     const message: HostMessage = {
       type: 'analyze',
-      request: await input.load(),
+      request,
       viewMode: context.workspaceState.get<ViewMode>(viewModeKey, 'graph'),
     };
     await webview.postMessage(message);
@@ -77,7 +80,7 @@ export function attachVisualizer(
         refresh();
         return;
       }
-      handleMessage(context, message, viewModeKey).catch((error: unknown) =>
+      handleMessage(context, message, viewModeKey, shownSources).catch((error: unknown) =>
         reportError(log, error),
       );
     }),
@@ -90,18 +93,26 @@ async function handleMessage(
   context: vscode.ExtensionContext,
   message: Exclude<WebviewMessage, { type: 'ready' }>,
   viewModeKey: string,
+  shownSources: readonly string[],
 ): Promise<void> {
   switch (message.type) {
     case 'viewMode':
       await context.workspaceState.update(viewModeKey, message.mode);
       return;
     case 'revealLine':
+      // The webview renders untrusted ontology text, so it may only open the documents it was given.
+      if (!shownSources.includes(message.uri)) return;
       await revealLine(vscode.Uri.parse(message.uri), message.line, message.column);
       return;
     case 'export':
       await saveExport(message.format, message.data, message.suggestedName);
       return;
   }
+}
+
+function sourceUris(request: AnalysisRequest): string[] {
+  const sources = request.kind === 'single' ? [request.source] : [request.before, request.after];
+  return sources.flatMap((source) => (source ? [source.uri] : []));
 }
 
 async function revealLine(uri: vscode.Uri, line: number, column = 1): Promise<void> {

@@ -30,8 +30,9 @@ function recordingWebview() {
       return { dispose: () => undefined };
     },
   };
-  const sendReady = () => listeners.forEach((listener) => listener({ type: 'ready' }));
-  return { webview: webview as unknown as vscode.Webview, received, sendReady };
+  const send = (message: WebviewMessage) => listeners.forEach((listener) => listener(message));
+  const sendReady = () => send({ type: 'ready' });
+  return { webview: webview as unknown as vscode.Webview, received, send, sendReady };
 }
 
 const fakeContext = {
@@ -92,6 +93,48 @@ suite('Refresh', () => {
       await new Promise((resolve) => setTimeout(resolve, 1000));
     }
     await waitFor(refreshed);
+  });
+});
+
+suite('Go to line', () => {
+  let connection: vscode.Disposable | undefined;
+
+  teardown(async () => {
+    connection?.dispose();
+    await vscode.commands.executeCommand('workbench.action.closeAllEditors');
+  });
+
+  const openEditors = () => vscode.window.visibleTextEditors.map((editor) => editor.document.uri);
+
+  test('opens the shown document at the line', async () => {
+    const { webview, received, send, sendReady } = recordingWebview();
+    connection = attachVisualizer(
+      fakeContext,
+      silentLog,
+      webview,
+      singleFileInput(fixture('pizza.ttl')),
+    );
+    sendReady();
+    await waitFor(() => received.length === 1);
+
+    send({ type: 'revealLine', uri: fixture('pizza.ttl').toString(), line: 3 });
+    await waitFor(() => vscode.window.activeTextEditor?.selection.active.line === 2);
+  });
+
+  test('ignores documents the view was not given', async () => {
+    const { webview, received, send, sendReady } = recordingWebview();
+    connection = attachVisualizer(
+      fakeContext,
+      silentLog,
+      webview,
+      singleFileInput(fixture('pizza.ttl')),
+    );
+    sendReady();
+    await waitFor(() => received.length === 1);
+
+    send({ type: 'revealLine', uri: fixture('people.jsonld').toString(), line: 1 });
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    assert.ok(!openEditors().some((uri) => uri.path.endsWith('people.jsonld')));
   });
 });
 

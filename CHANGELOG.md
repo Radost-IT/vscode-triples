@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.1
+
+- "Go to line" only opens the documents shown in the view. A crafted ontology can no longer make the visualizer open other files.
+
 ## 1.0.0
 
 - First stable release. All planned milestones are complete: graph and hierarchy views, every supported format, semantic diff with Git and pull request entry points, minimap and export.
