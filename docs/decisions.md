@@ -6,9 +6,9 @@ Short notes on choices where the requirements were open or met reality. Newest l
 
 The repository already had an MIT `LICENSE`. All runtime dependencies are MIT, ISC, BSD or Apache-2.0, which fit.
 
-## VS Code 1.140 or newer
+## VS Code 1.101 or newer
 
-`engines.vscode` is `^1.140.0` to match `@types/vscode`. Older versions are not tested.
+`engines.vscode` is `^1.101.0`, the first release that ships Node 22 (the extension bundle targets `node22`). `@types/vscode` stays on 1.101 so the build cannot use newer APIs. Earlier this was `^1.140.0`, which blocked install on older but current-enough editors.
 
 ## TypeScript 6.0
 
