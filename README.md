@@ -57,7 +57,7 @@ The example files are in [examples/](examples/).
 ## Usage
 
 1. Open an ontology file.
-2. Click the Triples button in the editor title bar, or run **Triples: Open Visualizer** from the Command Palette. The visualizer opens beside the text.
+2. Click the Triples button in the editor title bar, or right-click the file in the Explorer, or run **Open with Triples by Radost IT** from the Command Palette. The visualizer opens beside the text.
 3. Use the toolbar to switch between **Graph** and **Hierarchy**, search, filter, change the layout and export. Triples remembers the view per file.
 
 You can also right-click a file and choose **Open With... > Triples Visualizer**.

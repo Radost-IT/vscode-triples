@@ -91,3 +91,7 @@ Extension strings use `vscode.l10n.t`. The webview cannot call it, so the extens
 ## OWL syntaxes are mapped to RDF
 
 OWL Functional Syntax, OWL/XML and Manchester Syntax are parsed into the same small tree of constructs (OWL/XML uses the construct names as element names) and turned into triples with the W3C "OWL 2 Mapping to RDF Graphs". The rest of Triples (model, views, diff) then works unchanged, and a Functional Syntax file diffs cleanly against its Turtle version. Axioms with no RDF mapping that the views could show, such as SWRL rules (`DLSafeRule`), are skipped instead of failing the whole file. The Functional Syntax parser is hand-written (about 200 lines) because no small, maintained JavaScript parser for it exists. OWL/XML is read with `@rubensworks/saxes`, the XML parser already bundled for RDF/XML; `DOMParser` is not available in the Web Worker. Manchester Syntax is also hand-written. It reads data properties first so that restrictions on them use the data constructs, `and` binds tighter than `or`, and SWRL `Rule:` frames are skipped.
+
+## Open command title
+
+The open command reads "Open with Triples by Radost IT" instead of "Triples: Open Visualizer", as requested, so the Explorer menu and the editor title button name the extension and its maker. The command has no category, because "Triples: Open with Triples by Radost IT" would repeat the name in the Command Palette. The command ID stays `triples.openVisualizer`, so keybindings keep working.

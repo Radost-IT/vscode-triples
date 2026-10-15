@@ -83,7 +83,7 @@ Press F5 in VS Code to launch the Extension Development Host.
 ### 1. Opening files
 
 - Activate for `.ttl`, `.owl`, `.rdf`, `.nt`, `.trig`, `.jsonld` (and `.owx`, `.omn` when supported).
-- Provide a command "Triples: Open Visualizer" and an editor title button when a supported file is open.
+- Provide a command "Open with Triples by Radost IT" and an editor title button when a supported file is open.
 - Open the visualizer **beside** the text editor by default. Support a custom editor option too.
 - Auto-refresh (debounced) when the file changes or is saved. Preserve zoom, pan, and selection across refreshes.
 - Show clear, friendly parse errors with line numbers and a "go to line" link. Never show a blank panel.

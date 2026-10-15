@@ -40,7 +40,6 @@
       {
         "command": "triples.openVisualizer",
         "title": "%command.openVisualizer%",
-        "category": "Triples",
         "icon": "$(type-hierarchy)"
       },
       {
