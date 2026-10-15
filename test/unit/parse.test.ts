@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { ParseError, UnsupportedFormatError, detectFormat, parseRdf } from '../../src/core/parse';
+import { ParseError, detectFormat, parseRdf } from '../../src/core/parse';
 import { parseFixture, readFixture } from './helpers';
 
 const tripleKeys = (graph: Awaited<ReturnType<typeof parseFixture>>) =>
@@ -22,10 +22,15 @@ describe('detectFormat', () => {
     expect(detectFormat('a.owl', '@prefix ex: <http://example.org/> .')).toBe('turtle');
   });
 
-  it('rejects OWL syntaxes that are not supported yet', () => {
-    expect(() => detectFormat('a.owl', readFixture('functional.owl'))).toThrow(
-      UnsupportedFormatError,
+  it('detects OWL Functional Syntax by extension and content', () => {
+    expect(detectFormat('a.ofn', '')).toBe('owlfunctional');
+    expect(detectFormat('a.owl', readFixture('functional.owl'))).toBe('owlfunctional');
+    expect(detectFormat('a.owl', '# comment\nPrefix(:=<http://example.org/>)')).toBe(
+      'owlfunctional',
     );
+  });
+
+  it('rejects OWL syntaxes that are not supported yet', () => {
     expect(() => detectFormat('a.owx', '<Ontology/>')).toThrow(/OWL\/XML/);
     expect(() => detectFormat('a.omn', 'Class: A')).toThrow(/Manchester/);
   });
@@ -40,7 +45,7 @@ describe('parseRdf', () => {
 
   it('produces the same named triples from Turtle, RDF/XML, N-Triples and TriG', async () => {
     const expected = tripleKeys(await parseFixture('pizza.ttl'));
-    for (const name of ['pizza.owl', 'pizza.nt', 'pizza.trig']) {
+    for (const name of ['pizza.owl', 'pizza.nt', 'pizza.trig', 'pizza.ofn']) {
       expect(tripleKeys(await parseFixture(name)), name).toEqual(expected);
     }
   });

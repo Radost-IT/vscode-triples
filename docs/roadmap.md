@@ -8,7 +8,7 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 ## Later
 
-- OWL Functional Syntax (`.ofn`, `.owx`) and Manchester Syntax (`.omn`) parsers.
+- OWL/XML (`.owx`) and Manchester Syntax (`.omn`) parsers.
 - Optional minimap.
 - More integration tests: custom editor, Git compare commands, refresh on save.
 

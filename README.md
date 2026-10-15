@@ -48,8 +48,9 @@ The example files are in [examples/](examples/).
 | RDF/XML (OWL)            | `.owl`, `.rdf`        |
 | JSON-LD                  | `.jsonld`             |
 | N-Triples, N-Quads, TriG | `.nt`, `.nq`, `.trig` |
+| OWL Functional Syntax    | `.ofn`                |
 
-`.owl` files in Turtle syntax are detected and work too. OWL/XML (`.owx`), Functional Syntax and Manchester Syntax (`.omn`) are not supported yet; Triples says so instead of showing a parse error.
+`.owl` files in Turtle or Functional Syntax are detected and work too. OWL/XML (`.owx`) and Manchester Syntax (`.omn`) are not supported yet; Triples says so instead of showing a parse error.
 
 ## Usage
 

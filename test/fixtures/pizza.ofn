@@ -1,0 +1,69 @@
+Prefix(:=<http://example.org/pizza#>)
+Prefix(owl:=<http://www.w3.org/2002/07/owl#>)
+Prefix(rdfs:=<http://www.w3.org/2000/01/rdf-schema#>)
+Prefix(xsd:=<http://www.w3.org/2001/XMLSchema#>)
+
+# The same ontology as pizza.ttl, in OWL 2 Functional Syntax.
+Ontology(<http://example.org/pizza>
+  Annotation(rdfs:label "Pizza ontology"@en)
+  Annotation(owl:versionInfo "1.0")
+
+  Declaration(Class(:Food))
+  Declaration(Class(:Pizza))
+  Declaration(Class(:PizzaBase))
+  Declaration(Class(:Topping))
+  Declaration(Class(:CheeseTopping))
+  Declaration(Class(:VegetableTopping))
+  Declaration(Class(:VegetarianPizza))
+  Declaration(Class(:Margherita))
+  Declaration(Class(:NamedPizza))
+  Declaration(ObjectProperty(:hasTopping))
+  Declaration(ObjectProperty(:hasBase))
+  Declaration(ObjectProperty(:hasIngredient))
+  Declaration(DataProperty(:calories))
+  Declaration(AnnotationProperty(:origin))
+  Declaration(NamedIndividual(:myMargherita))
+
+  SubClassOf(:Food owl:Thing)
+  AnnotationAssertion(rdfs:label :Food "Food"@en)
+  AnnotationAssertion(rdfs:label :Food "Essen"@de)
+
+  SubClassOf(:Pizza :Food)
+  SubClassOf(:Pizza ObjectSomeValuesFrom(:hasBase :PizzaBase))
+  AnnotationAssertion(rdfs:label :Pizza "Pizza"@en)
+  AnnotationAssertion(rdfs:comment :Pizza "A dish of Italian origin."@en)
+
+  SubClassOf(:PizzaBase :Food)
+  AnnotationAssertion(rdfs:label :PizzaBase "Pizza base"@en)
+  SubClassOf(:Topping :Food)
+  AnnotationAssertion(rdfs:label :Topping "Topping"@en)
+  SubClassOf(:CheeseTopping :Topping)
+  AnnotationAssertion(rdfs:label :CheeseTopping "Cheese topping"@en)
+  SubClassOf(:VegetableTopping :Topping)
+  DisjointClasses(:VegetableTopping :CheeseTopping)
+
+  EquivalentClasses(:VegetarianPizza
+    ObjectIntersectionOf(:Pizza
+      ObjectAllValuesFrom(:hasTopping ObjectUnionOf(:CheeseTopping :VegetableTopping))))
+
+  SubClassOf(:Margherita :VegetarianPizza)
+  SubClassOf(:Margherita :NamedPizza)
+  SubClassOf(:NamedPizza :Pizza)
+
+  AnnotationAssertion(rdfs:label :hasTopping "has topping"@en)
+  ObjectPropertyDomain(:hasTopping :Pizza)
+  ObjectPropertyRange(:hasTopping :Topping)
+  FunctionalObjectProperty(:hasBase)
+  SubObjectPropertyOf(:hasBase :hasIngredient)
+  ObjectPropertyDomain(:hasBase :Pizza)
+  ObjectPropertyRange(:hasBase :PizzaBase)
+  DataPropertyDomain(:calories :Food)
+  DataPropertyRange(:calories xsd:integer)
+
+  ClassAssertion(:Margherita :myMargherita)
+  AnnotationAssertion(rdfs:label :myMargherita "My Margherita"@en)
+  DataPropertyAssertion(:calories :myMargherita "850"^^xsd:integer)
+  AnnotationAssertion(:origin :myMargherita "Naples")
+  ObjectPropertyAssertion(:hasTopping :myMargherita :mozzarella)
+  ClassAssertion(:CheeseTopping :mozzarella)
+)

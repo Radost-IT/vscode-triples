@@ -20,7 +20,7 @@ It accepts a custom document loader. Triples passes one that refuses every remot
 
 ## `.owl` files are sniffed
 
-The extension `.owl` is used for RDF/XML, Turtle, OWL/XML and Functional Syntax. The parser looks at the start of the file. RDF/XML and Turtle work. OWL/XML, Functional Syntax and Manchester Syntax show a "not supported yet" message instead of a parse error.
+The extension `.owl` is used for RDF/XML, Turtle, OWL/XML and Functional Syntax. The parser looks at the start of the file. RDF/XML, Turtle and Functional Syntax work. OWL/XML and Manchester Syntax show a "not supported yet" message instead of a parse error.
 
 ## Blank nodes in the diff use a structural hash
 
@@ -87,3 +87,7 @@ The GitHub Pull Requests extension has no public API for the base and head of a 
 ## Translations
 
 Extension strings use `vscode.l10n.t`. The webview cannot call it, so the extension embeds `vscode.l10n.bundle` in the page as JSON, and `src/webview/strings.ts` looks each English message up in it with the same `{0}` placeholders. One bundle per language therefore covers both sides. No translations ship yet; English is the fallback for any missing message.
+
+## OWL syntaxes are mapped to RDF
+
+OWL Functional Syntax is parsed into a small tree of constructs and turned into triples with the W3C "OWL 2 Mapping to RDF Graphs". The rest of Triples (model, views, diff) then works unchanged, and a Functional Syntax file diffs cleanly against its Turtle version. Axioms with no RDF mapping that the views could show, such as SWRL rules (`DLSafeRule`), are skipped instead of failing the whole file. The parser is hand-written (about 200 lines) because no small, maintained JavaScript parser for Functional Syntax exists.

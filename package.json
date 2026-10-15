@@ -2,7 +2,7 @@
   "name": "triples",
   "displayName": "Triples",
   "description": "%description%",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "publisher": "RadostIT",
   "license": "MIT",
   "repository": {
@@ -81,29 +81,29 @@
       "editor/title": [
         {
           "command": "triples.openVisualizer",
-          "when": "!isInDiffEditor && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "when": "!isInDiffEditor && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i",
           "group": "navigation"
         },
         {
           "command": "triples.viewOntologyChanges",
-          "when": "isInDiffEditor && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "when": "isInDiffEditor && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i",
           "group": "navigation"
         }
       ],
       "explorer/context": [
         {
           "command": "triples.openVisualizer",
-          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i",
           "group": "navigation@90"
         },
         {
           "command": "triples.compareWithHead",
-          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i && config.git.enabled",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i && config.git.enabled",
           "group": "3_compare@90"
         },
         {
           "command": "triples.compareTwoFiles",
-          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i",
           "group": "3_compare@91"
         }
       ],
@@ -117,27 +117,27 @@
       "scm/resourceState/context": [
         {
           "command": "triples.viewOntologyChanges",
-          "when": "scmProvider == git && scmResourceGroup =~ /^(workingTree|untracked)$/ && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "when": "scmProvider == git && scmResourceGroup =~ /^(workingTree|untracked)$/ && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i",
           "group": "navigation@90"
         },
         {
           "command": "triples.viewStagedOntologyChanges",
-          "when": "scmProvider == git && scmResourceGroup == index && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "when": "scmProvider == git && scmResourceGroup == index && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i",
           "group": "navigation@90"
         }
       ],
       "commandPalette": [
         {
           "command": "triples.openVisualizer",
-          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i"
+          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i"
         },
         {
           "command": "triples.compareWithHead",
-          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i"
+          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i"
         },
         {
           "command": "triples.compareWithRevision",
-          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i"
+          "when": "resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn)$/i"
         },
         {
           "command": "triples.viewOntologyChanges",
@@ -182,6 +182,9 @@
           },
           {
             "filenamePattern": "*.jsonld"
+          },
+          {
+            "filenamePattern": "*.ofn"
           }
         ]
       }

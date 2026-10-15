@@ -10,7 +10,7 @@ export const strings = {
     vscode.l10n.t(
       'Triples cannot open {0}. Supported extensions: {1}.',
       name,
-      '.ttl, .owl, .rdf, .nt, .nq, .n3, .trig, .jsonld',
+      '.ttl, .owl, .rdf, .nt, .nq, .n3, .trig, .jsonld, .ofn',
     ),
   gitUnavailable: vscode.l10n.t('The built-in Git extension is disabled or not ready.'),
   notInRepository: (name: string) => vscode.l10n.t('{0} is not inside a Git repository.', name),

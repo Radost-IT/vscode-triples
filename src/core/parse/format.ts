@@ -1,6 +1,7 @@
 import { UnsupportedFormatError } from './errors';
 
-export type RdfFormat = 'turtle' | 'trig' | 'ntriples' | 'nquads' | 'n3' | 'rdfxml' | 'jsonld';
+export type RdfFormat =
+  'turtle' | 'trig' | 'ntriples' | 'nquads' | 'n3' | 'rdfxml' | 'jsonld' | 'owlfunctional';
 
 const FORMAT_BY_EXTENSION: Readonly<Record<string, RdfFormat>> = {
   ttl: 'turtle',
@@ -13,6 +14,7 @@ const FORMAT_BY_EXTENSION: Readonly<Record<string, RdfFormat>> = {
   owl: 'rdfxml',
   xml: 'rdfxml',
   jsonld: 'jsonld',
+  ofn: 'owlfunctional',
 };
 
 export const SUPPORTED_EXTENSIONS = Object.keys(FORMAT_BY_EXTENSION);
@@ -40,8 +42,8 @@ export function detectFormat(fileName: string, text: string): RdfFormat {
   if (extension === 'omn') {
     throw new UnsupportedFormatError('Manchester Syntax files are not supported yet.');
   }
-  if (/^(Prefix|Ontology)\s*\(/.test(head)) {
-    throw new UnsupportedFormatError('OWL Functional Syntax files are not supported yet.');
+  if (/^(Prefix|Ontology)\s*\(/.test(head.replace(/^(\s*#[^\n]*\n)+\s*/, ''))) {
+    return 'owlfunctional';
   }
 
   const byExtension = FORMAT_BY_EXTENSION[extension];

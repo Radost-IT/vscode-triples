@@ -61,6 +61,14 @@ describe('diffGraphs', () => {
     expect(Object.values(diff.entityStatus).every((status) => status === 'unchanged')).toBe(true);
   });
 
+  it.each(['pizza.ofn'])('finds no changes between pizza.ttl and %s', async (name) => {
+    const diff = diffGraphs(await parseFixture('pizza.ttl'), await parseFixture(name), {
+      language: 'en',
+    });
+    expect(diff.changes).toEqual([]);
+    expect(diff.addedTriples + diff.removedTriples).toBe(0);
+  });
+
   it('reports a changed restriction once, on the class that owns it', async () => {
     const diff = await diffFixtures('bnode-changed/before.ttl', 'bnode-changed/after.ttl');
     expect(diff.changes.map((change) => [change.id, change.status])).toEqual([

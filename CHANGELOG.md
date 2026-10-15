@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.0
+
+- OWL Functional Syntax: `.ofn` files, and `.owl` files written in Functional Syntax, now open in the graph and hierarchy views and work in the semantic diff.
+
 ## 0.10.0
 
 - Translations: the webview now reads the same `l10n` bundle as the extension, so adding `l10n/bundle.l10n.<locale>.json` translates the whole UI. See "Development" in the README.

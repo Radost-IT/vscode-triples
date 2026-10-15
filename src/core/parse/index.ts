@@ -2,6 +2,7 @@ import { UnsupportedFormatError } from './errors';
 import { detectFormat } from './format';
 import { parseJsonLd } from './jsonld';
 import { parseWithN3 } from './n3';
+import { parseOwlFunctional } from './owl/functional';
 import { parseRdfXml } from './rdfxml';
 import type { ParsedGraph } from './types';
 
@@ -24,6 +25,8 @@ export async function parseRdf(
       return parseRdfXml(text, baseIri);
     case 'jsonld':
       return parseJsonLd(text, baseIri);
+    case 'owlfunctional':
+      return parseOwlFunctional(text, baseIri);
     case 'turtle':
     case 'trig':
     case 'ntriples':

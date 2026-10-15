@@ -30,11 +30,11 @@ describe('analyze', () => {
     });
   });
 
-  it('reports formats that are not supported yet', async () => {
+  it('reports formats that are not supported', async () => {
     const result = await analyze({
       kind: 'single',
       language: 'en',
-      source: source('functional.owl'),
+      source: { ...source('pizza.ttl'), fileName: 'pizza.csv' },
     });
     expect(result.kind).toBe('problems');
   });
