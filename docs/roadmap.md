@@ -8,7 +8,6 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 ## Later
 
-- Manchester Syntax (`.omn`) parser.
 - Optional minimap.
 - More integration tests: custom editor, Git compare commands, refresh on save.
 

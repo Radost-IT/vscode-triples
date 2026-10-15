@@ -50,8 +50,9 @@ The example files are in [examples/](examples/).
 | N-Triples, N-Quads, TriG | `.nt`, `.nq`, `.trig` |
 | OWL Functional Syntax    | `.ofn`                |
 | OWL/XML                  | `.owx`                |
+| Manchester Syntax        | `.omn`                |
 
-`.owl` files in Turtle, Functional Syntax or OWL/XML are detected and work too. Manchester Syntax (`.omn`) is not supported yet; Triples says so instead of showing a parse error.
+`.owl` files in Turtle, Functional Syntax, OWL/XML or Manchester Syntax are detected and work too.
 
 ## Usage
 

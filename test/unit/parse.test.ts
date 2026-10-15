@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { ParseError, detectFormat, parseRdf } from '../../src/core/parse';
+import { iri } from '../../src/core/rdf';
+import { owl, rdf } from '../../src/core/vocab';
 import { parseFixture, readFixture } from './helpers';
 
 const tripleKeys = (graph: Awaited<ReturnType<typeof parseFixture>>) =>
@@ -35,8 +37,9 @@ describe('detectFormat', () => {
     expect(detectFormat('a.owl', readFixture('pizza.owx'))).toBe('owlxml');
   });
 
-  it('rejects OWL syntaxes that are not supported yet', () => {
-    expect(() => detectFormat('a.omn', 'Class: A')).toThrow(/Manchester/);
+  it('detects Manchester Syntax by extension and content', () => {
+    expect(detectFormat('a.omn', 'Class: A')).toBe('manchester');
+    expect(detectFormat('a.owl', readFixture('pizza.omn'))).toBe('manchester');
   });
 });
 
@@ -47,11 +50,23 @@ describe('parseRdf', () => {
     expect(graph.prefixes['']).toBe('http://example.org/pizza#');
   });
 
-  it('produces the same named triples from Turtle, RDF/XML, N-Triples and TriG', async () => {
+  it('produces the same named triples from Turtle, RDF/XML, N-Triples, TriG, Functional Syntax and OWL/XML', async () => {
     const expected = tripleKeys(await parseFixture('pizza.ttl'));
     for (const name of ['pizza.owl', 'pizza.nt', 'pizza.trig', 'pizza.ofn', 'pizza.owx']) {
       expect(tripleKeys(await parseFixture(name)), name).toEqual(expected);
     }
+  });
+
+  it('reads Manchester Syntax, where an individual frame also declares the individual', async () => {
+    const expected = tripleKeys(await parseFixture('pizza.ttl'));
+    expected.add(
+      JSON.stringify({
+        subject: iri('http://example.org/pizza#mozzarella'),
+        predicate: rdf.type,
+        object: iri(owl.NamedIndividual),
+      }),
+    );
+    expect(tripleKeys(await parseFixture('pizza.omn'))).toEqual(expected);
   });
 
   it('parses JSON-LD with an inline context', async () => {

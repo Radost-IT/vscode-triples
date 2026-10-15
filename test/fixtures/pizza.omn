@@ -1,0 +1,72 @@
+Prefix: : <http://example.org/pizza#>
+Prefix: owl: <http://www.w3.org/2002/07/owl#>
+Prefix: rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+Prefix: xsd: <http://www.w3.org/2001/XMLSchema#>
+
+Ontology: <http://example.org/pizza>
+
+Annotations:
+    rdfs:label "Pizza ontology"@en,
+    owl:versionInfo "1.0"
+
+AnnotationProperty: :origin
+
+ObjectProperty: hasTopping
+    Annotations: rdfs:label "has topping"@en
+    Domain: Pizza
+    Range: Topping
+
+ObjectProperty: hasBase
+    Characteristics: Functional
+    SubPropertyOf: hasIngredient
+    Domain: Pizza
+    Range: PizzaBase
+
+ObjectProperty: hasIngredient
+
+DataProperty: calories
+    Domain: Food
+    Range: xsd:integer
+
+Class: Food
+    Annotations: rdfs:label "Food"@en, rdfs:label "Essen"@de
+    SubClassOf: owl:Thing
+
+Class: Pizza
+    Annotations:
+        rdfs:label "Pizza"@en,
+        rdfs:comment "A dish of Italian origin."@en
+    SubClassOf: Food, hasBase some PizzaBase
+
+Class: PizzaBase
+    Annotations: rdfs:label "Pizza base"@en
+    SubClassOf: Food
+
+Class: Topping
+    Annotations: rdfs:label "Topping"@en
+    SubClassOf: Food
+
+Class: CheeseTopping
+    Annotations: rdfs:label "Cheese topping"@en
+    SubClassOf: Topping
+
+Class: VegetableTopping
+    SubClassOf: Topping
+    DisjointWith: CheeseTopping
+
+Class: VegetarianPizza
+    EquivalentTo: Pizza and (hasTopping only (CheeseTopping or VegetableTopping))
+
+Class: Margherita
+    SubClassOf: VegetarianPizza, NamedPizza
+
+Class: NamedPizza
+    SubClassOf: Pizza
+
+Individual: myMargherita
+    Annotations: rdfs:label "My Margherita"@en, :origin "Naples"
+    Types: Margherita
+    Facts: calories 850, hasTopping mozzarella
+
+Individual: mozzarella
+    Types: CheeseTopping

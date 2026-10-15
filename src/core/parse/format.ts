@@ -9,7 +9,8 @@ export type RdfFormat =
   | 'rdfxml'
   | 'jsonld'
   | 'owlfunctional'
-  | 'owlxml';
+  | 'owlxml'
+  | 'manchester';
 
 const FORMAT_BY_EXTENSION: Readonly<Record<string, RdfFormat>> = {
   ttl: 'turtle',
@@ -24,6 +25,7 @@ const FORMAT_BY_EXTENSION: Readonly<Record<string, RdfFormat>> = {
   jsonld: 'jsonld',
   ofn: 'owlfunctional',
   owx: 'owlxml',
+  omn: 'manchester',
 };
 
 export const SUPPORTED_EXTENSIONS = Object.keys(FORMAT_BY_EXTENSION);
@@ -48,8 +50,8 @@ export function detectFormat(fileName: string, text: string): RdfFormat {
   if (extension === 'owx' || looksLikeOwlXml(head)) {
     return 'owlxml';
   }
-  if (extension === 'omn') {
-    throw new UnsupportedFormatError('Manchester Syntax files are not supported yet.');
+  if (extension === 'omn' || /^(Prefix|Ontology):\s/.test(head)) {
+    return 'manchester';
   }
   if (/^(Prefix|Ontology)\s*\(/.test(head.replace(/^(\s*#[^\n]*\n)+\s*/, ''))) {
     return 'owlfunctional';

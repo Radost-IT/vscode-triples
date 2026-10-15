@@ -1,5 +1,6 @@
 import type { Prefixes, Term } from '../../rdf';
 import { OWL, RDF, RDFS, XSD } from '../../vocab';
+import { ParseError } from '../errors';
 
 /**
  * One OWL 2 construct, such as `SubClassOf(:A :B)`. Functional Syntax and OWL/XML use the same
@@ -29,4 +30,9 @@ export const DEFAULT_PREFIXES: Prefixes = { rdf: RDF, rdfs: RDFS, xsd: XSD, owl:
 /** `new URL` would also normalize absolute IRIs, such as lowercasing the host, and change their identity. */
 export function resolveIri(base: string, value: string): string {
   return /^[A-Za-z][\w+.-]*:/.test(value) ? value : new URL(value, base).href;
+}
+
+export function parseErrorAt(text: string, offset: number, message: string): ParseError {
+  const before = text.slice(0, offset).split('\n');
+  return new ParseError(message, before.length, (before.at(-1)?.length ?? 0) + 1);
 }

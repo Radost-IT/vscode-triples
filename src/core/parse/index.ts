@@ -3,6 +3,7 @@ import { detectFormat } from './format';
 import { parseJsonLd } from './jsonld';
 import { parseWithN3 } from './n3';
 import { parseOwlFunctional } from './owl/functional';
+import { parseManchester } from './owl/manchester';
 import { parseOwlXml } from './owl/owlxml';
 import { parseRdfXml } from './rdfxml';
 import type { ParsedGraph } from './types';
@@ -30,6 +31,8 @@ export async function parseRdf(
       return parseOwlFunctional(text, baseIri);
     case 'owlxml':
       return parseOwlXml(text, baseIri);
+    case 'manchester':
+      return parseManchester(text, baseIri);
     case 'turtle':
     case 'trig':
     case 'ntriples':

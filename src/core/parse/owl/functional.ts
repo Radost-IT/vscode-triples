@@ -1,9 +1,9 @@
 import { bnode, iri, literal, type Prefixes, type Term } from '../../rdf';
 import { XSD, rdf } from '../../vocab';
-import { ParseError } from '../errors';
+import type { ParseError } from '../errors';
 import type { ParsedGraph } from '../types';
 import { owlToTriples } from './mapping';
-import { DEFAULT_PREFIXES, resolveIri, type OwlArg, type OwlCall } from './tree';
+import { DEFAULT_PREFIXES, parseErrorAt, resolveIri, type OwlArg, type OwlCall } from './tree';
 
 type TokenKind =
   | 'open'
@@ -174,9 +174,7 @@ class FunctionalParser {
   }
 
   private error(message: string, token?: Token): ParseError {
-    const offset = token?.offset ?? this.text.length;
-    const before = this.text.slice(0, offset).split('\n');
-    return new ParseError(message, before.length, (before.at(-1)?.length ?? 0) + 1);
+    return parseErrorAt(this.text, token?.offset ?? this.text.length, message);
   }
 }
 

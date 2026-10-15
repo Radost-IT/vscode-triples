@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.13.0
+
+- Manchester Syntax: `.omn` files, and `.owl` files written in Manchester Syntax, now open in the graph and hierarchy views and work in the semantic diff.
+
 ## 0.12.0
 
 - OWL/XML: `.owx` files, and `.owl` files written in OWL/XML, now open in the graph and hierarchy views and work in the semantic diff.
