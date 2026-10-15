@@ -5,6 +5,10 @@ import type { NodeKind } from '../core/view/project';
 /** Every string the webview shows, kept in one place for localization. */
 export const strings = {
   graph: 'Graph',
+  graphKeys:
+    'Graph. Arrow keys move between connected nodes, or pan when nothing is selected. Enter selects the node in the middle, or focuses on the selected node. Escape clears the selection.',
+  selectedAnnouncement: (label: string, kind: string, status: string | null) =>
+    status ? `${label}, ${kind}, ${status}` : `${label}, ${kind}`,
   hierarchy: 'Hierarchy',
   viewSwitch: 'View',
   searchPlaceholder: 'Search by label or IRI',

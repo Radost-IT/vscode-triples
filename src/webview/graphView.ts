@@ -5,6 +5,7 @@ import cytoscape, {
   type Position,
 } from 'cytoscape';
 import type { ProjectedGraph } from '../core/view/project';
+import { nearestInDirection, type Direction } from './direction';
 import { graphStylesheet, nodeSize } from './graphStyle';
 import { forceLayout, layeredLayout, withSeededRandom, type LayoutName } from './layout';
 import { exportSvg } from './svgExport';
@@ -44,9 +45,7 @@ const GOLDEN_ANGLE = 2.399963;
 export function createGraphView(container: HTMLElement, events: GraphViewEvents): GraphView {
   let large = false;
   let cy = createCore(container, events, large);
-  container.addEventListener('keydown', (event) =>
-    handleKey(cy, event, () => events.onSelect(null)),
-  );
+  container.addEventListener('keydown', (event) => handleKey(cy, event, events));
 
   return {
     render(graph, settings) {
@@ -206,19 +205,64 @@ function zoomBy(cy: Core, factor: number): void {
   cy.zoom({ level, renderedPosition: { x: cy.width() / 2, y: cy.height() / 2 } });
 }
 
-function handleKey(cy: Core, event: KeyboardEvent, clearSelection: () => void): void {
-  const pans: Record<string, Position> = {
-    ArrowLeft: { x: PAN_STEP, y: 0 },
-    ArrowRight: { x: -PAN_STEP, y: 0 },
-    ArrowUp: { x: 0, y: PAN_STEP },
-    ArrowDown: { x: 0, y: -PAN_STEP },
-  };
-  const pan = pans[event.key];
-  if (pan) cy.panBy(pan);
+const ARROWS: Record<string, Direction> = {
+  ArrowLeft: 'left',
+  ArrowRight: 'right',
+  ArrowUp: 'up',
+  ArrowDown: 'down',
+};
+
+/**
+ * With a node selected, arrow keys move to the connected node in that direction and Enter
+ * focuses on it. Without a selection, arrow keys pan and Enter selects the node nearest the center.
+ */
+function handleKey(cy: Core, event: KeyboardEvent, events: GraphViewEvents): void {
+  const selected = cy.nodes(':selected').first();
+  const direction = ARROWS[event.key];
+  if (direction && selected.nonempty()) moveSelection(cy, selected, direction, events);
+  else if (direction) cy.panBy(panFor(direction));
+  else if (event.key === 'Enter' && selected.nonempty()) events.onFocus(selected.id());
+  else if (event.key === 'Enter') selectNearestToCenter(cy, events);
   else if (event.key === '+' || event.key === '=') zoomBy(cy, 1.2);
   else if (event.key === '-') zoomBy(cy, 1 / 1.2);
   else if (event.key === '0') cy.fit(undefined, 40);
-  else if (event.key === 'Escape') clearSelection();
+  else if (event.key === 'Escape') events.onSelect(null);
   else return;
   event.preventDefault();
+}
+
+function panFor(direction: Direction): Position {
+  const pans: Record<Direction, Position> = {
+    left: { x: PAN_STEP, y: 0 },
+    right: { x: -PAN_STEP, y: 0 },
+    up: { x: 0, y: PAN_STEP },
+    down: { x: 0, y: -PAN_STEP },
+  };
+  return pans[direction];
+}
+
+function moveSelection(
+  cy: Core,
+  from: NodeSingular,
+  direction: Direction,
+  events: GraphViewEvents,
+): void {
+  const neighbors = from
+    .neighborhood()
+    .nodes()
+    .map((node) => ({ id: node.id(), position: node.position() }));
+  const nextId = nearestInDirection(from.position(), neighbors, direction);
+  if (!nextId) return;
+  events.onSelect(nextId);
+  cy.animate({ center: { eles: cy.getElementById(nextId) } }, { duration: 150 });
+}
+
+function selectNearestToCenter(cy: Core, events: GraphViewEvents): void {
+  const extent = cy.extent();
+  const center = { x: (extent.x1 + extent.x2) / 2, y: (extent.y1 + extent.y2) / 2 };
+  const nearest = cy.nodes().min((node: NodeSingular) => {
+    const { x, y } = node.position();
+    return Math.hypot(x - center.x, y - center.y);
+  });
+  if (nearest.ele) events.onSelect(nearest.ele.id());
 }

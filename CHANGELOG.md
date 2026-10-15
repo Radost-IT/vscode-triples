@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.0
+
+- Keyboard: with a node selected, arrow keys move to the connected node in that direction and Enter focuses on it. With nothing selected, Enter selects the node in the middle of the view. Screen readers announce the selected node's label, kind and change status.
+
 ## 0.6.0
 
 - GitHub Pull Requests: "View Ontology Changes" in the pull request file tree opens the semantic diff of the PR base against the head.

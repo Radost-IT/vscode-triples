@@ -19,7 +19,7 @@ import { createHierarchyView, type HierarchySettings } from './hierarchyView';
 import type { LayoutName } from './layout';
 import { renderLegend } from './legend';
 import { createSearchBox } from './searchBox';
-import { strings } from './strings';
+import { kindNames, statusNames, strings } from './strings';
 import { exportSvg } from './svgExport';
 import { onThemeChange, readPalette } from './theme';
 import type { WorkerRequest, WorkerResponse } from './workerProtocol';
@@ -89,7 +89,7 @@ const graphHost = h('div', {
   class: 'graph',
   tabindex: 0,
   role: 'application',
-  'aria-label': strings.graph,
+  'aria-label': strings.graphKeys,
 });
 const graph = createGraphView(graphHost, {
   onSelect: (nodeId) => setSelection(nodeId ? (nodeEntity.get(nodeId) ?? null) : null, false),
@@ -200,8 +200,8 @@ const legendPanel = h('aside', { class: 'panel popover legend', 'aria-label': st
 const detailsPanel = h('aside', {
   class: 'panel details',
   'aria-label': strings.details,
-  'aria-live': 'polite',
 });
+const announcer = h('div', { class: 'sr-only', 'aria-live': 'polite' });
 const overlay = h('div', { class: 'overlay', role: 'alert' });
 const stage = h(
   'div',
@@ -216,6 +216,7 @@ document.body.append(
   toolbar,
   banner,
   h('main', { class: 'workspace' }, changesPanel, stage, detailsPanel),
+  announcer,
 );
 
 const workerReady = createWorker(document.body.dataset['workerUri'] ?? '');
@@ -481,6 +482,7 @@ function togglePanel(panel: keyof PersistedState['panels']): void {
 function setSelection(entityId: string | null, center: boolean): void {
   saveState({ selectedId: entityId });
   if (loaded) renderDetails(detailsPanel, entityId, loaded.details);
+  announceSelection(entityId);
   if (center && entityId && viewMode === 'graph' && isGraphHeldBack()) {
     // The full graph is not drawn, so show the chosen node with its neighborhood instead.
     focusNodeId = entityId;
@@ -489,6 +491,20 @@ function setSelection(entityId: string | null, center: boolean): void {
   }
   if (viewMode === 'graph') graph.select(entityId && graph.has(entityId) ? entityId : null, center);
   else hierarchy.reveal(entityId);
+}
+
+function announceSelection(entityId: string | null): void {
+  const entity = entityId ? loaded?.model.entities[entityId] : undefined;
+  if (!entity || !loaded) {
+    announcer.textContent = '';
+    return;
+  }
+  const status = loaded.diff ? loaded.details.status(entity.id) : null;
+  announcer.textContent = strings.selectedAnnouncement(
+    entity.label,
+    kindNames[entity.kind],
+    status && status !== 'unchanged' ? statusNames[status] : null,
+  );
 }
 
 function switchView(mode: ViewMode, notifyHost: boolean): void {
