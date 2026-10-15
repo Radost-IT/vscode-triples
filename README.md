@@ -93,7 +93,7 @@ npm run test:vscode  # integration tests in a downloaded VS Code
 
 Press **F5** in VS Code to start the Extension Development Host.
 
-GitHub Actions runs lint, the format check, unit tests, integration tests and packaging on Linux, Windows and macOS for every push to `main` and every pull request. The Linux job uploads the `.vsix` as a build artifact.
+GitHub Actions runs lint, the format check, unit tests, integration tests and packaging on Linux, Windows and macOS for every push to `main` and every pull request that changes more than documentation. The Linux job uploads the `.vsix` as a build artifact.
 
 To refresh the README screenshots, build first, then run the script. It opens the webview in headless Chrome with VS Code theme colors and renders the files in `examples/` to `docs/images/`. Set `CHROME` if Chrome is not in the default location.
 
@@ -128,36 +128,23 @@ code --install-extension triples-<version>.vsix
 
 Run `npx vsce ls` to see which files go into the package.
 
-## Deploy
+## Contributing
 
-Publishing needs accounts that only a maintainer can create:
+Bug reports, ideas and pull requests are welcome.
 
-1. **VS Code Marketplace**: create the publisher `RadostIT` at https://marketplace.visualstudio.com/manage and a Personal Access Token in Azure DevOps with the scope "Marketplace (Manage)". Then run `npx vsce login RadostIT` and `npx vsce publish`.
-2. **Open VSX**:
-   1. Sign in at https://open-vsx.org with GitHub.
-   2. In your profile settings, link an Eclipse Foundation account and sign the Publisher Agreement. Publishing fails without it.
-   3. Create a token at https://open-vsx.org/user-settings/tokens ("Generate New Token"). It is shown only once, so store it safely.
-   4. Install the CLI and claim the namespace once:
+- **Report a bug:** open an issue with the VS Code version, the Triples version, and a small ontology file that shows the problem. Remove anything private from the file first.
+- **Suggest a feature:** open an issue that describes what you want to see and why. Check [docs/roadmap.md](docs/roadmap.md) first, it may already be planned.
+- **Send a pull request:**
+  1. Fork the repository and create a branch from `main`.
+  2. Set up the project as described in [Development](#development).
+  3. Keep the change small and focused. Add or update tests for every behavior change, especially in `src/core`.
+  4. Diff engine changes need before/after fixture pairs in `test/fixtures/diff/`.
+  5. Run `npm run lint`, `npm run format:check`, `npm test` and `npm run test:vscode` before you push.
+  6. Update `README.md` and `CHANGELOG.md` if users will notice the change.
+  7. Use [Conventional Commits](https://www.conventionalcommits.org/) for commit messages, for example `fix(graph): keep selection after refresh`.
+- **New dependencies:** check the license and bundle size first and record both in [docs/dependencies.md](docs/dependencies.md). The extension must stay offline, so no network access.
 
-      ```sh
-      npm install -g ovsx
-      ovsx create-namespace RadostIT -p <token>
-      ```
-
-   5. Build the package with `npm run package`, then publish it:
-
-      ```sh
-      ovsx publish triples-<version>.vsix -p <token>
-      ```
-
-After the first manual release, the `Release` workflow publishes to both stores:
-
-1. In the GitHub repository, open Settings > Secrets and variables > Actions and add `VSCE_PAT` (the Azure DevOps token) and `OVSX_PAT` (the Open VSX token).
-2. Bump `version` in `package.json` and add a `CHANGELOG.md` entry. Commit and push to `main`.
-
-When CI passes on `main` and the `package.json` version has no tag yet, CI creates the `v<version>` tag and starts the `Release` workflow. Pushing a `v<version>` tag by hand also starts it.
-
-The workflow checks that the tag matches `package.json`, runs lint and all tests, publishes the `.vsix` to both stores and attaches it to a GitHub release.
+[AGENTS.md](AGENTS.md) has the full project conventions. By contributing you agree that your work is released under the MIT license.
 
 ## License
 
