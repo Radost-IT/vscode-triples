@@ -14,6 +14,12 @@ import { STATUS_MARK, readPalette } from './theme';
 export interface GraphViewEvents {
   readonly onSelect: (nodeId: string | null) => void;
   readonly onFocus: (nodeId: string) => void;
+  readonly onViewportChange: (viewport: Viewport) => void;
+}
+
+export interface Viewport {
+  readonly zoom: number;
+  readonly pan: Position;
 }
 
 export interface GraphRenderSettings {
@@ -28,6 +34,7 @@ export interface GraphView {
   select(nodeId: string | null, center: boolean): void;
   zoomBy(factor: number): void;
   fit(): void;
+  setViewport(viewport: Viewport): void;
   applyTheme(): void;
   png(): string;
   svg(): string;
@@ -61,6 +68,7 @@ export function createGraphView(container: HTMLElement, events: GraphViewEvents)
     select: (nodeId, center) => select(cy, nodeId, center),
     zoomBy: (factor) => zoomBy(cy, factor),
     fit: () => cy.fit(undefined, 40),
+    setViewport: (viewport) => void cy.viewport(viewport),
     applyTheme: () => cy.style(graphStylesheet(readPalette())),
     png: () =>
       cy.png({
@@ -97,6 +105,7 @@ function createCore(container: HTMLElement, events: GraphViewEvents, large: bool
     if (event.target === cy) events.onSelect(null);
   });
   cy.on('dbltap', 'node', (event) => events.onFocus((event.target as NodeSingular).id()));
+  cy.on('viewport', () => events.onViewportChange({ zoom: cy.zoom(), pan: { ...cy.pan() } }));
   return cy;
 }
 

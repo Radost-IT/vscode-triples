@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.0
+
+- The graph keeps its zoom and pan after a window reload.
+
 ## 0.7.0
 
 - Keyboard: with a node selected, arrow keys move to the connected node in that direction and Enter focuses on it. With nothing selected, Enter selects the node in the middle of the view. Screen readers announce the selected node's label, kind and change status.

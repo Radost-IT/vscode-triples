@@ -14,7 +14,7 @@ import { renderDetails, indexEdges, type DetailsContext } from './detailsPanel';
 import { renderDiffPanel } from './diffPanel';
 import { h } from './dom';
 import { renderFilters, type FilterState } from './filtersPanel';
-import { createGraphView } from './graphView';
+import { createGraphView, type Viewport } from './graphView';
 import { createHierarchyView, type HierarchySettings } from './hierarchyView';
 import type { LayoutName } from './layout';
 import { renderLegend } from './legend';
@@ -37,6 +37,7 @@ interface PersistedState {
   readonly layout: LayoutName;
   readonly hops: number;
   readonly selectedId: string | null;
+  readonly viewport: Viewport | null;
   readonly hierarchy: HierarchySettings;
   readonly panels: {
     readonly filters: boolean;
@@ -58,6 +59,7 @@ const DEFAULT_STATE: PersistedState = {
   layout: 'force',
   hops: 1,
   selectedId: null,
+  viewport: null,
   hierarchy: { tab: 'classes', mode: 'outline', direction: 'LR' },
   panels: { filters: false, legend: true, details: true, changes: true },
 };
@@ -79,6 +81,9 @@ let focusNodeId: string | null = null;
 let graphDirty = false;
 let drawHugeGraph = false;
 let latestRequestId = 0;
+/** Layouts are deterministic, so after a window reload the saved zoom and pan show the same picture. */
+let viewportToRestore = state.viewport;
+let viewportSaveTimer: ReturnType<typeof setTimeout> | undefined;
 
 function saveState(change: Partial<PersistedState>): void {
   state = { ...state, ...change };
@@ -96,6 +101,10 @@ const graph = createGraphView(graphHost, {
   onFocus: (nodeId) => {
     focusNodeId = nodeId;
     drawGraph(false);
+  },
+  onViewportChange: (viewport) => {
+    clearTimeout(viewportSaveTimer);
+    viewportSaveTimer = setTimeout(() => saveState({ viewport }), 300);
   },
 });
 const hierarchy = createHierarchyView(state.hierarchy, {
@@ -372,6 +381,10 @@ function drawGraph(reuse: boolean): void {
     reuse,
   });
   graph.select(state.selectedId, false);
+  if (viewportToRestore && projected.nodes.length > 0 && !isGraphHeldBack()) {
+    graph.setViewport(viewportToRestore);
+    viewportToRestore = null;
+  }
 }
 
 function isGraphHeldBack(): boolean {

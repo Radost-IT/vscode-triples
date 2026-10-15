@@ -8,7 +8,6 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 ## M6 (PR workflow and polish)
 
-- Keep zoom and pan after a window reload by storing the viewport with `setState`.
 - Translation bundles for webview strings (`src/webview/strings.ts` is ready for them).
 - Disambiguate nodes that share a label but come from different namespaces, for example by adding the prefix.
 
