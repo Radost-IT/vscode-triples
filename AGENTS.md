@@ -19,8 +19,8 @@ Non-goals (for now): editing ontologies, reasoning/inference, SPARQL querying, a
 | ---------------- | -------------------------- |
 | Display name     | `Triples`                  |
 | Extension `name` | `triples`                  |
-| Publisher ID     | `radost-it`                |
-| Extension ID     | `radost-it.triples`        |
+| Publisher ID     | `RadostIT`                 |
+| Extension ID     | `RadostIT.triples`         |
 | Repo             | `Radost-IT/vscode-triples` |
 | License          | MIT                        |
 

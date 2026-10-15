@@ -122,8 +122,8 @@ Run `npx vsce ls` to see which files go into the package.
 
 Publishing needs accounts that only a maintainer can create:
 
-1. **VS Code Marketplace**: create the publisher `radost-it` at https://marketplace.visualstudio.com/manage and a Personal Access Token in Azure DevOps with the scope "Marketplace (Manage)". Then run `npx vsce login radost-it` and `npx vsce publish`.
-2. **Open VSX**: create an account at https://open-vsx.org, claim the `radost-it` namespace with `npx ovsx create-namespace radost-it -p <token>`, then run `npx ovsx publish triples-0.1.0.vsix -p <token>`.
+1. **VS Code Marketplace**: create the publisher `RadostIT` at https://marketplace.visualstudio.com/manage and a Personal Access Token in Azure DevOps with the scope "Marketplace (Manage)". Then run `npx vsce login RadostIT` and `npx vsce publish`.
+2. **Open VSX**: create an account at https://open-vsx.org, claim the `RadostIT` namespace with `npx ovsx create-namespace RadostIT -p <token>`, then run `npx ovsx publish triples-0.1.0.vsix -p <token>`.
 
 Bump `version` in `package.json` and add a `CHANGELOG.md` entry before each release.
 

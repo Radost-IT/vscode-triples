@@ -25,7 +25,7 @@ suite('Triples extension', () => {
   teardown(() => vscode.commands.executeCommand('workbench.action.closeAllEditors'));
 
   test('activates and registers its commands', async () => {
-    await vscode.extensions.getExtension('radost-it.triples')?.activate();
+    await vscode.extensions.getExtension('RadostIT.triples')?.activate();
     const commands = await vscode.commands.getCommands(true);
     for (const id of [
       'openVisualizer',
