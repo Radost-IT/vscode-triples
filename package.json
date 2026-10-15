@@ -2,7 +2,7 @@
   "name": "triples",
   "displayName": "Triples",
   "description": "%description%",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "publisher": "RadostIT",
   "license": "MIT",
   "repository": {
@@ -101,9 +101,14 @@
           "group": "3_compare@90"
         },
         {
+          "command": "triples.compareWithRevision",
+          "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn|owx|omn)$/i && config.git.enabled",
+          "group": "3_compare@91"
+        },
+        {
           "command": "triples.compareTwoFiles",
           "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld|ofn|owx|omn)$/i",
-          "group": "3_compare@91"
+          "group": "3_compare@92"
         }
       ],
       "view/item/context": [

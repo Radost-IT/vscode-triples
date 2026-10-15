@@ -69,7 +69,7 @@ You can also right-click a file and choose **Open With... > Triples Visualizer**
 ### Comparing versions
 
 - **Triples: Compare Ontology with HEAD** shows the uncommitted changes of the current file.
-- **Triples: Compare Ontology with Branch, Tag or Commit...** lets you pick any Git revision.
+- **Triples: Compare Ontology with Branch, Tag or Commit...** lets you pick any Git revision. It is also in the Explorer right-click menu.
 - **Triples: Compare Two Ontologies** compares two files. Select two files in the Explorer, or pick them in a dialog.
 - **Triples: View Ontology Changes** is in the Source Control view on a changed file, and in the title bar of any diff editor. In the Source Control view it matches Git: under **Changes** it compares the staged file with the working copy, and under **Staged Changes** (**View Staged Ontology Changes**) it compares HEAD with the staged file. This includes pull request diffs from the GitHub Pull Requests extension, so you can review the PR base against the head. In that extension's file tree, right-click a changed ontology and choose **View Ontology Changes**.
 

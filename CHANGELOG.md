@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Right-click an ontology file in the Explorer and choose "Compare Ontology with Branch, Tag or Commit..." to compare it with any Git revision.
+
 ## 1.2.0
 
 - Blank nodes without a label are named after the values they hold, such as `dateTime gteq launchDate` for an ODRL constraint, instead of "anonymous".
