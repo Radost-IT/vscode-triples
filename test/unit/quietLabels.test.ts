@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { hasQuietEdgeLabels } from '../../src/webview/graphStyle';
+import { hasQuietEdgeLabels } from '../../src/webview/edgeLabel';
 
 describe('hasQuietEdgeLabels', () => {
   it('shows every edge label in a small graph', () => {

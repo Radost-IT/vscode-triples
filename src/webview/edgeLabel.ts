@@ -20,3 +20,10 @@ export function edgeLabelOffset(source: Offset, target: Offset): Offset {
   const flip = normal.y > 0 || (normal.y === 0 && normal.x > 0) ? -1 : 1;
   return { x: normal.x * flip * GAP, y: normal.y * flip * GAP };
 }
+
+/** Past this many edges their labels pile up into noise, so they show only around the selection. */
+const QUIET_LABEL_EDGES = 300;
+
+export function hasQuietEdgeLabels(edgeCount: number): boolean {
+  return edgeCount > QUIET_LABEL_EDGES;
+}

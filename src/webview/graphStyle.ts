@@ -15,13 +15,6 @@ const HALO_SHAPE: Record<NodeShape, 'ellipse' | 'round-rectangle'> = {
   barrel: 'round-rectangle',
 };
 
-/** Past this many edges their labels pile up into noise, so they show only around the selection. */
-const QUIET_LABEL_EDGES = 300;
-
-export function hasQuietEdgeLabels(edgeCount: number): boolean {
-  return edgeCount > QUIET_LABEL_EDGES;
-}
-
 export function graphStylesheet(palette: Palette): StylesheetJson {
   const borderWidth = palette.highContrast ? 2 : 1.8;
   // A soft halo in the kind color lifts nodes off the canvas; high contrast themes skip it.
