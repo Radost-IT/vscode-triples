@@ -5,6 +5,8 @@
 - Blank nodes without a label are named after the values they hold, such as `dateTime gteq launchDate` for an ODRL constraint, instead of "anonymous".
 - "Instance of" links to a class with more than 15 instances are hidden by default, because dozens of dotted lines meeting in one class hide everything else. The details panel still names each node's class, and a filter brings the links back.
 - In a graph with more than 300 edges, edge labels show only around the selected node, so the labels no longer cover the graph.
+- The force layout spreads big graphs out further, up to two and a half times the usual spacing, so dense clusters open up.
+- `examples/odrl-policies.ttl`: a generated ODRL rights policy set with about 200 entities, for trying the large graph features.
 
 ## 1.1.0
 

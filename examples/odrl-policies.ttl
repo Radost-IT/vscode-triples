@@ -1,0 +1,457 @@
+@prefix odrl: <http://www.w3.org/ns/odrl/2/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix ex: <http://example.org/rights#> .
+
+ex:globalLaunchDateReference a odrl:RightOperand ; rdfs:label "globalLaunchDate reference" .
+ex:localLaunchDateReference a odrl:RightOperand ; rdfs:label "localLaunchDate reference" .
+ex:earliestActivationDateReference a odrl:RightOperand ; rdfs:label "earliestActivationDate reference" .
+ex:creativeWorkRevealDateReference a odrl:RightOperand ; rdfs:label "creativeWorkRevealDate reference" .
+ex:localExitDateReference a odrl:RightOperand ; rdfs:label "localExitDate reference" .
+ex:creativeWorkAdaptationDateReference a odrl:RightOperand ; rdfs:label "creativeWorkAdaptationDate reference" .
+ex:earlyCreativeWorkAccessDateReference a odrl:RightOperand ; rdfs:label "earlyCreativeWorkAccessDate reference" .
+
+ex:C_From_GlobalLaunch a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand ex:globalLaunchDateReference .
+ex:C_From_GlobalLaunch_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:globalLaunchDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_From_GlobalLaunch_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:globalLaunchDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_Until_GlobalLaunch a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand ex:globalLaunchDateReference .
+ex:C_Until_GlobalLaunch_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:globalLaunchDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_Until_GlobalLaunch_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:globalLaunchDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_From_LocalLaunch a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand ex:localLaunchDateReference .
+ex:C_From_LocalLaunch_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:localLaunchDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_From_LocalLaunch_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:localLaunchDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_Until_LocalLaunch a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand ex:localLaunchDateReference .
+ex:C_Until_LocalLaunch_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:localLaunchDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_Until_LocalLaunch_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:localLaunchDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_From_EarliestActivation a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand ex:earliestActivationDateReference .
+ex:C_From_EarliestActivation_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:earliestActivationDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_From_EarliestActivation_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:earliestActivationDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_Until_EarliestActivation a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand ex:earliestActivationDateReference .
+ex:C_Until_EarliestActivation_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:earliestActivationDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_Until_EarliestActivation_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:earliestActivationDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_From_CreativeWorkReveal a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand ex:creativeWorkRevealDateReference .
+ex:C_From_CreativeWorkReveal_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:creativeWorkRevealDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_From_CreativeWorkReveal_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:creativeWorkRevealDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_Until_CreativeWorkReveal a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand ex:creativeWorkRevealDateReference .
+ex:C_Until_CreativeWorkReveal_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:creativeWorkRevealDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_Until_CreativeWorkReveal_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:creativeWorkRevealDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_From_LocalExit a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand ex:localExitDateReference .
+ex:C_From_LocalExit_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:localExitDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_From_LocalExit_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:localExitDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_Until_LocalExit a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand ex:localExitDateReference .
+ex:C_Until_LocalExit_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:localExitDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_Until_LocalExit_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:localExitDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_From_CreativeWorkAdaptation a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand ex:creativeWorkAdaptationDateReference .
+ex:C_From_CreativeWorkAdaptation_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:creativeWorkAdaptationDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_From_CreativeWorkAdaptation_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:creativeWorkAdaptationDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_Until_CreativeWorkAdaptation a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand ex:creativeWorkAdaptationDateReference .
+ex:C_Until_CreativeWorkAdaptation_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:creativeWorkAdaptationDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_Until_CreativeWorkAdaptation_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:creativeWorkAdaptationDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_From_EarlyCreativeWorkAccess a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand ex:earlyCreativeWorkAccessDateReference .
+ex:C_From_EarlyCreativeWorkAccess_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:earlyCreativeWorkAccessDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_From_EarlyCreativeWorkAccess_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:gteq ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:earlyCreativeWorkAccessDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+ex:C_Until_EarlyCreativeWorkAccess a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand ex:earlyCreativeWorkAccessDateReference .
+ex:C_Until_EarlyCreativeWorkAccess_minus365 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:earlyCreativeWorkAccessDateReference ; odrl:delayPeriod "P365D"^^xsd:duration ] .
+ex:C_Until_EarlyCreativeWorkAccess_minus180 a odrl:Constraint ; odrl:leftOperand odrl:dateTime ; odrl:operator odrl:lt ; odrl:rightOperand [ a odrl:RightOperand ; odrl:source ex:earlyCreativeWorkAccessDateReference ; odrl:delayPeriod "P180D"^^xsd:duration ] .
+
+ex:Studio a odrl:Party .
+ex:Distributor a odrl:Party .
+ex:Partner a odrl:Party .
+ex:Platform a odrl:Party .
+ex:Prohib_read_From_GlobalLaunch a odrl:Prohibition ; odrl:action odrl:read ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_From_GlobalLaunch ex:C_Until_GlobalLaunch [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Perm_read_From_LocalLaunch_minus365 a odrl:Permission ; odrl:action odrl:read ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_From_LocalLaunch_minus365 .
+ex:Perm_read_From_EarliestActivation_minus180 a odrl:Permission ; odrl:action odrl:read ; odrl:assignee ex:Partner ; odrl:constraint ex:C_From_EarliestActivation_minus180 .
+ex:Prohib_read_Until_CreativeWorkReveal a odrl:Prohibition ; odrl:action odrl:read ; odrl:assignee ex:Platform ; odrl:constraint ex:C_Until_CreativeWorkReveal .
+ex:Perm_read_Until_LocalExit_minus365 a odrl:Permission ; odrl:action odrl:read ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_Until_LocalExit_minus365 ex:C_Until_GlobalLaunch_minus180 [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Perm_read_Until_CreativeWorkAdaptation_minus180 a odrl:Permission ; odrl:action odrl:read ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_Until_CreativeWorkAdaptation_minus180 .
+ex:Prohib_display_From_GlobalLaunch a odrl:Prohibition ; odrl:action odrl:display ; odrl:assignee ex:Partner ; odrl:constraint ex:C_From_GlobalLaunch .
+ex:Perm_display_From_LocalLaunch_minus365 a odrl:Permission ; odrl:action odrl:display ; odrl:assignee ex:Platform ; odrl:constraint ex:C_From_LocalLaunch_minus365 .
+ex:Perm_display_From_EarliestActivation_minus180 a odrl:Permission ; odrl:action odrl:display ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_From_EarliestActivation_minus180 ex:C_From_LocalLaunch_minus365 [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Prohib_display_Until_CreativeWorkReveal a odrl:Prohibition ; odrl:action odrl:display ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_Until_CreativeWorkReveal .
+ex:Perm_display_Until_LocalExit_minus365 a odrl:Permission ; odrl:action odrl:display ; odrl:assignee ex:Partner ; odrl:constraint ex:C_Until_LocalExit_minus365 .
+ex:Perm_display_Until_CreativeWorkAdaptation_minus180 a odrl:Permission ; odrl:action odrl:display ; odrl:assignee ex:Platform ; odrl:constraint ex:C_Until_CreativeWorkAdaptation_minus180 .
+ex:Prohib_distribute_From_GlobalLaunch a odrl:Prohibition ; odrl:action odrl:distribute ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_From_GlobalLaunch ex:C_Until_LocalLaunch [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Perm_distribute_From_LocalLaunch_minus365 a odrl:Permission ; odrl:action odrl:distribute ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_From_LocalLaunch_minus365 .
+ex:Perm_distribute_From_EarliestActivation_minus180 a odrl:Permission ; odrl:action odrl:distribute ; odrl:assignee ex:Partner ; odrl:constraint ex:C_From_EarliestActivation_minus180 .
+ex:Prohib_distribute_Until_CreativeWorkReveal a odrl:Prohibition ; odrl:action odrl:distribute ; odrl:assignee ex:Platform ; odrl:constraint ex:C_Until_CreativeWorkReveal .
+ex:Perm_distribute_Until_LocalExit_minus365 a odrl:Permission ; odrl:action odrl:distribute ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_Until_LocalExit_minus365 ex:C_Until_LocalLaunch_minus180 [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Perm_distribute_Until_CreativeWorkAdaptation_minus180 a odrl:Permission ; odrl:action odrl:distribute ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_Until_CreativeWorkAdaptation_minus180 .
+ex:Prohib_sell_From_GlobalLaunch a odrl:Prohibition ; odrl:action odrl:sell ; odrl:assignee ex:Partner ; odrl:constraint ex:C_From_GlobalLaunch .
+ex:Perm_sell_From_LocalLaunch_minus365 a odrl:Permission ; odrl:action odrl:sell ; odrl:assignee ex:Platform ; odrl:constraint ex:C_From_LocalLaunch_minus365 .
+ex:Perm_sell_From_EarliestActivation_minus180 a odrl:Permission ; odrl:action odrl:sell ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_From_EarliestActivation_minus180 ex:C_From_EarliestActivation_minus365 [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Prohib_sell_Until_CreativeWorkReveal a odrl:Prohibition ; odrl:action odrl:sell ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_Until_CreativeWorkReveal .
+ex:Perm_sell_Until_LocalExit_minus365 a odrl:Permission ; odrl:action odrl:sell ; odrl:assignee ex:Partner ; odrl:constraint ex:C_Until_LocalExit_minus365 .
+ex:Perm_sell_Until_CreativeWorkAdaptation_minus180 a odrl:Permission ; odrl:action odrl:sell ; odrl:assignee ex:Platform ; odrl:constraint ex:C_Until_CreativeWorkAdaptation_minus180 .
+ex:Prohib_reproduce_From_GlobalLaunch a odrl:Prohibition ; odrl:action odrl:reproduce ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_From_GlobalLaunch ex:C_Until_EarliestActivation [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Perm_reproduce_From_LocalLaunch_minus365 a odrl:Permission ; odrl:action odrl:reproduce ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_From_LocalLaunch_minus365 .
+ex:Perm_reproduce_From_EarliestActivation_minus180 a odrl:Permission ; odrl:action odrl:reproduce ; odrl:assignee ex:Partner ; odrl:constraint ex:C_From_EarliestActivation_minus180 .
+ex:Prohib_reproduce_Until_CreativeWorkReveal a odrl:Prohibition ; odrl:action odrl:reproduce ; odrl:assignee ex:Platform ; odrl:constraint ex:C_Until_CreativeWorkReveal .
+ex:Perm_reproduce_Until_LocalExit_minus365 a odrl:Permission ; odrl:action odrl:reproduce ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_Until_LocalExit_minus365 ex:C_Until_EarliestActivation_minus180 [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Perm_reproduce_Until_CreativeWorkAdaptation_minus180 a odrl:Permission ; odrl:action odrl:reproduce ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_Until_CreativeWorkAdaptation_minus180 .
+ex:Prohib_modify_From_GlobalLaunch a odrl:Prohibition ; odrl:action odrl:modify ; odrl:assignee ex:Partner ; odrl:constraint ex:C_From_GlobalLaunch .
+ex:Perm_modify_From_LocalLaunch_minus365 a odrl:Permission ; odrl:action odrl:modify ; odrl:assignee ex:Platform ; odrl:constraint ex:C_From_LocalLaunch_minus365 .
+ex:Perm_modify_From_EarliestActivation_minus180 a odrl:Permission ; odrl:action odrl:modify ; odrl:assignee ex:Studio ; odrl:constraint [ a odrl:LogicalConstraint ; odrl:and ( ex:C_From_EarliestActivation_minus180 ex:C_From_CreativeWorkReveal_minus365 [ a odrl:Constraint ; odrl:leftOperand odrl:purpose ; odrl:operator odrl:eq ; odrl:rightOperand "marketing" ] ) ] .
+ex:Prohib_modify_Until_CreativeWorkReveal a odrl:Prohibition ; odrl:action odrl:modify ; odrl:assignee ex:Distributor ; odrl:constraint ex:C_Until_CreativeWorkReveal .
+ex:Perm_modify_Until_LocalExit_minus365 a odrl:Permission ; odrl:action odrl:modify ; odrl:assignee ex:Partner ; odrl:constraint ex:C_Until_LocalExit_minus365 .
+ex:Perm_modify_Until_CreativeWorkAdaptation_minus180 a odrl:Permission ; odrl:action odrl:modify ; odrl:assignee ex:Platform ; odrl:constraint ex:C_Until_CreativeWorkAdaptation_minus180 .
+
+ex:Policy_Lvl1_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_read_From_GlobalLaunch ;
+  odrl:permission ex:Perm_display_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_distribute_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl1_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_read_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_From_GlobalLaunch ;
+  odrl:permission ex:Perm_sell_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_reproduce_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl1_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_display_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_distribute_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_From_GlobalLaunch ;
+  odrl:permission ex:Perm_modify_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_Lvl1_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_distribute_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_sell_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_reproduce_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_read_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl1_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_sell_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_modify_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_read_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl1_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_reproduce_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_modify_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_read_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_display_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_Lvl1_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_modify_From_GlobalLaunch ;
+  odrl:permission ex:Perm_read_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_display_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl1_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_modify_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_display_From_GlobalLaunch ;
+  odrl:permission ex:Perm_distribute_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_sell_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl1_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_read_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_display_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_From_GlobalLaunch ;
+  odrl:permission ex:Perm_reproduce_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_Lvl1_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_display_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_distribute_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_sell_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl1_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_distribute_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_reproduce_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_modify_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl1_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_sell_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_reproduce_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_read_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_Lvl2_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_reproduce_From_GlobalLaunch ;
+  odrl:permission ex:Perm_modify_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_read_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_display_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl2_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_reproduce_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_read_From_GlobalLaunch ;
+  odrl:permission ex:Perm_display_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_distribute_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl2_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_modify_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_read_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_From_GlobalLaunch ;
+  odrl:permission ex:Perm_sell_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_Lvl2_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_read_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_display_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_distribute_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl2_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_display_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_sell_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_reproduce_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl2_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_distribute_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_sell_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_modify_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_Lvl2_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_sell_From_GlobalLaunch ;
+  odrl:permission ex:Perm_reproduce_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_modify_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_read_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl2_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_sell_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_From_GlobalLaunch ;
+  odrl:permission ex:Perm_read_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_display_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl2_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_reproduce_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_modify_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_display_From_GlobalLaunch ;
+  odrl:permission ex:Perm_distribute_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_Lvl2_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_modify_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_read_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_display_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl2_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_read_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_display_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_distribute_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_sell_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl2_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_display_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_distribute_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_reproduce_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_Lvl3_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_distribute_From_GlobalLaunch ;
+  odrl:permission ex:Perm_sell_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_reproduce_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl3_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_distribute_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_From_GlobalLaunch ;
+  odrl:permission ex:Perm_modify_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_read_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl3_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_sell_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_reproduce_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_read_From_GlobalLaunch ;
+  odrl:permission ex:Perm_display_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_Lvl3_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_reproduce_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_modify_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_read_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl3_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_modify_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_read_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_display_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_distribute_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl3_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_read_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_display_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_sell_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_Lvl3_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_display_From_GlobalLaunch ;
+  odrl:permission ex:Perm_distribute_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_sell_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl3_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_display_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_From_GlobalLaunch ;
+  odrl:permission ex:Perm_reproduce_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_modify_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl3_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_distribute_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_sell_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_From_GlobalLaunch ;
+  odrl:permission ex:Perm_read_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_Lvl3_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_sell_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_reproduce_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_modify_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_display_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl3_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_reproduce_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_read_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_display_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl3_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_modify_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_read_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_display_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_distribute_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_Lvl4_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_read_From_GlobalLaunch ;
+  odrl:permission ex:Perm_display_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_distribute_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl4_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_read_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_From_GlobalLaunch ;
+  odrl:permission ex:Perm_sell_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_reproduce_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl4_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_display_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_distribute_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_From_GlobalLaunch ;
+  odrl:permission ex:Perm_modify_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_Lvl4_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_distribute_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_sell_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_reproduce_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_read_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl4_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_sell_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_modify_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_read_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl4_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_reproduce_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_modify_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_read_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_display_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_Lvl4_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_modify_From_GlobalLaunch ;
+  odrl:permission ex:Perm_read_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_display_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl4_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_modify_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_display_From_GlobalLaunch ;
+  odrl:permission ex:Perm_distribute_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_sell_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl4_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_read_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_display_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_From_GlobalLaunch ;
+  odrl:permission ex:Perm_reproduce_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_Lvl4_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_display_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_distribute_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_sell_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl4_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_distribute_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_reproduce_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_modify_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl4_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_sell_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_reproduce_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_read_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_Lvl5_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_reproduce_From_GlobalLaunch ;
+  odrl:permission ex:Perm_modify_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_read_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_display_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl5_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_reproduce_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_read_From_GlobalLaunch ;
+  odrl:permission ex:Perm_display_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_distribute_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl5_StandardProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_modify_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_read_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_From_GlobalLaunch ;
+  odrl:permission ex:Perm_sell_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_Lvl5_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_read_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_display_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_distribute_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl5_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_display_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_distribute_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_sell_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_reproduce_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl5_SensitiveProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_distribute_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_sell_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_reproduce_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_modify_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_Lvl5_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_sell_From_GlobalLaunch ;
+  odrl:permission ex:Perm_reproduce_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_modify_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_read_Until_CreativeWorkReveal ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:read ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl5_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_sell_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_modify_From_GlobalLaunch ;
+  odrl:permission ex:Perm_read_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_display_From_EarliestActivation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:display ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl5_CriticalProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_reproduce_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_modify_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_display_From_GlobalLaunch ;
+  odrl:permission ex:Perm_distribute_From_LocalLaunch_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:distribute ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P0D"^^xsd:duration ] ] .
+ex:Policy_Lvl5_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:prohibition ex:Prohib_modify_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_read_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_display_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_From_GlobalLaunch ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:sell ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P30D"^^xsd:duration ] ] .
+ex:Policy_LowSecure_Lvl5_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_read_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_display_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_distribute_Until_LocalExit_minus365 ;
+  odrl:permission ex:Perm_sell_Until_CreativeWorkAdaptation_minus180 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:reproduce ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P60D"^^xsd:duration ] ] .
+ex:Policy_HighSecure_Lvl5_NonProduct a odrl:Set ; odrl:assigner ex:Studio ;
+  odrl:permission ex:Perm_display_From_LocalLaunch_minus365 ;
+  odrl:permission ex:Perm_distribute_From_EarliestActivation_minus180 ;
+  odrl:prohibition ex:Prohib_sell_Until_CreativeWorkReveal ;
+  odrl:permission ex:Perm_reproduce_Until_LocalExit_minus365 ;
+  odrl:permission [ a odrl:Permission ; odrl:action odrl:modify ; odrl:constraint [ a odrl:Constraint ; odrl:leftOperand odrl:delayPeriod ; odrl:operator odrl:eq ; odrl:rightOperand "P90D"^^xsd:duration ] ] .
