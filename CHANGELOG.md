@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.0
+
+- First stable release. All planned milestones are complete: graph and hierarchy views, every supported format, semantic diff with Git and pull request entry points, minimap and export.
+
 ## 0.17.0
 
 - A `Release` workflow publishes to the Marketplace and Open VSX when a `v<version>` tag is pushed, and attaches the `.vsix` to a GitHub release.

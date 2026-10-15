@@ -1,11 +1,7 @@
 # Roadmap
 
-What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to M5 are done; the items below are gaps found while reviewing them, plus M6.
+Milestones M1 to M6 from `AGENTS.md` are done in code. One step is left, and only the maintainer can do it.
 
 ## Release blockers
 
-1. **Publishing.** Needs the maintainer: create the Marketplace publisher and Open VSX namespace (see Deploy in the README), then publish to both.
-
-## Known visual rough edges
-
-- Property-only components (for example `contains` and `made with` linked by `rdfs:subPropertyOf`) are placed far from the main graph by the force layout.
+1. **Publishing.** Create the Marketplace publisher and the Open VSX namespace, publish 1.0.0 by hand once, then let the `Release` workflow publish later versions (see Deploy in the README).
