@@ -1,10 +1,15 @@
 import type { EntityKind, OntologyModel } from '../core/model/types';
-import type { ViewOptions } from '../core/view/project';
+import { BUSY_CLASS_INSTANCES, type ViewOptions } from '../core/view/project';
 import { h } from './dom';
 import { filterableKinds, kindNames, strings } from './strings';
 
 type Toggle =
-  'showOwlThing' | 'showAnnotationLinks' | 'showLiterals' | 'propertiesAsEdges' | 'onlyChanges';
+  | 'showOwlThing'
+  | 'showAnnotationLinks'
+  | 'showLiterals'
+  | 'showBusyTypeLinks'
+  | 'propertiesAsEdges'
+  | 'onlyChanges';
 
 export interface FilterState {
   readonly options: ViewOptions;
@@ -62,6 +67,7 @@ export function renderFilters(
       toggle('showOwlThing', strings.showOwlThing),
       toggle('showAnnotationLinks', strings.showAnnotationLinks),
       toggle('showLiterals', strings.showLiterals),
+      toggle('showBusyTypeLinks', strings.showBusyTypeLinks(BUSY_CLASS_INSTANCES)),
       state.diff ? toggle('onlyChanges', strings.onlyChanges) : null,
       h('label', { class: 'field' }, strings.focusHops, ' ', hops),
     ),

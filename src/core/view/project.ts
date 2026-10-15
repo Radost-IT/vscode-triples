@@ -8,6 +8,7 @@ export interface ViewOptions {
   readonly showOwlThing: boolean;
   readonly showAnnotationLinks: boolean;
   readonly showLiterals: boolean;
+  readonly showBusyTypeLinks: boolean;
   readonly propertiesAsEdges: boolean;
   readonly onlyChanges: boolean;
   readonly hiddenKinds: readonly EntityKind[];
@@ -19,6 +20,7 @@ export const DEFAULT_VIEW_OPTIONS: ViewOptions = {
   showOwlThing: false,
   showAnnotationLinks: false,
   showLiterals: false,
+  showBusyTypeLinks: false,
   propertiesAsEdges: true,
   onlyChanges: false,
   hiddenKinds: [],
@@ -60,6 +62,9 @@ export interface DiffStatuses {
   readonly edgeStatus: Readonly<Record<string, ChangeStatus>>;
 }
 
+/** A class with more instances than this pulls so many dotted lines together that they hide the rest. */
+export const BUSY_CLASS_INSTANCES = 15;
+
 const TOP_AND_BOTTOM: ReadonlySet<string> = new Set([owl.Thing, owl.Nothing]);
 
 /** Decides what the graph view draws. Pure, so the declutter rules can be unit tested. */
@@ -82,6 +87,8 @@ export function projectGraph(
         candidates.has(edge.source) && candidates.has(edge.target) && isEdgeShown(edge, options),
     )
     .map((edge) => ({ ...edge, status: edgeStatus(edge.id) }));
+
+  if (!options.showBusyTypeLinks) edges = withoutBusyTypeLinks(edges);
 
   const hiddenProperties = new Set<string>();
   if (options.propertiesAsEdges) {
@@ -129,6 +136,21 @@ function isCandidate(entity: Entity, options: ViewOptions): boolean {
 function isEdgeShown(edge: Edge, options: ViewOptions): boolean {
   if (edge.kind === 'annotation' && !options.showAnnotationLinks) return false;
   return !options.hiddenPredicates.includes(edge.predicate);
+}
+
+/** Changed type links stay, so a diff still shows them. */
+function withoutBusyTypeLinks(edges: VisibleEdge[]): VisibleEdge[] {
+  const instanceCounts = new Map<string, number>();
+  for (const edge of edges) {
+    if (edge.kind === 'type')
+      instanceCounts.set(edge.target, (instanceCounts.get(edge.target) ?? 0) + 1);
+  }
+  return edges.filter(
+    (edge) =>
+      edge.kind !== 'type' ||
+      edge.status !== 'unchanged' ||
+      (instanceCounts.get(edge.target) ?? 0) <= BUSY_CLASS_INSTANCES,
+  );
 }
 
 /**

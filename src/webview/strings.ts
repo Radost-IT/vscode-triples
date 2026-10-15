@@ -54,6 +54,8 @@ export const strings = {
   showOwlThing: t('Show owl:Thing and owl:Nothing'),
   showAnnotationLinks: t('Show annotation links'),
   showLiterals: t('Draw data values as nodes'),
+  showBusyTypeLinks: (count: number) =>
+    t('Show "instance of" links to classes with more than {0} instances', count),
   propertiesAsEdges: t('Draw properties as arrows between domain and range'),
   onlyChanges: t('Show only changes'),
   nodeKinds: t('Node kinds'),
