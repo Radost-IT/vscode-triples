@@ -77,11 +77,14 @@ npm install
 npm run build        # bundle extension and webview into dist/
 npm run watch        # rebuild on change
 npm run lint         # ESLint and type check
+npm run format:check # Prettier
 npm test             # unit tests (Vitest)
 npm run test:vscode  # integration tests in a downloaded VS Code
 ```
 
 Press **F5** in VS Code to start the Extension Development Host.
+
+GitHub Actions runs lint, the format check, unit tests, integration tests and packaging on Linux, Windows and macOS for every push to `main` and every pull request. The Linux job uploads the `.vsix` as a build artifact.
 
 To refresh the README screenshots, build first, then run the script. It opens the webview in headless Chrome with VS Code theme colors and renders the files in `examples/` to `docs/images/`. Set `CHROME` if Chrome is not in the default location.
 
@@ -109,7 +112,7 @@ npm run package
 This runs a production build and writes `triples-<version>.vsix`. Install it with:
 
 ```
-code --install-extension triples-0.1.0.vsix
+code --install-extension triples-<version>.vsix
 ```
 
 Run `npx vsce ls` to see which files go into the package.

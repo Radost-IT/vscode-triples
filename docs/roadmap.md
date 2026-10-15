@@ -4,10 +4,9 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 ## Release blockers
 
-1. **CI.** Add `.github/workflows/ci.yml`: `npm ci`, `npm run lint`, `npm test`, `npm run test:vscode` (with `xvfb-run` on Linux) and `npm run package`. Upload the `.vsix` as a build artifact.
-2. **Performance check.** Add a generated 5,000-node fixture and a test that measures parse plus model build time. Record the first-render time in the Extension Development Host. Target: under 2 seconds.
-3. **Huge-file guard.** Warn before rendering above about 20,000 nodes and offer to start with the hierarchy view or a filtered graph.
-4. **Publishing.** Needs the maintainer: create the Marketplace publisher and Open VSX namespace (see Deploy in the README), then publish 0.1.0 to both.
+1. **Performance check.** Add a generated 5,000-node fixture and a test that measures parse plus model build time. Record the first-render time in the Extension Development Host. Target: under 2 seconds.
+2. **Huge-file guard.** Warn before rendering above about 20,000 nodes and offer to start with the hierarchy view or a filtered graph.
+3. **Publishing.** Needs the maintainer: create the Marketplace publisher and Open VSX namespace (see Deploy in the README), then publish 0.1.0 to both.
 
 ## M5 follow-ups (diff)
 

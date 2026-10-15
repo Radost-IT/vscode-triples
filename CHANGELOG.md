@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.1
+
+- Continuous integration: lint, format check, unit tests, integration tests and packaging run on Linux, Windows and macOS for every push and pull request.
+
 ## 0.1.0
 
 First release.

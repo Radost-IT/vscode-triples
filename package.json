@@ -2,7 +2,7 @@
   "name": "triples",
   "displayName": "Triples",
   "description": "%description%",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "publisher": "radost-it",
   "license": "MIT",
   "repository": {
@@ -161,6 +161,7 @@
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.webview.json && tsc -p tsconfig.worker.json",
     "lint": "eslint . && npm run typecheck",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "pretest:vscode": "npm run build && node scripts/build-tests.mjs",
     "test:vscode": "node out/test/integration/runTest.js",
