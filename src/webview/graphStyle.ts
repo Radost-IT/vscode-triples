@@ -153,6 +153,8 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
     },
     { selector: 'edge.quiet-label', style: { 'text-opacity': 0 } },
     { selector: 'edge.quiet-label.highlighted', style: { 'text-opacity': 1 } },
+    // Landmark labels grow as the view zooms out; drawn last, they stay on top of their neighbors.
+    { selector: 'node.landmark', style: { 'z-index': 1 } },
     { selector: 'node.highlighted', style: { opacity: 1, 'text-opacity': 1 } },
     {
       selector: 'node:selected',

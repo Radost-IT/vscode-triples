@@ -10,6 +10,7 @@ import type { NodeKind, ProjectedGraph } from '../core/view/project';
 import { nearestInDirection, type Direction } from './direction';
 import { edgeLabelOffset, hasQuietEdgeLabels } from './edgeLabel';
 import { graphStylesheet, nodeSize } from './graphStyle';
+import { landmarkLabelSize, pickLandmarks, unclutteredLandmarks } from './landmarks';
 import { forceLayout, layeredLayout, withSeededRandom, type LayoutName } from './layout';
 import type { MinimapScene } from './minimapProjection';
 import { spreadSelfLoops } from './selfLoops';
@@ -119,6 +120,7 @@ function createCore(container: HTMLElement, events: GraphViewEvents, large: bool
   cy.on('drag', 'node', (event) =>
     placeEdgeLabels((event.target as NodeSingular).connectedEdges(':simple')),
   );
+  cy.on('zoom', () => scaleLandmarks(cy));
   cy.on('viewport', () => events.onViewportChange({ zoom: cy.zoom(), pan: { ...cy.pan() } }));
   cy.on('render', () => events.onRender());
   return cy;
@@ -146,9 +148,33 @@ function render(cy: Core, graph: ProjectedGraph, settings: GraphRenderSettings):
   }
   cy.batch(() => placeEdgeLabels(cy.edges(':simple')));
   if (selected && cy.getElementById(selected).nonempty()) select(cy, selected, false);
+  scaleLandmarks(cy);
+}
+
+function scaleLandmarks(cy: Core): void {
+  const { fontSize, textMaxWidth } = landmarkLabelSize(cy.zoom());
+  const rank = (node: NodeSingular) => node.data('landmarkRank') as number;
+  const landmarks = cy
+    .nodes('.landmark')
+    .toArray()
+    .sort((a, b) => rank(a) - rank(b));
+  const placements = landmarks.map((node) => ({
+    id: node.id(),
+    ...node.position(),
+    label: node.data('label') as string,
+  }));
+  const kept = new Set(unclutteredLandmarks(placements, fontSize, textMaxWidth));
+  cy.batch(() => {
+    for (const node of landmarks) {
+      if (kept.has(node.id()))
+        node.style({ 'font-size': fontSize, 'text-max-width': `${textMaxWidth}px` });
+      else node.removeStyle('font-size text-max-width');
+    }
+  });
 }
 
 function toElements(graph: ProjectedGraph, diff: boolean): ElementDefinition[] {
+  const landmarkRank = new Map(pickLandmarks(graph).map((id, rank) => [id, rank]));
   const nodes = graph.nodes.map((node) => {
     const label = `${STATUS_MARK[node.status]}${node.label}`;
     return {
@@ -158,6 +184,7 @@ function toElements(graph: ProjectedGraph, diff: boolean): ElementDefinition[] {
         label,
         kind: node.kind,
         status: node.status,
+        landmarkRank: landmarkRank.get(node.id),
         ...nodeSize(label, node.kind),
       },
       classes: [
@@ -165,6 +192,7 @@ function toElements(graph: ProjectedGraph, diff: boolean): ElementDefinition[] {
         `status-${node.status}`,
         diff ? 'diff' : '',
         node.context ? 'context' : '',
+        landmarkRank.has(node.id) ? 'landmark' : '',
       ].join(' '),
     };
   });
