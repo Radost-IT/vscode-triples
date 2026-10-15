@@ -75,7 +75,7 @@ function edgeSvg(edge: EdgeSingular, shift: (point: Position) => Position): stri
     end,
     color,
   );
-  const label = edge.style('label') as string;
+  const label = Number(edge.style('text-opacity')) > 0 ? (edge.style('label') as string) : '';
   const midpoint = shift(edge.midpoint());
   const middle = {
     x: midpoint.x + parseFloat(edge.style('text-margin-x') as string),

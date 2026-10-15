@@ -9,7 +9,7 @@ import type { ChangeStatus } from '../core/diff/diff';
 import type { NodeKind, ProjectedGraph } from '../core/view/project';
 import { nearestInDirection, type Direction } from './direction';
 import { edgeLabelOffset } from './edgeLabel';
-import { graphStylesheet, nodeSize } from './graphStyle';
+import { graphStylesheet, hasQuietEdgeLabels, nodeSize } from './graphStyle';
 import { forceLayout, layeredLayout, withSeededRandom, type LayoutName } from './layout';
 import type { MinimapScene } from './minimapProjection';
 import { spreadSelfLoops } from './selfLoops';
@@ -169,6 +169,7 @@ function toElements(graph: ProjectedGraph, diff: boolean): ElementDefinition[] {
     };
   });
   const loops = spreadSelfLoops(graph.edges);
+  const quietLabels = hasQuietEdgeLabels(graph.edges.length);
   const edges = graph.edges.map((edge) => {
     const loop = loops.get(edge.id);
     return {
@@ -188,7 +189,12 @@ function toElements(graph: ProjectedGraph, diff: boolean): ElementDefinition[] {
           labelDy: loop.labelOffset.y,
         }),
       },
-      classes: [`kind-${edge.kind}`, `status-${edge.status}`, diff ? 'diff' : ''].join(' '),
+      classes: [
+        `kind-${edge.kind}`,
+        `status-${edge.status}`,
+        diff ? 'diff' : '',
+        quietLabels ? 'quiet-label' : '',
+      ].join(' '),
     };
   });
   return [...nodes, ...edges];
