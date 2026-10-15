@@ -103,6 +103,7 @@ export interface Palette {
   readonly focus: string;
   readonly edge: string;
   readonly highContrast: boolean;
+  readonly light: boolean;
   readonly kinds: Record<NodeKind, string>;
   readonly status: Record<Exclude<ChangeStatus, 'unchanged'>, string>;
   readonly fontFamily: string;
@@ -134,6 +135,9 @@ export function readPalette(): Palette {
     edge: read('--vscode-editorLineNumber-foreground', '#858585'),
     highContrast:
       document.body.classList.contains('vscode-high-contrast') ||
+      document.body.classList.contains('vscode-high-contrast-light'),
+    light:
+      document.body.classList.contains('vscode-light') ||
       document.body.classList.contains('vscode-high-contrast-light'),
     kinds,
     status,

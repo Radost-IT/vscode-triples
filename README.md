@@ -14,7 +14,7 @@
 
 ![Selected node in a diff, light theme](docs/images/diff-light.png)
 
-**Hierarchy as a tree diagram.** Classes laid out by `rdfs:subClassOf`, left to right. Classes with several parents keep all their links.
+**Hierarchy as a tree diagram.** Classes laid out by `rdfs:subClassOf`, left to right. Classes sit under their first parent; links to other parents are dashed, so the tree stays readable.
 
 ![Class hierarchy as a tree diagram](docs/images/hierarchy-dark.png)
 

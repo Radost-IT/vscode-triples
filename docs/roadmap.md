@@ -13,5 +13,3 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 ## Known visual rough edges
 
 - Property-only components (for example `contains` and `made with` linked by `rdfs:subPropertyOf`) are placed far from the main graph by the force layout.
-- In the tree diagram, classes with several parents draw long edges that cross other branches.
-- Faded nodes are very light in the light theme.

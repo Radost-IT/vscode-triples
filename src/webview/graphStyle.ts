@@ -121,7 +121,11 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
     { selector: 'edge.status-added, edge.status-modified', style: { width: 2.4 } },
     { selector: '.diff.status-unchanged', style: { opacity: 0.55 } },
     { selector: '.context', style: { opacity: 0.35 } },
-    { selector: '.faded', style: { opacity: 0.12, 'text-opacity': 0, 'underlay-opacity': 0 } },
+    {
+      selector: '.faded',
+      // Pale node colors on a white canvas vanish at the opacity that works on a dark one.
+      style: { opacity: palette.light ? 0.28 : 0.12, 'text-opacity': 0, 'underlay-opacity': 0 },
+    },
     {
       selector: 'edge.highlighted',
       style: {

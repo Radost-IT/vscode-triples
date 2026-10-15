@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.15.0
+
+- Tree diagram: a class with several parents sits under its first parent, and links to its other parents are drawn dashed, so edges no longer cross other branches.
+- Light theme: nodes outside the selected neighborhood stay faintly visible instead of almost disappearing.
+
 ## 0.14.0
 
 - Minimap: an optional overview of the whole graph in the corner of the graph view. Click or drag on it to move the view. Toggle it with the Minimap button.

@@ -404,10 +404,10 @@ export function createHierarchyView(
       ...ids.flatMap((id) =>
         (data.nodes[id]?.parents ?? [])
           .filter((parent) => shown.has(parent))
-          .map((parent) => ({
+          .map((parent, index) => ({
             group: 'edges' as const,
             data: { id: `${parent} ${id}`, source: parent, target: id, label: '' },
-            classes: 'tree-edge',
+            classes: `tree-edge ${settings.direction}${index === 0 ? '' : ' extra-parent'}`,
           })),
       ),
     ];
@@ -417,7 +417,9 @@ export function createHierarchyView(
       core.add(elements);
     });
     core.resize();
-    core.layout(layeredLayout(settings.direction)).run();
+    // Laying out only the first parent edge keeps the picture a tree; with every parent
+    // edge, dagre pulls shared children between branches and the edges cross.
+    core.elements().not('.extra-parent').layout(layeredLayout(settings.direction)).run();
     if (selectedId && core.getElementById(selectedId).nonempty()) {
       core.getElementById(selectedId).select();
       core.center(core.getElementById(selectedId));
@@ -501,9 +503,15 @@ function diagramStylesheet() {
         'source-arrow-fill': 'hollow',
         'arrow-scale': 1.3,
         'curve-style': 'taxi',
-        'taxi-direction': 'auto',
         'taxi-radius': 10,
       },
+    },
+    // With 'auto', an edge to a child far down the column bends the wrong way first.
+    { selector: 'edge.tree-edge.LR', style: { 'taxi-direction': 'horizontal' } },
+    { selector: 'edge.tree-edge.TB', style: { 'taxi-direction': 'vertical' } },
+    {
+      selector: 'edge.extra-parent',
+      style: { 'curve-style': 'unbundled-bezier', 'line-style': 'dashed', opacity: 0.55 },
     },
   ] as cytoscape.StylesheetJson;
 }
