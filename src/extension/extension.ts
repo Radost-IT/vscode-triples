@@ -82,6 +82,12 @@ export function activate(context: vscode.ExtensionContext): void {
     command('triples.viewStagedOntologyChanges', (target: CommandTarget) => {
       show(stagedInput(ontologyTarget(target)));
     }),
+    command('triples.viewPullRequestChanges', async (fileNode: { resourceUri?: vscode.Uri }) => {
+      if (fileNode.resourceUri) requireOntology(fileNode.resourceUri);
+      // The GitHub Pull Requests extension knows the PR base and head; let it open its diff, then read both sides.
+      await vscode.commands.executeCommand('pr.openDiffView', fileNode);
+      show(activeDiffInput());
+    }),
     vscode.window.registerCustomEditorProvider(
       CUSTOM_EDITOR_VIEW_TYPE,
       {

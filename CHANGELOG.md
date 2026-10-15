@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- GitHub Pull Requests: "View Ontology Changes" in the pull request file tree opens the semantic diff of the PR base against the head.
+
 ## 0.5.0
 
 - Source Control: "View Ontology Changes" on a file under Changes compares the staged file with the working copy, and the new "View Staged Ontology Changes" under Staged Changes compares HEAD with the staged file, the same as Git's own diffs.

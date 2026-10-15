@@ -79,3 +79,7 @@ Each panel keeps context when hidden (`retainContextWhenHidden`), so large graph
 ## Huge graphs
 
 Above 20,000 visible nodes the graph view does not draw anything until the user asks. Drawing that many nodes freezes the webview for several seconds and the picture is unreadable anyway. The notice offers the hierarchy view and a "Draw anyway" button, and search still works: picking a result draws only that node's neighborhood. The limit counts nodes after filters, so hiding kinds or namespaces can bring a graph under it.
+
+## Pull request file tree
+
+The GitHub Pull Requests extension has no public API for the base and head of a changed file. "View Ontology Changes" on a file in its tree runs that extension's own `pr.openDiffView` command with the tree item, then reads both sides of the diff editor it opens, the same way as the diff editor title button. If the extension changes that command, only this menu entry breaks; the title button keeps working. Its tree items carry no file extension context key, so the entry shows on every changed file and says so when the file is not an ontology.

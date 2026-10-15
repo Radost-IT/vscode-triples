@@ -2,7 +2,7 @@
   "name": "triples",
   "displayName": "Triples",
   "description": "%description%",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "publisher": "RadostIT",
   "license": "MIT",
   "repository": {
@@ -68,6 +68,12 @@
         "title": "%command.viewStagedOntologyChanges%",
         "category": "Triples",
         "icon": "$(type-hierarchy)"
+      },
+      {
+        "command": "triples.viewPullRequestChanges",
+        "title": "%command.viewOntologyChanges%",
+        "category": "Triples",
+        "icon": "$(type-hierarchy)"
       }
     ],
     "menus": {
@@ -98,6 +104,13 @@
           "command": "triples.compareTwoFiles",
           "when": "!explorerResourceIsFolder && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
           "group": "3_compare@91"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "triples.viewPullRequestChanges",
+          "when": "view =~ /^(pr|prStatus):github$/ && viewItem =~ /filechange(?!:DELETE)/",
+          "group": "1_diff@9"
         }
       ],
       "scm/resourceState/context": [
@@ -131,6 +144,10 @@
         },
         {
           "command": "triples.viewStagedOntologyChanges",
+          "when": "false"
+        },
+        {
+          "command": "triples.viewPullRequestChanges",
           "when": "false"
         }
       ]

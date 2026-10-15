@@ -8,7 +8,6 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 ## M6 (PR workflow and polish)
 
-- "View ontology changes" for files in the GitHub Pull Requests extension, comparing the PR base with the head.
 - Keyboard navigation between graph nodes (arrow keys to move to neighbors) and screen reader announcements of the selected node.
 - Keep zoom and pan after a window reload by storing the viewport with `setState`.
 - Translation bundles for webview strings (`src/webview/strings.ts` is ready for them).

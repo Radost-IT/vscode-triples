@@ -34,6 +34,7 @@ suite('Triples extension', () => {
       'compareTwoFiles',
       'viewOntologyChanges',
       'viewStagedOntologyChanges',
+      'viewPullRequestChanges',
     ]) {
       assert.ok(commands.includes(`triples.${id}`), `missing triples.${id}`);
     }
