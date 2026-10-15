@@ -2,7 +2,7 @@
   "name": "triples",
   "displayName": "Triples",
   "description": "%description%",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "publisher": "RadostIT",
   "license": "MIT",
   "repository": {
@@ -62,6 +62,12 @@
         "title": "%command.viewOntologyChanges%",
         "category": "Triples",
         "icon": "$(type-hierarchy)"
+      },
+      {
+        "command": "triples.viewStagedOntologyChanges",
+        "title": "%command.viewStagedOntologyChanges%",
+        "category": "Triples",
+        "icon": "$(type-hierarchy)"
       }
     ],
     "menus": {
@@ -97,7 +103,12 @@
       "scm/resourceState/context": [
         {
           "command": "triples.viewOntologyChanges",
-          "when": "scmProvider == git && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "when": "scmProvider == git && scmResourceGroup =~ /^(workingTree|untracked)$/ && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
+          "group": "navigation@90"
+        },
+        {
+          "command": "triples.viewStagedOntologyChanges",
+          "when": "scmProvider == git && scmResourceGroup == index && resourceExtname =~ /^\\.(ttl|owl|rdf|nt|nq|n3|trig|jsonld)$/i",
           "group": "navigation@90"
         }
       ],
@@ -117,6 +128,10 @@
         {
           "command": "triples.viewOntologyChanges",
           "when": "isInDiffEditor"
+        },
+        {
+          "command": "triples.viewStagedOntologyChanges",
+          "when": "false"
         }
       ]
     },

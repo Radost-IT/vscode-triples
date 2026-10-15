@@ -6,10 +6,6 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 1. **Publishing.** Needs the maintainer: create the Marketplace publisher and Open VSX namespace (see Deploy in the README), then publish to both.
 
-## M5 follow-ups (diff)
-
-- Respect the staged state when comparing from the Source Control view (index vs HEAD, working tree vs index).
-
 ## M6 (PR workflow and polish)
 
 - "View ontology changes" for files in the GitHub Pull Requests extension, comparing the PR base with the head.

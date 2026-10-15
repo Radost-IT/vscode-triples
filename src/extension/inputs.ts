@@ -20,10 +20,13 @@ export function singleFileInput(uri: vscode.Uri): TitledInput {
   };
 }
 
+/** Git's name for the staged version of a file in `git show` and Git URIs. */
+const INDEX_REF = '';
+
 /** Compares the file at a Git revision (before) with the working copy (after). */
 export function revisionInput(uri: vscode.Uri, ref: string, label: string): TitledInput {
   return {
-    key: `diff:${uri.toString()}`,
+    key: `diff:${uri.toString()}@${ref}`,
     title: strings.panelTitle(strings.diffTitle(`${baseName(uri)} (${label})`, baseName(uri))),
     watched: [uri],
     load: async () => {
@@ -34,6 +37,35 @@ export function revisionInput(uri: vscode.Uri, ref: string, label: string): Titl
       ]);
       const before = old === null ? null : sourceDocument(old, api.toGitUri(uri, ref), label, uri);
       const after = current === null ? null : sourceDocument(current, uri, baseName(uri));
+      return { kind: 'diff', language: language(), before, after };
+    },
+  };
+}
+
+/** Unstaged changes, as the Source Control view shows them: the staged file against the working copy. */
+export function unstagedInput(uri: vscode.Uri): TitledInput {
+  return revisionInput(uri, INDEX_REF, strings.staged);
+}
+
+/** Staged changes: the file at HEAD against the staged file. */
+export function stagedInput(uri: vscode.Uri): TitledInput {
+  const name = baseName(uri);
+  return {
+    key: `diff:${uri.toString()}@HEAD..${INDEX_REF}`,
+    title: strings.panelTitle(strings.diffTitle(`${name} (HEAD)`, `${name} (${strings.staged})`)),
+    watched: [uri],
+    load: async () => {
+      const { api, repository } = await repositoryOf(uri);
+      const [old, staged] = await Promise.all([
+        showAtRef(repository, 'HEAD', uri),
+        showAtRef(repository, INDEX_REF, uri),
+      ]);
+      const before =
+        old === null ? null : sourceDocument(old, api.toGitUri(uri, 'HEAD'), 'HEAD', uri);
+      const after =
+        staged === null
+          ? null
+          : sourceDocument(staged, api.toGitUri(uri, INDEX_REF), strings.staged, uri);
       return { kind: 'diff', language: language(), before, after };
     },
   };

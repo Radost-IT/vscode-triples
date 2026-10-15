@@ -3,6 +3,8 @@ import { RefType, repositoryOf } from './git';
 import {
   diffEditorInput,
   revisionInput,
+  stagedInput,
+  unstagedInput,
   singleFileInput,
   twoFilesInput,
   type TitledInput,
@@ -73,9 +75,12 @@ export function activate(context: vscode.ExtensionContext): void {
     command('triples.viewOntologyChanges', (target: CommandTarget) => {
       const input =
         target && !(target instanceof vscode.Uri)
-          ? revisionInput(target.resourceUri, 'HEAD', 'HEAD')
+          ? unstagedInput(target.resourceUri)
           : activeDiffInput();
       show(input);
+    }),
+    command('triples.viewStagedOntologyChanges', (target: CommandTarget) => {
+      show(stagedInput(ontologyTarget(target)));
     }),
     vscode.window.registerCustomEditorProvider(
       CUSTOM_EDITOR_VIEW_TYPE,

@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.5.0
+
+- Source Control: "View Ontology Changes" on a file under Changes compares the staged file with the working copy, and the new "View Staged Ontology Changes" under Staged Changes compares HEAD with the staged file, the same as Git's own diffs.
+- Comparing with a branch or commit after comparing with HEAD now opens a new panel instead of showing the old comparison.
+
 ## 0.4.0
 
 - "Show only changes" now also filters the hierarchy view: it keeps changed classes and properties and the path from each one up to its root.

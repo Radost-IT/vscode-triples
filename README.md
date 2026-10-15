@@ -63,7 +63,7 @@ You can also right-click a file and choose **Open With... > Triples Visualizer**
 - **Triples: Compare Ontology with HEAD** shows the uncommitted changes of the current file.
 - **Triples: Compare Ontology with Branch, Tag or Commit...** lets you pick any Git revision.
 - **Triples: Compare Two Ontologies** compares two files. Select two files in the Explorer, or pick them in a dialog.
-- **Triples: View Ontology Changes** is in the Source Control view on a changed file, and in the title bar of any diff editor. This includes pull request diffs from the GitHub Pull Requests extension, so you can review the PR base against the head.
+- **Triples: View Ontology Changes** is in the Source Control view on a changed file, and in the title bar of any diff editor. In the Source Control view it matches Git: under **Changes** it compares the staged file with the working copy, and under **Staged Changes** (**View Staged Ontology Changes**) it compares HEAD with the staged file. This includes pull request diffs from the GitHub Pull Requests extension, so you can review the PR base against the head.
 
 The changes panel lists added, removed and modified classes, properties and individuals, each with its added and removed statements underneath. Click a name to jump to the node, or the arrow to fold its statements. In the filters, **Show only changes** hides everything else except a ring of unchanged neighbors in the graph, and the path to each changed class or property in the hierarchy.
 

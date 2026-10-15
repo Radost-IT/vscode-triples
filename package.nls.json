@@ -5,5 +5,6 @@
   "command.compareWithRevision": "Compare Ontology with Branch, Tag or Commit...",
   "command.compareTwoFiles": "Compare Two Ontologies",
   "command.viewOntologyChanges": "View Ontology Changes",
+  "command.viewStagedOntologyChanges": "View Staged Ontology Changes",
   "customEditor.displayName": "Triples Visualizer"
 }

@@ -67,5 +67,5 @@ export async function showAtRef(
 
 function isMissingAtRef(error: unknown): boolean {
   const stderr = (error as { stderr?: unknown }).stderr;
-  return typeof stderr === 'string' && /does not exist in|exists on disk, but not in/.test(stderr);
+  return typeof stderr === 'string' && /does not exist|exists on disk, but not in/.test(stderr);
 }
