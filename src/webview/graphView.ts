@@ -141,6 +141,7 @@ function render(cy: Core, graph: ProjectedGraph, settings: GraphRenderSettings):
     placeFromPrevious(cy, previous);
     cy.viewport(viewport);
   } else {
+    cy.resize();
     runLayout(cy, settings.layout);
   }
   cy.batch(() => placeEdgeLabels(cy.edges(':simple')));

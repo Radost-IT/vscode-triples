@@ -395,6 +395,12 @@ function drawGraph(reuse: boolean): void {
   if (viewportToRestore && projected.nodes.length > 0 && !isGraphHeldBack()) {
     graph.setViewport(viewportToRestore);
     viewportToRestore = null;
+  } else if (!reuse) {
+    // The panel may still be growing to its final size when the layout first fits the graph.
+    requestAnimationFrame(() => {
+      graph.resize();
+      graph.fit();
+    });
   }
 }
 

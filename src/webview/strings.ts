@@ -128,7 +128,7 @@ export const edgeLegend = {
   subClassOf: t('Subclass of (hollow arrow)'),
   property: t('Property or relation'),
   type: t('Instance of (dotted)'),
-  restriction: t('Restriction or shape constraint (dashed)'),
+  restriction: t('Restriction (dashed)'),
 } as const;
 
 export const filterableKinds: readonly EntityKind[] = [

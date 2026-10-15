@@ -19,6 +19,8 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
   const borderWidth = palette.highContrast ? 2 : 1.8;
   // A soft halo in the kind color lifts nodes off the canvas; high contrast themes skip it.
   const haloOpacity = palette.highContrast ? 0 : 0.1;
+  // Theme foregrounds are often light gray, which fades on the tinted node fill.
+  const labelColor = palette.light ? palette.foreground : '#ffffff';
   const kindRules = (Object.keys(KIND_LOOK) as NodeKind[]).map((kind) => ({
     selector: `node.kind-${kind}`,
     style: {
@@ -54,7 +56,7 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
         'border-width': borderWidth,
         'underlay-opacity': haloOpacity,
         'underlay-padding': 5,
-        color: palette.foreground,
+        color: labelColor,
         'font-family': palette.fontFamily,
         'font-size': 13,
         'font-weight': 500,
@@ -80,7 +82,7 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
         'target-arrow-shape': 'triangle',
         'arrow-scale': 0.9,
         label: 'data(label)',
-        color: palette.muted,
+        color: labelColor,
         'font-family': palette.fontFamily,
         'font-size': 10,
         'text-rotation': 'autorotate',
