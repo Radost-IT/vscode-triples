@@ -2,6 +2,28 @@
 
 **See your ontology.** Triples turns Turtle, OWL and other RDF files into a clear, interactive graph inside VS Code, and shows what changed between two versions.
 
+![Graph view of a coffee shop ontology in the dark theme](docs/images/graph-dark.png)
+
+## Screenshots
+
+**Semantic diff.** Compare a branch with `main`: added classes are green, removed are red and dashed, modified are amber. The summary panel counts changes and links to each one.
+
+![Semantic diff between two versions of the ontology](docs/images/diff-dark.png)
+
+**Focus on a node.** Select a node to highlight its neighbors and read its IRI, annotations, changes and relations in the details panel.
+
+![Selected node in a diff, light theme](docs/images/diff-light.png)
+
+**Hierarchy as a tree diagram.** Classes laid out by `rdfs:subClassOf`, left to right. Classes with several parents keep all their links.
+
+![Class hierarchy as a tree diagram](docs/images/hierarchy-dark.png)
+
+**Light theme.** Colors follow your VS Code theme, including high contrast.
+
+![Graph view in the light theme with Latte selected](docs/images/graph-light.png)
+
+The example files are in [examples/](examples/).
+
 ## Features
 
 - **Graph view**: classes, properties and individuals as nodes with labeled arrows. Zoom, pan, fit to screen, force or layered layout.
@@ -60,6 +82,13 @@ npm run test:vscode  # integration tests in a downloaded VS Code
 ```
 
 Press **F5** in VS Code to start the Extension Development Host.
+
+To refresh the README screenshots, build first, then run the script. It opens the webview in headless Chrome with VS Code theme colors and renders the files in `examples/` to `docs/images/`. Set `CHROME` if Chrome is not in the default location.
+
+```
+npm run build
+npm run screenshots
+```
 
 Source layout:
 

@@ -165,7 +165,8 @@
     "pretest:vscode": "npm run build && node scripts/build-tests.mjs",
     "test:vscode": "node out/test/integration/runTest.js",
     "vscode:prepublish": "npm run build:production",
-    "package": "vsce package"
+    "package": "vsce package",
+    "screenshots": "node scripts/screenshots.mjs"
   },
   "dependencies": {
     "cytoscape": "^3.34.3",

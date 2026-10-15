@@ -13,3 +13,6 @@ First release.
 - Summary panel with added, removed and modified counts and a list of changes.
 - Export as SVG or PNG.
 - Live refresh while editing, and parse errors with a "Go to line" link.
+- Visual refresh: soft halos around nodes, bolder labels, a dot grid behind the graph, rounded panels, and line samples for each edge style in the legend.
+- The packaged extension now includes the webview stylesheet.
+- README screenshots and example ontologies in `examples/`.

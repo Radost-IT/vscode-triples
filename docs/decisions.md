@@ -67,3 +67,7 @@ Webview strings are in `src/webview/strings.ts`, extension strings use `vscode.l
 ## Panel state
 
 Each panel keeps context when hidden (`retainContextWhenHidden`), so large graphs do not need a new layout when the user switches tabs. The Graph/Hierarchy choice is stored per file in workspace state. Panels are not restored after a window reload.
+
+## Screenshots outside VS Code
+
+`scripts/screenshots.mjs` serves `dist/` and `media/` locally and loads the webview in headless Chrome. The page sets the VS Code Dark Modern or Light Modern theme variables and stubs `acquireVsCodeApi`. This keeps screenshots reproducible without driving a real VS Code window. The script is a dev tool only and is not packaged.

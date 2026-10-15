@@ -1,0 +1,185 @@
+@prefix : <http://example.org/coffee#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<http://example.org/coffee> a owl:Ontology ;
+    rdfs:label "Coffee shop ontology"@en ;
+    rdfs:comment "Drinks, beans and the people who make them. Used for the Triples screenshots."@en ;
+    owl:versionInfo "1.0" .
+
+:Product a owl:Class ;
+    rdfs:label "Product"@en ;
+    rdfs:comment "Anything the shop sells."@en .
+
+:Drink a owl:Class ;
+    rdfs:subClassOf :Product ;
+    rdfs:label "Drink"@en .
+
+:Food a owl:Class ;
+    rdfs:subClassOf :Product ;
+    rdfs:label "Food"@en .
+
+:Pastry a owl:Class ;
+    rdfs:subClassOf :Food ;
+    rdfs:label "Pastry"@en .
+
+:Sandwich a owl:Class ;
+    rdfs:subClassOf :Food ;
+    rdfs:label "Sandwich"@en .
+
+:CoffeeDrink a owl:Class ;
+    rdfs:subClassOf :Drink ;
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty :madeWith ; owl:someValuesFrom :CoffeeBean ] ;
+    rdfs:label "Coffee drink"@en .
+
+:Tea a owl:Class ;
+    rdfs:subClassOf :Drink ;
+    rdfs:label "Tea"@en .
+
+:Espresso a owl:Class ;
+    rdfs:subClassOf :CoffeeDrink ;
+    rdfs:label "Espresso"@en ;
+    rdfs:comment "A small, strong coffee brewed by forcing hot water through fine grounds."@en .
+
+:MilkDrink a owl:Class ;
+    rdfs:subClassOf :Drink ;
+    rdfs:subClassOf [ a owl:Restriction ; owl:onProperty :contains ; owl:someValuesFrom :Milk ] ;
+    rdfs:label "Milk drink"@en .
+
+:Latte a owl:Class ;
+    rdfs:subClassOf :CoffeeDrink, :MilkDrink ;
+    rdfs:label "Latte"@en .
+
+:Cappuccino a owl:Class ;
+    rdfs:subClassOf :CoffeeDrink, :MilkDrink ;
+    rdfs:label "Cappuccino"@en .
+
+:FlatWhite a owl:Class ;
+    rdfs:subClassOf :CoffeeDrink, :MilkDrink ;
+    rdfs:label "Flat white"@en .
+
+:Americano a owl:Class ;
+    rdfs:subClassOf :CoffeeDrink ;
+    rdfs:label "Americano"@en .
+
+:ColdBrew a owl:Class ;
+    rdfs:subClassOf :CoffeeDrink ;
+    rdfs:label "Cold brew"@en .
+
+:Ingredient a owl:Class ;
+    rdfs:label "Ingredient"@en .
+
+:Milk a owl:Class ;
+    rdfs:subClassOf :Ingredient ;
+    rdfs:label "Milk"@en .
+
+:OatMilk a owl:Class ;
+    rdfs:subClassOf :Milk ;
+    rdfs:label "Oat milk"@en .
+
+:CowMilk a owl:Class ;
+    rdfs:subClassOf :Milk ;
+    rdfs:label "Cow milk"@en ;
+    owl:disjointWith :OatMilk .
+
+:CoffeeBean a owl:Class ;
+    rdfs:subClassOf :Ingredient ;
+    rdfs:label "Coffee bean"@en .
+
+:Arabica a owl:Class ;
+    rdfs:subClassOf :CoffeeBean ;
+    rdfs:label "Arabica"@en .
+
+:Robusta a owl:Class ;
+    rdfs:subClassOf :CoffeeBean ;
+    rdfs:label "Robusta"@en ;
+    owl:disjointWith :Arabica .
+
+:Origin a owl:Class ;
+    rdfs:label "Origin"@en ;
+    rdfs:comment "The country or region where beans are grown."@en .
+
+:Person a owl:Class ;
+    rdfs:label "Person"@en .
+
+:Barista a owl:Class ;
+    rdfs:subClassOf :Person ;
+    rdfs:label "Barista"@en .
+
+:Customer a owl:Class ;
+    rdfs:subClassOf :Person ;
+    rdfs:label "Customer"@en .
+
+:Order a owl:Class ;
+    rdfs:label "Order"@en .
+
+:contains a owl:ObjectProperty ;
+    rdfs:label "contains"@en ;
+    rdfs:domain :Product ;
+    rdfs:range :Ingredient .
+
+:madeWith a owl:ObjectProperty ;
+    rdfs:subPropertyOf :contains ;
+    rdfs:label "made with"@en ;
+    rdfs:domain :CoffeeDrink ;
+    rdfs:range :CoffeeBean .
+
+:grownIn a owl:ObjectProperty ;
+    rdfs:label "grown in"@en ;
+    rdfs:domain :CoffeeBean ;
+    rdfs:range :Origin .
+
+:preparedBy a owl:ObjectProperty ;
+    rdfs:label "prepared by"@en ;
+    rdfs:domain :Order ;
+    rdfs:range :Barista .
+
+:placedBy a owl:ObjectProperty ;
+    rdfs:label "placed by"@en ;
+    rdfs:domain :Order ;
+    rdfs:range :Customer .
+
+:includes a owl:ObjectProperty ;
+    rdfs:label "includes"@en ;
+    rdfs:domain :Order ;
+    rdfs:range :Product .
+
+:price a owl:DatatypeProperty ;
+    rdfs:label "price"@en ;
+    rdfs:domain :Product ;
+    rdfs:range xsd:decimal .
+
+:caffeineMg a owl:DatatypeProperty ;
+    rdfs:label "caffeine (mg)"@en ;
+    rdfs:domain :Drink ;
+    rdfs:range xsd:integer .
+
+:altitude a owl:DatatypeProperty ;
+    rdfs:label "altitude (m)"@en ;
+    rdfs:domain :Origin ;
+    rdfs:range xsd:integer .
+
+:Ethiopia a owl:NamedIndividual, :Origin ;
+    rdfs:label "Ethiopia"@en ;
+    :altitude 2000 .
+
+:Colombia a owl:NamedIndividual, :Origin ;
+    rdfs:label "Colombia"@en ;
+    :altitude 1600 .
+
+:Yirgacheffe a owl:NamedIndividual, :Arabica ;
+    rdfs:label "Yirgacheffe"@en ;
+    :grownIn :Ethiopia .
+
+:Huila a owl:NamedIndividual, :Arabica ;
+    rdfs:label "Huila"@en ;
+    :grownIn :Colombia .
+
+:Maya a owl:NamedIndividual, :Barista ;
+    rdfs:label "Maya"@en .
+
+:Order42 a owl:NamedIndividual, :Order ;
+    rdfs:label "Order #42"@en ;
+    :preparedBy :Maya .
