@@ -28,7 +28,7 @@ The example files are in [examples/](examples/).
 
 - **Graph view**: classes, properties and individuals as nodes with labeled arrows. Zoom, pan, fit to screen, force or layered layout.
 - **Hierarchy view**: class and property trees by `rdfs:subClassOf` and `rdfs:subPropertyOf`, as an outline or a tree diagram. Multiple parents are marked. Selection stays in sync with the graph view.
-- **Readable by default**: labels from `rdfs:label` in your VS Code language, collapsed prefixes (`foaf:Person`), distinct shapes and colors per kind, and a legend. `owl:Thing`, annotation links and data values are hidden until you turn them on.
+- **Readable by default**: labels from `rdfs:label` in your VS Code language, collapsed prefixes (`foaf:Person`), the compact name next to labels that several nodes share (`Person (foaf:Person)`), distinct shapes and colors per kind, and a legend. `owl:Thing`, annotation links and data values are hidden until you turn them on.
 - **Details panel**: full IRI, annotations, data values and relations of the selected node.
 - **Search and focus**: find any node by label or IRI. Double-click a node to focus on its neighborhood.
 - **Filters**: by node kind, namespace and relation type.

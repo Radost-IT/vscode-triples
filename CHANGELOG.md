@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.9.0
+
+- When several nodes share a label, the graph and the hierarchy add the compact name, such as `Person (foaf:Person)`, so they can be told apart.
+
 ## 0.8.0
 
 - The graph keeps its zoom and pan after a window reload.

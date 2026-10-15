@@ -9,6 +9,17 @@ const ZOO = 'http://example.org/zoo#';
 const OWL_THING = 'http://www.w3.org/2002/07/owl#Thing';
 
 describe('projectGraph', () => {
+  it('adds the compact name to labels that several entities share', async () => {
+    const model = await modelOfFixture('same-label.ttl');
+    const labels = projectGraph(model, DEFAULT_VIEW_OPTIONS).nodes.map((node) => node.label);
+    expect(labels).toEqual(
+      expect.arrayContaining(['Person (:Person)', 'Person (foaf:Person)', 'Employee']),
+    );
+    expect(buildHierarchy(model, 'classes').nodes['http://xmlns.com/foaf/0.1/Person']?.label).toBe(
+      'Person (foaf:Person)',
+    );
+  });
+
   it('hides owl:Thing by default and shows it on request', async () => {
     const model = await modelOfFixture('pizza.ttl');
     const ids = (showOwlThing: boolean) =>

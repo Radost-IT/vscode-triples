@@ -2,6 +2,7 @@ import type { ChangeStatus } from '../diff/diff';
 import { PROPERTY_KINDS } from '../model/kinds';
 import type { Edge, EdgeKind, Entity, EntityKind, OntologyModel } from '../model/types';
 import { owl } from '../vocab';
+import { distinctLabels } from './labels';
 
 export interface ViewOptions {
   readonly showOwlThing: boolean;
@@ -70,6 +71,7 @@ export function projectGraph(
   const entityStatus = (id: string): ChangeStatus => diff?.entityStatus[id] ?? 'unchanged';
   const edgeStatus = (id: string): ChangeStatus => diff?.edgeStatus[id] ?? 'unchanged';
   const entities = Object.values(model.entities);
+  const labelOf = distinctLabels(model);
   const candidates = new Set(
     entities.filter((entity) => isCandidate(entity, options)).map((entity) => entity.id),
   );
@@ -94,7 +96,7 @@ export function projectGraph(
       id: entity.id,
       entityId: entity.id,
       kind: entity.kind,
-      label: entity.label,
+      label: labelOf(entity),
       status: entityStatus(entity.id),
       context: false,
     }));

@@ -1,6 +1,7 @@
 import { PROPERTY_KINDS } from '../model/kinds';
 import type { Entity, OntologyModel } from '../model/types';
 import { owl } from '../vocab';
+import { distinctLabels } from './labels';
 
 export type HierarchyTab = 'classes' | 'properties';
 
@@ -44,11 +45,12 @@ export function buildHierarchy(model: OntologyModel, tab: HierarchyTab): Hierarc
   }
 
   const byLabel = (a: string, b: string) => compareLabels(model.entities[a], model.entities[b]);
+  const labelOf = distinctLabels(model);
   const nodes: Record<string, HierarchyNode> = {};
   for (const entity of members) {
     nodes[entity.id] = {
       id: entity.id,
-      label: entity.label,
+      label: labelOf(entity),
       children: [...(children.get(entity.id) ?? [])].sort(byLabel),
       parents: [...(parents.get(entity.id) ?? [])].sort(byLabel),
       instanceCount: instances.get(entity.id) ?? 0,
