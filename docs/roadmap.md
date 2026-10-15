@@ -4,9 +4,8 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 ## Release blockers
 
-1. **Performance check.** Add a generated 5,000-node fixture and a test that measures parse plus model build time. Record the first-render time in the Extension Development Host. Target: under 2 seconds.
-2. **Huge-file guard.** Warn before rendering above about 20,000 nodes and offer to start with the hierarchy view or a filtered graph.
-3. **Publishing.** Needs the maintainer: create the Marketplace publisher and Open VSX namespace (see Deploy in the README), then publish 0.1.0 to both.
+1. **Huge-file guard.** Warn before rendering above about 20,000 nodes and offer to start with the hierarchy view or a filtered graph.
+2. **Publishing.** Needs the maintainer: create the Marketplace publisher and Open VSX namespace (see Deploy in the README), then publish 0.1.0 to both.
 
 ## M5 follow-ups (diff)
 
@@ -27,7 +26,6 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 - OWL Functional Syntax (`.ofn`, `.owx`) and Manchester Syntax (`.omn`) parsers.
 - Optional minimap.
 - More integration tests: custom editor, Git compare commands, refresh on save.
-- A test that the force layout gives the same positions for the same file.
 
 ## Known visual rough edges
 

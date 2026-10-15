@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Tests: a 5,000-node ontology must parse, project and lay out in under 2 seconds, and the same file must always give the same layout.
+
 ## 0.1.1
 
 - Continuous integration: lint, format check, unit tests, integration tests and packaging run on Linux, Windows and macOS for every push and pull request.

@@ -71,3 +71,7 @@ Each panel keeps context when hidden (`retainContextWhenHidden`), so large graph
 ## Screenshots outside VS Code
 
 `scripts/screenshots.mjs` serves `dist/` and `media/` locally and loads the webview in headless Chrome. The page sets the VS Code Dark Modern or Light Modern theme variables and stubs `acquireVsCodeApi`. This keeps screenshots reproducible without driving a real VS Code window. The script is a dev tool only and is not packaged.
+
+## Performance budget
+
+`test/unit/performance.test.ts` generates a 5,000-class ontology, then parses it, builds the model, projects the graph and runs the force layout in headless Cytoscape. The test fails above 2 seconds. Canvas drawing is not part of the measurement, because it needs a browser; it is fast next to the layout.
