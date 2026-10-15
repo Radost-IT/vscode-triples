@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.10.0
+
+- Translations: the webview now reads the same `l10n` bundle as the extension, so adding `l10n/bundle.l10n.<locale>.json` translates the whole UI. See "Development" in the README.
+
 ## 0.9.0
 
 - When several nodes share a label, the graph and the hierarchy add the compact name, such as `Person (foaf:Person)`, so they can be told apart.

@@ -83,3 +83,7 @@ Above 20,000 visible nodes the graph view does not draw anything until the user 
 ## Pull request file tree
 
 The GitHub Pull Requests extension has no public API for the base and head of a changed file. "View Ontology Changes" on a file in its tree runs that extension's own `pr.openDiffView` command with the tree item, then reads both sides of the diff editor it opens, the same way as the diff editor title button. If the extension changes that command, only this menu entry breaks; the title button keeps working. Its tree items carry no file extension context key, so the entry shows on every changed file and says so when the file is not an ontology.
+
+## Translations
+
+Extension strings use `vscode.l10n.t`. The webview cannot call it, so the extension embeds `vscode.l10n.bundle` in the page as JSON, and `src/webview/strings.ts` looks each English message up in it with the same `{0}` placeholders. One bundle per language therefore covers both sides. No translations ship yet; English is the fallback for any missing message.

@@ -170,9 +170,15 @@ function renderHtml(webview: vscode.Webview, extensionUri: vscode.Uri): string {
 <link rel="stylesheet" href="${resource('media', 'webview.css')}">
 </head>
 <body data-worker-uri="${resource('dist', 'webview', 'worker.js')}">
+<script type="application/json" id="l10n">${webviewBundle()}</script>
 <script nonce="${nonce}" src="${resource('dist', 'webview', 'main.js')}"></script>
 </body>
 </html>`;
+}
+
+/** The webview has no `vscode.l10n`, so it gets the loaded translations as data. `<` is escaped so the JSON cannot close the tag. */
+function webviewBundle(): string {
+  return JSON.stringify(vscode.l10n.bundle ?? {}).replace(/</g, '\\u003c');
 }
 
 function createNonce(): string {

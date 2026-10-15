@@ -2,7 +2,7 @@
   "name": "triples",
   "displayName": "Triples",
   "description": "%description%",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "publisher": "RadostIT",
   "license": "MIT",
   "repository": {
@@ -32,6 +32,7 @@
     "graph",
     "diff"
   ],
+  "l10n": "./l10n",
   "main": "./dist/extension.js",
   "activationEvents": [],
   "contributes": {

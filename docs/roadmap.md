@@ -6,10 +6,6 @@ What is left before a 1.0 release, grouped by milestone from `AGENTS.md`. M1 to 
 
 1. **Publishing.** Needs the maintainer: create the Marketplace publisher and Open VSX namespace (see Deploy in the README), then publish to both.
 
-## M6 (PR workflow and polish)
-
-- Translation bundles for webview strings (`src/webview/strings.ts` is ready for them).
-
 ## Later
 
 - OWL Functional Syntax (`.ofn`, `.owx`) and Manchester Syntax (`.omn`) parsers.

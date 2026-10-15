@@ -95,6 +95,8 @@ npm run build
 npm run screenshots
 ```
 
+To add a language, create `l10n/bundle.l10n.<locale>.json` (for example `bundle.l10n.de.json`) that maps each English message in `src/extension/strings.ts` and `src/webview/strings.ts` to its translation, keeping placeholders such as `{0}`. Command titles go in `package.nls.<locale>.json`. Messages without a translation stay in English.
+
 Source layout:
 
 - `src/core`: parsing, model, diff and view logic. No VS Code or DOM APIs.
