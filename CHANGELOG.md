@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Edge labels sit beside their line instead of on it, so the line and arrow no longer run through the text. SVG export matches.
+- Several self loops on one node fan out around it instead of stacking, so each label is readable.
 
 ## 1.0.3
 

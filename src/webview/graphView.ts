@@ -12,6 +12,7 @@ import { edgeLabelOffset } from './edgeLabel';
 import { graphStylesheet, nodeSize } from './graphStyle';
 import { forceLayout, layeredLayout, withSeededRandom, type LayoutName } from './layout';
 import type { MinimapScene } from './minimapProjection';
+import { spreadSelfLoops } from './selfLoops';
 import { exportSvg } from './svgExport';
 import { STATUS_MARK, readPalette } from './theme';
 
@@ -116,7 +117,7 @@ function createCore(container: HTMLElement, events: GraphViewEvents, large: bool
   });
   cy.on('dbltap', 'node', (event) => events.onFocus((event.target as NodeSingular).id()));
   cy.on('drag', 'node', (event) =>
-    placeEdgeLabels((event.target as NodeSingular).connectedEdges()),
+    placeEdgeLabels((event.target as NodeSingular).connectedEdges(':simple')),
   );
   cy.on('viewport', () => events.onViewportChange({ zoom: cy.zoom(), pan: { ...cy.pan() } }));
   cy.on('render', () => events.onRender());
@@ -142,7 +143,7 @@ function render(cy: Core, graph: ProjectedGraph, settings: GraphRenderSettings):
   } else {
     runLayout(cy, settings.layout);
   }
-  cy.batch(() => placeEdgeLabels(cy.edges()));
+  cy.batch(() => placeEdgeLabels(cy.edges(':simple')));
   if (selected && cy.getElementById(selected).nonempty()) select(cy, selected, false);
 }
 
@@ -166,23 +167,36 @@ function toElements(graph: ProjectedGraph, diff: boolean): ElementDefinition[] {
       ].join(' '),
     };
   });
-  const edges = graph.edges.map((edge) => ({
-    group: 'edges' as const,
-    data: {
-      id: edge.id,
-      source: edge.source,
-      target: edge.target,
-      label:
-        edge.kind === 'subClassOf' || edge.kind === 'subPropertyOf'
-          ? ''
-          : `${STATUS_MARK[edge.status]}${edge.label}`,
-    },
-    classes: [`kind-${edge.kind}`, `status-${edge.status}`, diff ? 'diff' : ''].join(' '),
-  }));
+  const loops = spreadSelfLoops(graph.edges);
+  const edges = graph.edges.map((edge) => {
+    const loop = loops.get(edge.id);
+    return {
+      group: 'edges' as const,
+      data: {
+        id: edge.id,
+        source: edge.source,
+        target: edge.target,
+        label:
+          edge.kind === 'subClassOf' || edge.kind === 'subPropertyOf'
+            ? ''
+            : `${STATUS_MARK[edge.status]}${edge.label}`,
+        ...(loop && {
+          loopDirection: loop.direction,
+          loopSweep: loop.sweep,
+          labelDx: loop.labelOffset.x,
+          labelDy: loop.labelOffset.y,
+        }),
+      },
+      classes: [`kind-${edge.kind}`, `status-${edge.status}`, diff ? 'diff' : ''].join(' '),
+    };
+  });
   return [...nodes, ...edges];
 }
 
-/** Cytoscape keeps text margins in model space, so they follow the edge only if recomputed when nodes move. */
+/**
+ * Cytoscape keeps text margins in model space, so they follow the edge only if recomputed when
+ * nodes move. Self loops keep the fixed offset they got from spreadSelfLoops.
+ */
 function placeEdgeLabels(edges: EdgeCollection): void {
   edges.forEach((edge) => {
     const offset = edgeLabelOffset(edge.source().position(), edge.target().position());

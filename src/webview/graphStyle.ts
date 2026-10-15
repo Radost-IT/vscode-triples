@@ -93,6 +93,14 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
       },
     },
     {
+      selector: 'edge:loop',
+      style: {
+        'loop-direction': (edge: EdgeSingular) => `${edge.data('loopDirection') as number}deg`,
+        'loop-sweep': (edge: EdgeSingular) => `${edge.data('loopSweep') as number}deg`,
+        'control-point-step-size': 60,
+      },
+    },
+    {
       selector: 'edge.kind-subClassOf, edge.kind-subPropertyOf',
       style: { width: 1, 'target-arrow-fill': 'hollow', 'arrow-scale': 1.3 },
     },
