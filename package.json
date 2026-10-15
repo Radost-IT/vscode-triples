@@ -2,7 +2,7 @@
   "name": "triples",
   "displayName": "Triples",
   "description": "%description%",
-  "version": "0.16.0",
+  "version": "0.17.0",
   "publisher": "RadostIT",
   "license": "MIT",
   "repository": {
@@ -235,6 +235,7 @@
     "eslint": "^10.12.0",
     "globals": "^17.13.0",
     "mocha": "^12.0.3",
+    "ovsx": "^1.2.0",
     "prettier": "^3.9.10",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.71.2",

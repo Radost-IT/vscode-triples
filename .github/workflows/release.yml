@@ -1,0 +1,37 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Check that the tag matches package.json
+        run: test "v$(node -p "require('./package.json').version")" = "$GITHUB_REF_NAME"
+      - run: npm run lint
+      - run: npm test
+      - run: xvfb-run -a npm run test:vscode
+      - run: npm run package
+      - name: Publish to the Visual Studio Marketplace
+        run: npx vsce publish --packagePath triples-*.vsix
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      - name: Publish to Open VSX
+        run: npx ovsx publish triples-*.vsix
+        env:
+          OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      - name: Attach the package to a GitHub release
+        run: gh release create "$GITHUB_REF_NAME" triples-*.vsix --title "$GITHUB_REF_NAME" --notes "See CHANGELOG.md."
+        env:
+          GH_TOKEN: ${{ github.token }}

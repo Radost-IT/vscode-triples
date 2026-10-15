@@ -146,7 +146,18 @@ Publishing needs accounts that only a maintainer can create:
       ovsx publish triples-<version>.vsix -p <token>
       ```
 
-Bump `version` in `package.json` and add a `CHANGELOG.md` entry before each release.
+After the first manual release, the `Release` workflow publishes to both stores:
+
+1. In the GitHub repository, open Settings > Secrets and variables > Actions and add `VSCE_PAT` (the Azure DevOps token) and `OVSX_PAT` (the Open VSX token).
+2. Bump `version` in `package.json` and add a `CHANGELOG.md` entry. Commit and push.
+3. Tag the commit and push the tag:
+
+   ```sh
+   git tag v<version>
+   git push origin v<version>
+   ```
+
+The workflow checks that the tag matches `package.json`, runs lint and all tests, publishes the `.vsix` to both stores and attaches it to a GitHub release.
 
 ## License
 

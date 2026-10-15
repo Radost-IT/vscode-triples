@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.0
+
+- A `Release` workflow publishes to the Marketplace and Open VSX when a `v<version>` tag is pushed, and attaches the `.vsix` to a GitHub release.
+
 ## 0.16.0
 
 - Compare with HEAD on a new file that Git does not track yet now shows every entity as added, instead of failing with "Git relative path not found".

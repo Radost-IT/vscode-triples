@@ -26,17 +26,18 @@ Bundle sizes:
 
 ## Development only
 
-| Package                                                                                           | License    | Why                                                 |
-| ------------------------------------------------------------------------------------------------- | ---------- | --------------------------------------------------- |
-| `typescript` 6.0.3                                                                                | Apache-2.0 | Type checking (typescript-eslint supports < 6.1)    |
-| `esbuild`                                                                                         | MIT        | Bundling                                            |
-| `vitest`, `vite`                                                                                  | MIT        | Unit tests                                          |
-| `eslint`, `@eslint/js`, `typescript-eslint`, `globals`                                            | MIT        | Linting                                             |
-| `prettier`                                                                                        | MIT        | Formatting                                          |
-| `@vscode/test-electron`                                                                           | MIT        | Runs integration tests in a real VS Code            |
-| `mocha`                                                                                           | MIT        | Test runner inside the extension host               |
-| `@vscode/vsce`                                                                                    | MIT        | Builds the `.vsix` and publishes to the Marketplace |
-| `@types/vscode`, `@types/node`, `@types/mocha`, `@types/n3`, `@types/cytoscape-*`, `@rdfjs/types` | MIT        | Type definitions                                    |
+| Package                                                                                           | License    | Why                                                                                                        |
+| ------------------------------------------------------------------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| `typescript` 6.0.3                                                                                | Apache-2.0 | Type checking (typescript-eslint supports < 6.1)                                                           |
+| `esbuild`                                                                                         | MIT        | Bundling                                                                                                   |
+| `vitest`, `vite`                                                                                  | MIT        | Unit tests                                                                                                 |
+| `eslint`, `@eslint/js`, `typescript-eslint`, `globals`                                            | MIT        | Linting                                                                                                    |
+| `prettier`                                                                                        | MIT        | Formatting                                                                                                 |
+| `@vscode/test-electron`                                                                           | MIT        | Runs integration tests in a real VS Code                                                                   |
+| `mocha`                                                                                           | MIT        | Test runner inside the extension host                                                                      |
+| `@vscode/vsce`                                                                                    | MIT        | Builds the `.vsix` and publishes to the Marketplace                                                        |
+| `ovsx` 1.2.0                                                                                      | EPL-2.0    | Publishes to Open VSX from the release workflow. A build tool only; nothing from it ships in the extension |
+| `@types/vscode`, `@types/node`, `@types/mocha`, `@types/n3`, `@types/cytoscape-*`, `@rdfjs/types` | MIT        | Type definitions                                                                                           |
 
 ## Considered and rejected
 
