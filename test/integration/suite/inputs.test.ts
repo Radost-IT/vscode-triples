@@ -85,8 +85,13 @@ suite('Refresh', () => {
     sendReady();
     await waitFor(() => received.length === 1);
 
-    await vscode.workspace.fs.writeFile(scratchFile(), new TextEncoder().encode(TURTLE('three')));
-    await waitFor(() => sourceText(received.at(-1)?.request)?.includes('"three"') === true);
+    const refreshed = () => sourceText(received.at(-1)?.request)?.includes('"three"') === true;
+    // On macOS the file watcher needs a moment to start, so a single early write can go unseen.
+    for (let attempt = 0; attempt < 5 && !refreshed(); attempt++) {
+      await vscode.workspace.fs.writeFile(scratchFile(), new TextEncoder().encode(TURTLE('three')));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+    }
+    await waitFor(refreshed);
   });
 });
 
