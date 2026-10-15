@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.3
+
+- CI tags each new `package.json` version on `main` and starts the release.
+
 ## 1.0.2
 
 - Installs on VS Code 1.101 and newer. 1.0.0 required 1.140, which blocked older editors.
