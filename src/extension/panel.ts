@@ -111,7 +111,7 @@ async function handleMessage(
 }
 
 function sourceUris(request: AnalysisRequest): string[] {
-  const sources = request.kind === 'single' ? [request.source] : [request.before, request.after];
+  const sources = request.kind === 'single' ? request.sources : [request.before, request.after];
   return sources.flatMap((source) => (source ? [source.uri] : []));
 }
 

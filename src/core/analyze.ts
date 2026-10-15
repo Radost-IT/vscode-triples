@@ -1,6 +1,7 @@
 import { diffGraphs, type DiffResult } from './diff/diff';
 import { buildModel } from './model/build';
 import type { OntologyModel } from './model/types';
+import { bnode, type Prefixes } from './rdf';
 import { ParseError, UnsupportedFormatError, parseRdf, type ParsedGraph } from './parse';
 
 export interface SourceDocument {
@@ -15,7 +16,12 @@ export interface SourceDocument {
 }
 
 export type AnalysisRequest =
-  | { readonly kind: 'single'; readonly language: string; readonly source: SourceDocument }
+  | {
+      readonly kind: 'single';
+      readonly language: string;
+      /** Drawn together as one graph; usually one file. */
+      readonly sources: readonly SourceDocument[];
+    }
   | {
       readonly kind: 'diff';
       readonly language: string;
@@ -53,9 +59,11 @@ async function parseSource(source: SourceDocument): Promise<Parsed> {
 export async function analyze(request: AnalysisRequest): Promise<AnalysisResult> {
   const options = { language: request.language };
   if (request.kind === 'single') {
-    const parsed = await parseSource(request.source);
-    if ('problem' in parsed) return { kind: 'problems', problems: [parsed.problem] };
-    return { kind: 'single', model: buildModel(parsed.graph, options) };
+    const parsed = await Promise.all(request.sources.map(parseSource));
+    const problems = parsed.flatMap((result) => ('problem' in result ? [result.problem] : []));
+    if (problems.length > 0) return { kind: 'problems', problems };
+    const graphs = parsed.flatMap((result) => ('graph' in result ? [result.graph] : []));
+    return { kind: 'single', model: buildModel(mergeGraphs(graphs), options) };
   }
   const [before, after] = await Promise.all(
     [request.before, request.after].map((source) => (source ? parseSource(source) : null)),
@@ -67,4 +75,24 @@ export async function analyze(request: AnalysisRequest): Promise<AnalysisResult>
   const graphOf = (parsed: Parsed | null | undefined) =>
     parsed && 'graph' in parsed ? parsed.graph : null;
   return { kind: 'diff', diff: diffGraphs(graphOf(before), graphOf(after), options) };
+}
+
+/**
+ * Blank node labels are local to their file, so two files can both use `_:b0` for different
+ * things. Each file's blank nodes get a prefix before the triples are joined.
+ */
+function mergeGraphs(graphs: readonly ParsedGraph[]): ParsedGraph {
+  const [only] = graphs;
+  if (graphs.length === 1 && only) return only;
+  const prefixes: Prefixes = {};
+  const triples = graphs.flatMap((graph, index) => {
+    Object.assign(prefixes, graph.prefixes);
+    const local = (value: string) => bnode(`f${index}_${value}`);
+    return graph.triples.map(({ subject, predicate, object }) => ({
+      subject: subject.kind === 'bnode' ? local(subject.value) : subject,
+      predicate,
+      object: object.kind === 'bnode' ? local(object.value) : object,
+    }));
+  });
+  return { triples, prefixes };
 }

@@ -12,12 +12,20 @@ const source = (name: string, title = name): SourceDocument => ({
 
 describe('analyze', () => {
   it('builds a model for one file', async () => {
-    const result = await analyze({ kind: 'single', language: 'en', source: source('pizza.ttl') });
+    const result = await analyze({
+      kind: 'single',
+      language: 'en',
+      sources: [source('pizza.ttl')],
+    });
     expect(result.kind).toBe('single');
   });
 
   it('reports a parse error with its position instead of throwing', async () => {
-    const result = await analyze({ kind: 'single', language: 'en', source: source('broken.ttl') });
+    const result = await analyze({
+      kind: 'single',
+      language: 'en',
+      sources: [source('broken.ttl')],
+    });
     expect(result).toEqual({
       kind: 'problems',
       problems: [
@@ -34,9 +42,39 @@ describe('analyze', () => {
     const result = await analyze({
       kind: 'single',
       language: 'en',
-      source: { ...source('pizza.ttl'), fileName: 'pizza.csv' },
+      sources: [{ ...source('pizza.ttl'), fileName: 'pizza.csv' }],
     });
     expect(result.kind).toBe('problems');
+  });
+
+  it('draws several files as one graph', async () => {
+    const result = await analyze({
+      kind: 'single',
+      language: 'en',
+      sources: [source('pizza.ttl'), source('odrl.ttl')],
+    });
+    if (result.kind !== 'single') throw new Error(`expected a model, got ${result.kind}`);
+    const ids = Object.keys(result.model.entities);
+    expect(ids).toContain('http://example.org/rights#Policy_Lvl1_StandardProduct');
+    expect(ids.some((id) => id.startsWith('http://example.org/pizza#'))).toBe(true);
+  });
+
+  it('keeps blank nodes of different files apart', async () => {
+    const file = (name: string, label: string): SourceDocument => ({
+      text: `@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n_:b0 rdfs:label "${label}" .`,
+      fileName: name,
+      uri: `file:///${name}`,
+      baseIri: `file:///${name}`,
+      title: name,
+    });
+    const result = await analyze({
+      kind: 'single',
+      language: 'en',
+      sources: [file('a.ttl', 'first'), file('b.ttl', 'second')],
+    });
+    if (result.kind !== 'single') throw new Error(`expected a model, got ${result.kind}`);
+    const labels = Object.values(result.model.entities).map((entity) => entity.label);
+    expect(labels).toEqual(expect.arrayContaining(['first', 'second']));
   });
 
   it('treats a missing side of a diff as an empty ontology', async () => {

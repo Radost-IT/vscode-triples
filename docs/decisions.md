@@ -103,3 +103,7 @@ A property shape such as `[ sh:path ex:name ; sh:datatype xsd:string ; sh:minCou
 ## Grouped individuals
 
 Instance data such as ODRL policies can hold hundreds of individuals of a handful of classes. Drawn one by one, they form a cloud where no label is readable. Above 100 visible individuals, the graph draws each class once with a count and merges edges between individuals into one edge per relation, labeled with how many it stands for. An individual typed with several classes joins the first class in the file. A class with one individual is not grouped, because the count would only hide a name. Grouping is on by default because readability comes first; the declutter filters turn it off. Double-click, which normally focuses on a neighborhood, opens and closes a group instead, because a group node has no useful neighborhood of its own until it is opened.
+
+## Several files in one view
+
+Selecting several ontology files in the Explorer and choosing "Open with Triples by Radost IT" draws them as one graph. The triples of all files are put into one graph before the model is built, so an IRI that appears in two files is one node with the facts from both. Blank node labels are only meaningful inside their own file, so each file's labels get a file prefix first; otherwise `_:b0` in one file would merge with `_:b0` in another. Prefixes are combined, and a later file wins when two files bind the same prefix to different namespaces. The view refreshes when any of the files changes. Diffs still compare one file with one file.

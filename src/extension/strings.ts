@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 export const strings = {
   panelTitle: (name: string) => vscode.l10n.t('Triples: {0}', name),
   diffTitle: (before: string, after: string) => vscode.l10n.t('{0} ↔ {1}', before, after),
+  mergedTitle: (first: string, more: number) => vscode.l10n.t('{0} + {1} more', first, more),
   missingSide: vscode.l10n.t('(none)'),
   staged: vscode.l10n.t('Staged'),
   noFile: vscode.l10n.t('Open an ontology file first.'),

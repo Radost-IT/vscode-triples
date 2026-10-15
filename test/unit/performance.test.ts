@@ -17,13 +17,15 @@ describe('performance', () => {
     const result = await analyze({
       kind: 'single',
       language: 'en',
-      source: {
-        text,
-        fileName: 'large.ttl',
-        uri: 'file:///large.ttl',
-        baseIri: 'file:///large.ttl',
-        title: 'large.ttl',
-      },
+      sources: [
+        {
+          text,
+          fileName: 'large.ttl',
+          uri: 'file:///large.ttl',
+          baseIri: 'file:///large.ttl',
+          title: 'large.ttl',
+        },
+      ],
     });
     if (result.kind !== 'single') throw new Error(`Expected a model, got ${result.kind}`);
     const graph = projectGraph(result.model, DEFAULT_VIEW_OPTIONS);

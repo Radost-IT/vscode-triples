@@ -16,7 +16,29 @@ export function singleFileInput(uri: vscode.Uri): TitledInput {
     key: uri.toString(),
     title: strings.panelTitle(baseName(uri)),
     watched: [uri],
-    load: async () => ({ kind: 'single', language: language(), source: await readSource(uri) }),
+    load: async () => ({
+      kind: 'single',
+      language: language(),
+      sources: [await readSource(uri)],
+    }),
+  };
+}
+
+/** Several files drawn together as one graph. */
+export function mergedInput(uris: readonly vscode.Uri[]): TitledInput {
+  const names = uris.map(baseName);
+  return {
+    key: `merge:${uris
+      .map((uri) => uri.toString())
+      .sort()
+      .join('|')}`,
+    title: strings.panelTitle(strings.mergedTitle(names[0] ?? '', names.length - 1)),
+    watched: [...uris],
+    load: async () => ({
+      kind: 'single',
+      language: language(),
+      sources: await Promise.all(uris.map((uri) => readSource(uri))),
+    }),
   };
 }
 

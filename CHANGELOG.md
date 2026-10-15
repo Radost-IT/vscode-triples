@@ -8,6 +8,7 @@
 - The force layout spreads big graphs out further, up to two and a half times the usual spacing, so dense clusters open up.
 - When zoomed out, the busiest nodes (8 or more links, up to 30) keep their label at a readable size. A label that would cover a busier node's label stays small.
 - Above 100 individuals, the graph draws each class once with a count, such as `Constraint ×47`, and merges the links of its individuals into one link per relation, such as `action ×6`. Double-click a class to open its individuals, and again to close them. Searching for an individual opens its class. A filter turns grouping off.
+- Several files in one view: select ontology files in the Explorer and choose "Open with Triples by Radost IT". They are drawn as one graph, and a class used in two files is one node. Parse errors name the file they come from.
 - `examples/odrl-policies.ttl`: a generated ODRL rights policy set with about 200 entities, for trying the large graph features.
 
 ## 1.1.0

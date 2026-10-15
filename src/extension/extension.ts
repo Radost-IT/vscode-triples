@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { RefType, repositoryOf } from './git';
 import {
   diffEditorInput,
+  mergedInput,
   revisionInput,
   stagedInput,
   unstagedInput,
@@ -55,9 +56,13 @@ export function activate(context: vscode.ExtensionContext): void {
 
   context.subscriptions.push(
     log,
-    command('triples.openVisualizer', (target: CommandTarget) => {
-      const uri = ontologyTarget(target);
-      show(singleFileInput(uri));
+    command('triples.openVisualizer', (target: CommandTarget, selection?: vscode.Uri[]) => {
+      if (selection && selection.length > 1) {
+        selection.forEach(requireOntology);
+        show(mergedInput(selection));
+        return;
+      }
+      show(singleFileInput(ontologyTarget(target)));
     }),
     command('triples.compareWithHead', (target: CommandTarget) => {
       const uri = ontologyTarget(target);

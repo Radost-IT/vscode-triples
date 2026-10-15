@@ -50,7 +50,7 @@ async function waitFor(condition: () => boolean): Promise<void> {
 }
 
 function sourceText(request: AnalysisRequest | undefined): string | undefined {
-  return request?.kind === 'single' ? request.source.text : undefined;
+  return request?.kind === 'single' ? request.sources[0]?.text : undefined;
 }
 
 suite('Refresh', () => {

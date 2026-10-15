@@ -617,7 +617,7 @@ function exportView(format: 'svg' | 'png'): void {
       : graph.png();
   const source =
     loaded.request.kind === 'single'
-      ? loaded.request.source
+      ? loaded.request.sources[0]
       : (loaded.request.after ?? loaded.request.before);
   const baseName = (source?.fileName.split(/[\\/]/).pop() ?? 'ontology').replace(/\.[^.]+$/, '');
   vscode.postMessage({
