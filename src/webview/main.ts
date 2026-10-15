@@ -62,6 +62,10 @@ const DEFAULT_STATE: PersistedState = {
   panels: { filters: false, legend: true, details: true, changes: true },
 };
 
+/** Past this many nodes a full drawing makes the editor sluggish, so the user decides first. */
+const HUGE_GRAPH = 20_000;
+const NO_GRAPH: ProjectedGraph = { nodes: [], edges: [], hiddenEntityCount: 0 };
+
 const vscode = acquireVsCodeApi();
 let state: PersistedState = {
   ...DEFAULT_STATE,
@@ -69,10 +73,11 @@ let state: PersistedState = {
 };
 let viewMode: ViewMode = 'graph';
 let loaded: Loaded | null = null;
-let projected: ProjectedGraph = { nodes: [], edges: [], hiddenEntityCount: 0 };
+let projected: ProjectedGraph = NO_GRAPH;
 let nodeEntity = new Map<string, string>();
 let focusNodeId: string | null = null;
 let graphDirty = false;
+let drawHugeGraph = false;
 let latestRequestId = 0;
 
 function saveState(change: Partial<PersistedState>): void {
@@ -315,6 +320,7 @@ function showProblems(problems: readonly SourceProblem[]): void {
 }
 
 function showOverlay(content: Node[]): void {
+  delete overlay.dataset['notice'];
   overlay.replaceChildren(
     h('div', { class: `overlay-card${loaded ? ' over-graph' : ''}` }, ...content),
   );
@@ -352,30 +358,76 @@ function drawGraph(reuse: boolean): void {
     new Set<NodeKind>(projected.nodes.map((node) => node.kind)),
     loaded.diff !== null,
   );
-  drawEmptyNote();
+  drawGraphNotice();
   if (viewMode !== 'graph') {
     graphDirty = true;
     return;
   }
   graphDirty = false;
-  graph.render(projected, { layout: state.layout, diff: loaded.diff !== null, reuse });
+  graph.render(isGraphHeldBack() ? NO_GRAPH : projected, {
+    layout: state.layout,
+    diff: loaded.diff !== null,
+    reuse,
+  });
   graph.select(state.selectedId, false);
 }
 
-function drawEmptyNote(): void {
-  if (!loaded || viewMode !== 'graph' || projected.nodes.length > 0) {
-    if (loaded && overlay.dataset['empty']) {
-      overlay.hidden = true;
-      delete overlay.dataset['empty'];
-    }
+function isGraphHeldBack(): boolean {
+  return projected.nodes.length > HUGE_GRAPH && !drawHugeGraph;
+}
+
+/** Explains an empty or held-back graph. Problem overlays carry no notice and are left alone. */
+function drawGraphNotice(): void {
+  const notice =
+    !loaded || viewMode !== 'graph'
+      ? null
+      : projected.nodes.length === 0
+        ? 'empty'
+        : isGraphHeldBack()
+          ? 'huge'
+          : null;
+  if (!notice) {
+    if (overlay.dataset['notice']) overlay.hidden = true;
+    delete overlay.dataset['notice'];
     return;
   }
-  const filtered = Object.keys(loaded.model.entities).length > 0;
-  showOverlay([
+  showOverlay(notice === 'empty' ? emptyNotice() : hugeNotice());
+  overlay.dataset['notice'] = notice;
+}
+
+function emptyNotice(): Node[] {
+  const filtered = Object.keys(loaded?.model.entities ?? {}).length > 0;
+  return [
     h('h2', {}, strings.emptyTitle),
     h('p', {}, filtered ? strings.emptyFiltered : strings.emptyBody),
-  ]);
-  overlay.dataset['empty'] = 'true';
+  ];
+}
+
+function hugeNotice(): Node[] {
+  return [
+    h('h2', {}, strings.hugeTitle(projected.nodes.length)),
+    h('p', {}, strings.hugeBody),
+    h(
+      'div',
+      { class: 'actions' },
+      h(
+        'button',
+        { class: 'text-button primary', onclick: () => switchView('hierarchy', true) },
+        strings.openHierarchy,
+      ),
+      h(
+        'button',
+        {
+          class: 'text-button',
+          onclick: () => {
+            drawHugeGraph = true;
+            drawGraph(false);
+          },
+        },
+        strings.drawAnyway,
+      ),
+    ),
+  ];
 }
 
 function drawPanels(): void {
@@ -427,6 +479,12 @@ function togglePanel(panel: keyof PersistedState['panels']): void {
 function setSelection(entityId: string | null, center: boolean): void {
   saveState({ selectedId: entityId });
   if (loaded) renderDetails(detailsPanel, entityId, loaded.details);
+  if (center && entityId && viewMode === 'graph' && isGraphHeldBack()) {
+    // The full graph is not drawn, so show the chosen node with its neighborhood instead.
+    focusNodeId = entityId;
+    drawGraph(false);
+    return;
+  }
   if (viewMode === 'graph') graph.select(entityId && graph.has(entityId) ? entityId : null, center);
   else hierarchy.reveal(entityId);
 }
@@ -452,7 +510,7 @@ function switchView(mode: ViewMode, notifyHost: boolean): void {
     hierarchy.show();
     hierarchy.reveal(state.selectedId);
   }
-  drawEmptyNote();
+  drawGraphNotice();
 }
 
 function exportView(format: 'svg' | 'png'): void {

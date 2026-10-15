@@ -425,6 +425,21 @@ input[type='number'] {
   box-shadow: 0 2px 8px var(--vscode-widget-shadow, transparent);
 }
 
+.overlay-card .actions {
+  display: flex;
+  gap: var(--gap);
+  margin-top: 12px;
+}
+
+.text-button.primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+
+.text-button.primary:hover {
+  background: var(--vscode-button-hoverBackground);
+}
+
 .overlay-card pre {
   white-space: pre-wrap;
 }

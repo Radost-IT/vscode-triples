@@ -75,3 +75,7 @@ Each panel keeps context when hidden (`retainContextWhenHidden`), so large graph
 ## Performance budget
 
 `test/unit/performance.test.ts` generates a 5,000-class ontology, then parses it, builds the model, projects the graph and runs the force layout in headless Cytoscape. The test fails above 2 seconds. Canvas drawing is not part of the measurement, because it needs a browser; it is fast next to the layout.
+
+## Huge graphs
+
+Above 20,000 visible nodes the graph view does not draw anything until the user asks. Drawing that many nodes freezes the webview for several seconds and the picture is unreadable anyway. The notice offers the hierarchy view and a "Draw anyway" button, and search still works: picking a result draws only that node's neighborhood. The limit counts nodes after filters, so hiding kinds or namespaces can bring a graph under it.

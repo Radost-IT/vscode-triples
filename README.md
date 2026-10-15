@@ -35,6 +35,7 @@ The example files are in [examples/](examples/).
 - **Semantic diff**: compare two versions of an ontology. Added nodes are green, removed are red and dashed, modified are amber. Reordering, whitespace, prefix changes and syntax changes (Turtle to RDF/XML) are ignored, because Triples compares the data, not the text. Unchanged OWL restrictions stay unchanged, even when their blank nodes get new labels.
 - **Export**: the current view as SVG or PNG.
 - **Live**: the view refreshes while you edit, and keeps zoom, pan and selection.
+- **Large files**: above 20,000 nodes the graph waits for you. Search for a node to see its neighborhood, filter, open the hierarchy, or draw everything anyway.
 - **Clear errors**: parse errors show the line and a "Go to line" link.
 - **Private and offline**: no network access, no telemetry. JSON-LD remote contexts are refused, not fetched.
 

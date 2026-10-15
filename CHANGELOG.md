@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- Large files: above 20,000 nodes the graph view no longer draws everything at once. It offers the hierarchy view or "Draw anyway", and search shows the neighborhood of the chosen node.
+
 ## 0.1.2
 
 - Tests: a 5,000-node ontology must parse, project and lay out in under 2 seconds, and the same file must always give the same layout.

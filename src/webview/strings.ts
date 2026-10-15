@@ -27,6 +27,11 @@ export const strings = {
   emptyTitle: 'Nothing to show',
   emptyBody: 'The file has no triples yet.',
   emptyFiltered: 'Every node is hidden by the current filters.',
+  hugeTitle: (nodes: number) => `This graph has ${nodes.toLocaleString()} nodes`,
+  hugeBody:
+    'Drawing all of them can make VS Code slow. Search for a node to see its neighborhood, hide some kinds or namespaces in Filters, or browse the hierarchy.',
+  openHierarchy: 'Open hierarchy',
+  drawAnyway: 'Draw anyway',
   problemTitle: (title: string) => `Could not read ${title}`,
   goToLine: (line: number) => `Go to line ${line}`,
   internalError: 'Something went wrong while reading the ontology:',
