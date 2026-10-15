@@ -9,8 +9,17 @@ export type LayoutName = 'force' | 'layered';
 export type TreeDirection = 'LR' | 'TB';
 
 const LARGE_GRAPH = 2500;
+/** Up to this size the default spacing works; bigger graphs get longer edges so hubs do not clump. */
+const ROOMY_GRAPH = 150;
+const MAX_SPREAD = 2.5;
+
+/** How much to stretch edges and repulsion for a graph of this size. 1 means the default spacing. */
+export function layoutSpread(nodeCount: number): number {
+  return Math.min(MAX_SPREAD, Math.max(1, Math.sqrt(nodeCount / ROOMY_GRAPH)));
+}
 
 export function forceLayout(nodeCount: number): FcoseLayoutOptions {
+  const spread = layoutSpread(nodeCount);
   return {
     name: 'fcose',
     quality: nodeCount > LARGE_GRAPH ? 'draft' : 'default',
@@ -20,8 +29,8 @@ export function forceLayout(nodeCount: number): FcoseLayoutOptions {
     padding: 40,
     nodeDimensionsIncludeLabels: false,
     packComponents: true,
-    idealEdgeLength: 110,
-    nodeRepulsion: 8000,
+    idealEdgeLength: 110 * spread,
+    nodeRepulsion: 8000 * spread * spread,
     nodeSeparation: 90,
     numIter: nodeCount > LARGE_GRAPH ? 1000 : 2500,
   };

@@ -4,6 +4,7 @@ import { DEFAULT_VIEW_OPTIONS, projectGraph } from '../../src/core/view/project'
 import {
   forceLayout,
   layeredLayout,
+  layoutSpread,
   withSeededRandom,
   type LayoutName,
 } from '../../src/webview/layout';
@@ -36,6 +37,13 @@ describe('layout', () => {
       expect(await positions(layout)).toEqual(first);
     },
   );
+
+  it('spreads big graphs out more, up to a limit', () => {
+    expect(layoutSpread(100)).toBe(1);
+    expect(layoutSpread(600)).toBe(2);
+    expect(layoutSpread(50_000)).toBe(2.5);
+    expect(forceLayout(600).idealEdgeLength).toBe(220);
+  });
 
   it('leaves Math.random alone after a seeded layout', () => {
     const original = Math.random;
