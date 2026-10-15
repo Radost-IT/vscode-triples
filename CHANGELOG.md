@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 1.2.0
 
 - Blank nodes without a label are named after the values they hold, such as `dateTime gteq launchDate` for an ODRL constraint, instead of "anonymous".
 - "Instance of" links to a class with more than 15 instances are hidden by default, because dozens of dotted lines meeting in one class hide everything else. The details panel still names each node's class, and a filter brings the links back.
