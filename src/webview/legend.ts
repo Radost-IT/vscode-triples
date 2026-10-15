@@ -22,7 +22,9 @@ export function renderLegend(
   const kindItems = (Object.keys(KIND_LOOK) as NodeKind[])
     .filter((kind) => kinds.has(kind))
     .map((kind) => h('li', {}, shapeIcon(kind, palette.kinds[kind]), ` ${kindNames[kind]}`));
-  const edgeItems = Object.values(edgeLegend).map((label) => h('li', {}, label));
+  const edgeItems = (Object.keys(edgeLegend) as (keyof typeof edgeLegend)[]).map((kind) =>
+    h('li', {}, edgeIcon(kind, palette.edge), ` ${edgeLegend[kind]}`),
+  );
   const statusItems = diff
     ? (['added', 'removed', 'modified'] as const).map((status) =>
         h(
@@ -39,6 +41,33 @@ export function renderLegend(
     h('ul', { class: 'legend-list' }, ...edgeItems),
     statusItems.length > 0 ? h('ul', { class: 'legend-list' }, ...statusItems) : '',
   );
+}
+
+const EDGE_DASH: Record<keyof typeof edgeLegend, string> = {
+  subClassOf: '',
+  property: '',
+  type: '1 2',
+  restriction: '4 2',
+};
+
+/** A short line in the same dash and arrow style as the graph edge. */
+function edgeIcon(kind: keyof typeof edgeLegend, color: string): SVGSVGElement {
+  const svg = document.createElementNS(SVG, 'svg');
+  svg.setAttribute('viewBox', '0 0 20 16');
+  svg.setAttribute('width', '20');
+  svg.setAttribute('height', '16');
+  svg.setAttribute('aria-hidden', 'true');
+  const line = document.createElementNS(SVG, 'line');
+  Object.entries({ x1: 1, y1: 8, x2: 13, y2: 8, stroke: color, 'stroke-width': 1.5 }).forEach(
+    ([name, value]) => line.setAttribute(name, String(value)),
+  );
+  if (EDGE_DASH[kind]) line.setAttribute('stroke-dasharray', EDGE_DASH[kind]);
+  const arrow = document.createElementNS(SVG, 'polygon');
+  arrow.setAttribute('points', '12,4 19,8 12,12');
+  arrow.setAttribute('stroke', color);
+  arrow.setAttribute('fill', kind === 'subClassOf' ? 'none' : color);
+  svg.append(line, arrow);
+  return svg;
 }
 
 function shapeIcon(kind: NodeKind, color: string): SVGSVGElement {

@@ -1,9 +1,23 @@
 import type { StylesheetJson } from 'cytoscape';
 import type { NodeKind } from '../core/view/project';
-import { KIND_LOOK, type Palette } from './theme';
+import { KIND_LOOK, type NodeShape, type Palette } from './theme';
+
+/** Cytoscape draws underlays only as ellipses or rounded boxes; pick the closer fit per node shape. */
+const HALO_SHAPE: Record<NodeShape, 'ellipse' | 'round-rectangle'> = {
+  ellipse: 'ellipse',
+  diamond: 'ellipse',
+  hexagon: 'ellipse',
+  octagon: 'ellipse',
+  'round-rectangle': 'round-rectangle',
+  rectangle: 'round-rectangle',
+  'round-tag': 'round-rectangle',
+  barrel: 'round-rectangle',
+};
 
 export function graphStylesheet(palette: Palette): StylesheetJson {
-  const borderWidth = palette.highContrast ? 2 : 1.5;
+  const borderWidth = palette.highContrast ? 2 : 1.8;
+  // A soft halo in the kind color lifts nodes off the canvas; high contrast themes skip it.
+  const haloOpacity = palette.highContrast ? 0 : 0.1;
   const kindRules = (Object.keys(KIND_LOOK) as NodeKind[]).map((kind) => ({
     selector: `node.kind-${kind}`,
     style: {
@@ -11,6 +25,8 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
       'background-color': palette.kinds[kind],
       'border-color': palette.kinds[kind],
       'border-style': KIND_LOOK[kind].dashed ? ('dashed' as const) : ('solid' as const),
+      'underlay-color': palette.kinds[kind],
+      'underlay-shape': HALO_SHAPE[KIND_LOOK[kind].shape],
     },
   }));
   const statusRules = (['added', 'removed', 'modified'] as const).map((status) => ({
@@ -21,6 +37,7 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
       'line-color': palette.status[status],
       'target-arrow-color': palette.status[status],
       'source-arrow-color': palette.status[status],
+      'underlay-color': palette.status[status],
       color: palette.foreground,
     },
   }));
@@ -32,25 +49,30 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
         label: 'data(label)',
         width: 'data(width)',
         height: 'data(height)',
-        'background-opacity': palette.highContrast ? 0 : 0.22,
+        'background-opacity': palette.highContrast ? 0 : 0.3,
         'border-width': borderWidth,
+        'underlay-opacity': haloOpacity,
+        'underlay-padding': 5,
         color: palette.foreground,
         'font-family': palette.fontFamily,
-        'font-size': 12,
+        'font-size': 13,
+        'font-weight': 500,
         'text-valign': 'center',
         'text-halign': 'center',
         'text-wrap': 'ellipsis',
-        'text-max-width': '180px',
+        'text-max-width': '210px',
         'min-zoomed-font-size': 7,
       },
     },
     ...kindRules,
+    { selector: 'node.kind-class', style: { 'font-weight': 600 } },
     { selector: 'node.kind-literal', style: { 'font-size': 11, 'font-style': 'italic' } },
     {
       selector: 'edge',
       style: {
-        width: 1.2,
+        width: 1.3,
         'curve-style': 'bezier',
+        'line-opacity': 0.8,
         'line-color': palette.edge,
         'target-arrow-color': palette.edge,
         'source-arrow-color': palette.edge,
@@ -62,8 +84,9 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
         'font-size': 10,
         'text-rotation': 'autorotate',
         'text-background-color': palette.background,
-        'text-background-opacity': 0.85,
-        'text-background-padding': '2px',
+        'text-background-opacity': 0.9,
+        'text-background-padding': '3px',
+        'text-background-shape': 'roundrectangle',
         'min-zoomed-font-size': 8,
       },
     },
@@ -85,7 +108,12 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
     ...statusRules,
     {
       selector: 'node.status-added, node.status-removed, node.status-modified',
-      style: { 'border-width': 3, 'background-opacity': 0.35 },
+      style: {
+        'border-width': 3,
+        'background-opacity': 0.4,
+        'underlay-opacity': palette.highContrast ? 0 : 0.28,
+        'underlay-padding': 8,
+      },
     },
     { selector: 'node.status-removed', style: { 'border-style': 'dashed', opacity: 0.75 } },
     { selector: 'node.status-modified', style: { 'border-style': 'double', 'border-width': 5 } },
@@ -93,11 +121,13 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
     { selector: 'edge.status-added, edge.status-modified', style: { width: 2.4 } },
     { selector: '.diff.status-unchanged', style: { opacity: 0.55 } },
     { selector: '.context', style: { opacity: 0.35 } },
-    { selector: '.faded', style: { opacity: 0.12, 'text-opacity': 0 } },
+    { selector: '.faded', style: { opacity: 0.12, 'text-opacity': 0, 'underlay-opacity': 0 } },
     {
       selector: 'edge.highlighted',
       style: {
         width: 2.4,
+        'line-opacity': 1,
+        color: palette.foreground,
         'line-color': palette.focus,
         'target-arrow-color': palette.focus,
         'source-arrow-color': palette.focus,
@@ -108,9 +138,12 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
     {
       selector: 'node:selected',
       style: {
-        'border-width': 4,
+        'border-width': 3,
         'border-color': palette.focus,
         'border-style': 'solid',
+        'underlay-color': palette.focus,
+        'underlay-opacity': palette.highContrast ? 0 : 0.35,
+        'underlay-padding': 9,
         opacity: 1,
         'text-opacity': 1,
       },
@@ -120,9 +153,9 @@ export function graphStylesheet(palette: Palette): StylesheetJson {
 
 /** Rough label size so nodes grow with their text without measuring on every render. */
 export function nodeSize(label: string, kind: NodeKind): { width: number; height: number } {
-  const textWidth = Math.min(label.length, 28) * 7;
-  if (kind === 'individual') return { width: textWidth + 44, height: 42 };
-  if (kind === 'class' || kind === 'expression') return { width: textWidth + 34, height: 38 };
-  if (kind === 'literal') return { width: textWidth + 16, height: 24 };
-  return { width: textWidth + 24, height: 30 };
+  const textWidth = Math.min(label.length, 28) * 7.6;
+  if (kind === 'individual') return { width: textWidth + 48, height: 46 };
+  if (kind === 'class' || kind === 'expression') return { width: textWidth + 40, height: 42 };
+  if (kind === 'literal') return { width: textWidth + 18, height: 26 };
+  return { width: textWidth + 28, height: 32 };
 }

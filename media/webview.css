@@ -1,6 +1,9 @@
 :root {
   --gap: 6px;
   --panel-width: 300px;
+  --radius: 6px;
+  --surface: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  --hairline: var(--vscode-widget-border, var(--vscode-panel-border, transparent));
   --added: var(--vscode-gitDecoration-addedResourceForeground, #81b88b);
   --removed: var(--vscode-gitDecoration-deletedResourceForeground, #c74e39);
   --modified: var(--vscode-gitDecoration-modifiedResourceForeground, #e2c08d);
@@ -48,7 +51,8 @@ input {
   flex-wrap: wrap;
   align-items: center;
   gap: var(--gap);
-  padding: var(--gap);
+  padding: 6px 8px;
+  background: var(--surface);
   border-bottom: 1px solid var(--vscode-panel-border, transparent);
 }
 
@@ -66,9 +70,10 @@ input {
   border: 1px solid var(--vscode-button-border, transparent);
   background: var(--vscode-button-secondaryBackground);
   color: var(--vscode-button-secondaryForeground);
-  padding: 2px 8px;
-  border-radius: 2px;
+  padding: 3px 10px;
+  border-radius: 4px;
   cursor: pointer;
+  transition: background-color 0.12s ease;
 }
 
 .icon-button {
@@ -82,11 +87,27 @@ input {
   background: var(--vscode-button-secondaryHoverBackground);
 }
 
+.segmented {
+  padding: 2px;
+  border-radius: 6px;
+  background: var(--vscode-input-background);
+}
+
+.segment {
+  border-color: transparent;
+  background: transparent;
+}
+
 .segment[aria-pressed='true'],
-.text-button[aria-pressed='true'],
 .tab[aria-selected='true'] {
   background: var(--vscode-button-background);
   color: var(--vscode-button-foreground);
+}
+
+.text-button[aria-pressed='true'] {
+  background: var(--vscode-inputOption-activeBackground, var(--vscode-button-background));
+  border-color: var(--vscode-inputOption-activeBorder, transparent);
+  color: var(--vscode-inputOption-activeForeground, var(--vscode-button-foreground));
 }
 
 select,
@@ -94,8 +115,8 @@ input[type='search'],
 input[type='number'] {
   background: var(--vscode-input-background);
   border: 1px solid var(--vscode-input-border, transparent);
-  padding: 2px 4px;
-  border-radius: 2px;
+  padding: 3px 6px;
+  border-radius: 4px;
 }
 
 input[type='number'] {
@@ -172,11 +193,20 @@ input[type='number'] {
   height: 100%;
 }
 
+.graph,
+.diagram {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--vscode-editor-foreground) 13%, transparent) 1px,
+    transparent 1.2px
+  );
+  background-size: 22px 22px;
+}
+
 .panel {
   width: var(--panel-width);
   overflow: auto;
-  padding: 8px 10px;
-  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  padding: 10px 14px;
+  background: var(--surface);
   border-left: 1px solid var(--vscode-panel-border, transparent);
 }
 
@@ -188,30 +218,51 @@ input[type='number'] {
 .popover {
   position: absolute;
   z-index: 10;
-  top: 8px;
-  max-height: calc(100% - 16px);
-  border: 1px solid var(--vscode-widget-border, var(--vscode-panel-border));
-  box-shadow: 0 2px 8px var(--vscode-widget-shadow, transparent);
+  top: 10px;
+  max-height: calc(100% - 20px);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 20px var(--vscode-widget-shadow, transparent);
 }
 
 .popover.filters {
-  left: 8px;
+  left: 10px;
 }
 
 .popover.legend {
-  right: 8px;
-  width: 230px;
+  right: 10px;
+  width: 220px;
 }
 
 .panel h2 {
-  font-size: 1.1em;
-  margin: 4px 0 8px;
+  font-size: 1.25em;
+  font-weight: 600;
+  margin: 4px 0 10px;
+}
+
+.popover h2 {
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--vscode-descriptionForeground);
 }
 
 .panel h3 {
-  font-size: 0.95em;
-  margin: 12px 0 4px;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin: 16px 0 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--hairline);
   color: var(--vscode-descriptionForeground);
+}
+
+.legend-list + .legend-list {
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--hairline);
 }
 
 .facts,
@@ -303,6 +354,11 @@ input[type='number'] {
   border-collapse: collapse;
   margin: 8px 0;
   width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.summary tbody tr + tr {
+  border-top: 1px solid var(--hairline);
 }
 
 .summary th,
@@ -363,6 +419,7 @@ input[type='number'] {
   pointer-events: auto;
   max-width: 560px;
   padding: 16px 20px;
+  border-radius: var(--radius);
   background: var(--vscode-editorWidget-background);
   border: 1px solid var(--vscode-editorWidget-border, var(--vscode-panel-border));
   box-shadow: 0 2px 8px var(--vscode-widget-shadow, transparent);
@@ -468,7 +525,7 @@ input[type='number'] {
 
 .badge {
   font-size: 0.85em;
-  padding: 0 5px;
+  padding: 0 6px;
   border-radius: 8px;
   background: var(--vscode-badge-background);
   color: var(--vscode-badge-foreground);
@@ -494,6 +551,7 @@ input[type='number'] {
   transform: translateX(-50%);
   z-index: 40;
   padding: 6px 12px;
+  border-radius: var(--radius);
   background: var(--vscode-notifications-background, var(--vscode-editorWidget-background));
   color: var(--vscode-notifications-foreground, inherit);
   border: 1px solid var(--vscode-notifications-border, var(--vscode-panel-border));

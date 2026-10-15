@@ -493,6 +493,7 @@ function diagramStylesheet() {
         'arrow-scale': 1.3,
         'curve-style': 'taxi',
         'taxi-direction': 'auto',
+        'taxi-radius': 10,
       },
     },
   ] as cytoscape.StylesheetJson;
