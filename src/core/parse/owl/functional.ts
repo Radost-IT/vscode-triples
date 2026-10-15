@@ -1,9 +1,9 @@
 import { bnode, iri, literal, type Prefixes, type Term } from '../../rdf';
-import { OWL, RDF, RDFS, XSD, rdf } from '../../vocab';
+import { XSD, rdf } from '../../vocab';
 import { ParseError } from '../errors';
 import type { ParsedGraph } from '../types';
 import { owlToTriples } from './mapping';
-import type { OwlArg, OwlCall } from './tree';
+import { DEFAULT_PREFIXES, resolveIri, type OwlArg, type OwlCall } from './tree';
 
 type TokenKind =
   | 'open'
@@ -39,9 +39,6 @@ const TOKEN_PATTERNS: readonly [TokenKind | 'skip', RegExp][] = [
   ['word', /[A-Za-z][A-Za-z0-9]*/y],
 ];
 
-/** OWL 2 Functional Syntax declares these prefixes implicitly. */
-const DEFAULT_PREFIXES: Prefixes = { rdf: RDF, rdfs: RDFS, xsd: XSD, owl: OWL };
-
 export function parseOwlFunctional(text: string, baseIri: string): ParsedGraph {
   return owlToTriples(new FunctionalParser(text, baseIri).document());
 }
@@ -76,7 +73,10 @@ class FunctionalParser {
     if (!name.endsWith(':'))
       throw this.error(`Invalid prefix name "${name}".`, this.tokens[this.position - 1]);
     this.expect('equals');
-    this.declared[name.slice(0, -1)] = this.resolve(this.expect('iri').text.slice(1, -1));
+    this.declared[name.slice(0, -1)] = resolveIri(
+      this.baseIri,
+      this.expect('iri').text.slice(1, -1),
+    );
     this.expect('close');
   }
 
@@ -130,16 +130,12 @@ class FunctionalParser {
   }
 
   private iriValue(token: Token): string {
-    if (token.kind === 'iri') return this.resolve(token.text.slice(1, -1));
+    if (token.kind === 'iri') return resolveIri(this.baseIri, token.text.slice(1, -1));
     const colon = token.text.indexOf(':');
     const prefix = token.text.slice(0, colon);
     const namespace = this.declared[prefix] ?? DEFAULT_PREFIXES[prefix];
     if (namespace === undefined) throw this.error(`Unknown prefix "${prefix}:".`, token);
     return namespace + token.text.slice(colon + 1);
-  }
-
-  private resolve(value: string): string {
-    return /^[A-Za-z][\w+.-]*:/.test(value) ? value : new URL(value, this.baseIri).href;
   }
 
   private peek(): Token | undefined {

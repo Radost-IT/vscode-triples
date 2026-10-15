@@ -61,7 +61,7 @@ describe('diffGraphs', () => {
     expect(Object.values(diff.entityStatus).every((status) => status === 'unchanged')).toBe(true);
   });
 
-  it.each(['pizza.ofn'])('finds no changes between pizza.ttl and %s', async (name) => {
+  it.each(['pizza.ofn', 'pizza.owx'])('finds no changes between pizza.ttl and %s', async (name) => {
     const diff = diffGraphs(await parseFixture('pizza.ttl'), await parseFixture(name), {
       language: 'en',
     });

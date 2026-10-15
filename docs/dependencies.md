@@ -9,11 +9,12 @@ Every dependency is checked for license and bundle size before it is added. Size
 | `n3`                      | 2.13.12 | MIT     | Turtle, TriG, N-Triples, N-Quads and N3 parser         |
 | `rdfxml-streaming-parser` | 3.3.0   | MIT     | RDF/XML parser for most `.owl` and `.rdf` files        |
 | `jsonld-streaming-parser` | 5.0.2   | MIT     | JSON-LD parser that accepts a custom document loader   |
+| `@rubensworks/saxes`      | 6.0.1   | ISC     | XML parser for OWL/XML; already bundled for RDF/XML    |
 | `cytoscape`               | 3.34.3  | MIT     | Canvas graph rendering; ships its own TypeScript types |
 | `cytoscape-fcose`         | 2.2.0   | MIT     | Force-directed layout                                  |
 | `cytoscape-dagre`         | 4.0.1   | MIT     | Layered layout and tree diagram                        |
 
-Notable transitive packages: `readable-stream`, `buffer`, `events`, `process` (MIT), `canonicalize` (Apache-2.0), `@rubensworks/saxes` (ISC), `ieee754` (BSD-3-Clause), `cose-base` and `layout-base` (MIT). All are compatible with the MIT license of this extension. esbuild writes their notices to `dist/webview/*.LEGAL.txt`, which ships in the `.vsix`.
+Notable transitive packages: `readable-stream`, `buffer`, `events`, `process` (MIT), `canonicalize` (Apache-2.0), `ieee754` (BSD-3-Clause), `cose-base` and `layout-base` (MIT). All are compatible with the MIT license of this extension. esbuild writes their notices to `dist/webview/*.LEGAL.txt`, which ships in the `.vsix`.
 
 Bundle sizes:
 

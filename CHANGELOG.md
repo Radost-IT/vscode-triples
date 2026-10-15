@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.0
+
+- OWL/XML: `.owx` files, and `.owl` files written in OWL/XML, now open in the graph and hierarchy views and work in the semantic diff.
+
 ## 0.11.0
 
 - OWL Functional Syntax: `.ofn` files, and `.owl` files written in Functional Syntax, now open in the graph and hierarchy views and work in the semantic diff.

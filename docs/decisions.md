@@ -20,7 +20,7 @@ It accepts a custom document loader. Triples passes one that refuses every remot
 
 ## `.owl` files are sniffed
 
-The extension `.owl` is used for RDF/XML, Turtle, OWL/XML and Functional Syntax. The parser looks at the start of the file. RDF/XML, Turtle and Functional Syntax work. OWL/XML and Manchester Syntax show a "not supported yet" message instead of a parse error.
+The extension `.owl` is used for RDF/XML, Turtle, OWL/XML and Functional Syntax. The parser looks at the start of the file. RDF/XML, Turtle, Functional Syntax and OWL/XML work. Manchester Syntax shows a "not supported yet" message instead of a parse error.
 
 ## Blank nodes in the diff use a structural hash
 
@@ -90,4 +90,4 @@ Extension strings use `vscode.l10n.t`. The webview cannot call it, so the extens
 
 ## OWL syntaxes are mapped to RDF
 
-OWL Functional Syntax is parsed into a small tree of constructs and turned into triples with the W3C "OWL 2 Mapping to RDF Graphs". The rest of Triples (model, views, diff) then works unchanged, and a Functional Syntax file diffs cleanly against its Turtle version. Axioms with no RDF mapping that the views could show, such as SWRL rules (`DLSafeRule`), are skipped instead of failing the whole file. The parser is hand-written (about 200 lines) because no small, maintained JavaScript parser for Functional Syntax exists.
+OWL Functional Syntax and OWL/XML are parsed into the same small tree of constructs (OWL/XML uses the construct names as element names) and turned into triples with the W3C "OWL 2 Mapping to RDF Graphs". The rest of Triples (model, views, diff) then works unchanged, and a Functional Syntax file diffs cleanly against its Turtle version. Axioms with no RDF mapping that the views could show, such as SWRL rules (`DLSafeRule`), are skipped instead of failing the whole file. The Functional Syntax parser is hand-written (about 200 lines) because no small, maintained JavaScript parser for it exists. OWL/XML is read with `@rubensworks/saxes`, the XML parser already bundled for RDF/XML; `DOMParser` is not available in the Web Worker.

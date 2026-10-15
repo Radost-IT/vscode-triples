@@ -1,7 +1,15 @@
 import { UnsupportedFormatError } from './errors';
 
 export type RdfFormat =
-  'turtle' | 'trig' | 'ntriples' | 'nquads' | 'n3' | 'rdfxml' | 'jsonld' | 'owlfunctional';
+  | 'turtle'
+  | 'trig'
+  | 'ntriples'
+  | 'nquads'
+  | 'n3'
+  | 'rdfxml'
+  | 'jsonld'
+  | 'owlfunctional'
+  | 'owlxml';
 
 const FORMAT_BY_EXTENSION: Readonly<Record<string, RdfFormat>> = {
   ttl: 'turtle',
@@ -15,6 +23,7 @@ const FORMAT_BY_EXTENSION: Readonly<Record<string, RdfFormat>> = {
   xml: 'rdfxml',
   jsonld: 'jsonld',
   ofn: 'owlfunctional',
+  owx: 'owlxml',
 };
 
 export const SUPPORTED_EXTENSIONS = Object.keys(FORMAT_BY_EXTENSION);
@@ -37,7 +46,7 @@ export function detectFormat(fileName: string, text: string): RdfFormat {
     .trimStart();
 
   if (extension === 'owx' || looksLikeOwlXml(head)) {
-    throw new UnsupportedFormatError('OWL/XML files are not supported yet.');
+    return 'owlxml';
   }
   if (extension === 'omn') {
     throw new UnsupportedFormatError('Manchester Syntax files are not supported yet.');

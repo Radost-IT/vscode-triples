@@ -30,8 +30,12 @@ describe('detectFormat', () => {
     );
   });
 
+  it('detects OWL/XML by extension and content', () => {
+    expect(detectFormat('a.owx', '<Ontology/>')).toBe('owlxml');
+    expect(detectFormat('a.owl', readFixture('pizza.owx'))).toBe('owlxml');
+  });
+
   it('rejects OWL syntaxes that are not supported yet', () => {
-    expect(() => detectFormat('a.owx', '<Ontology/>')).toThrow(/OWL\/XML/);
     expect(() => detectFormat('a.omn', 'Class: A')).toThrow(/Manchester/);
   });
 });
@@ -45,7 +49,7 @@ describe('parseRdf', () => {
 
   it('produces the same named triples from Turtle, RDF/XML, N-Triples and TriG', async () => {
     const expected = tripleKeys(await parseFixture('pizza.ttl'));
-    for (const name of ['pizza.owl', 'pizza.nt', 'pizza.trig', 'pizza.ofn']) {
+    for (const name of ['pizza.owl', 'pizza.nt', 'pizza.trig', 'pizza.ofn', 'pizza.owx']) {
       expect(tripleKeys(await parseFixture(name)), name).toEqual(expected);
     }
   });
@@ -76,6 +80,16 @@ describe('parseRdf', () => {
     ).catch((caught: unknown) => caught);
     expect(error).toBeInstanceOf(ParseError);
     expect((error as ParseError).line).toBeGreaterThan(1);
+  });
+
+  it('reports the line of an OWL/XML error', async () => {
+    const error = await parseRdf(
+      '<Ontology xmlns="http://www.w3.org/2002/07/owl#">\n<Declaration>\n</Ontology>',
+      'a.owx',
+      'file:///a.owx',
+    ).catch((caught: unknown) => caught);
+    expect(error).toBeInstanceOf(ParseError);
+    expect((error as ParseError).line).toBe(3);
   });
 
   it('never fetches remote JSON-LD contexts', async () => {
