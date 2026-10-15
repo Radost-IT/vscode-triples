@@ -74,7 +74,7 @@ Each panel keeps context when hidden (`retainContextWhenHidden`), so large graph
 
 ## Performance budget
 
-`test/unit/performance.test.ts` generates a 5,000-class ontology, then parses it, builds the model, projects the graph and runs the force layout in headless Cytoscape. The test fails above 2 seconds. Canvas drawing is not part of the measurement, because it needs a browser; it is fast next to the layout.
+`test/unit/performance.test.ts` generates a 5,000-class ontology, then parses it, builds the model, projects the graph and runs the force layout in headless Cytoscape. The test fails above 2 seconds, or 6 seconds on CI, where shared runners are several times slower. Canvas drawing is not part of the measurement, because it needs a browser; it is fast next to the layout.
 
 ## Huge graphs
 

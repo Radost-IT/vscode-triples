@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.1
+
+- CI: the performance budget allows for slower shared runners, and the VS Code download for integration tests is cached.
+
 ## 0.2.0
 
 - Large files: above 20,000 nodes the graph view no longer draws everything at once. It offers the hierarchy view or "Draw anyway", and search shows the neighborhood of the chosen node.
