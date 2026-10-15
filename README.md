@@ -123,7 +123,22 @@ Run `npx vsce ls` to see which files go into the package.
 Publishing needs accounts that only a maintainer can create:
 
 1. **VS Code Marketplace**: create the publisher `RadostIT` at https://marketplace.visualstudio.com/manage and a Personal Access Token in Azure DevOps with the scope "Marketplace (Manage)". Then run `npx vsce login RadostIT` and `npx vsce publish`.
-2. **Open VSX**: create an account at https://open-vsx.org, claim the `RadostIT` namespace with `npx ovsx create-namespace RadostIT -p <token>`, then run `npx ovsx publish triples-0.1.0.vsix -p <token>`.
+2. **Open VSX**:
+   1. Sign in at https://open-vsx.org with GitHub.
+   2. In your profile settings, link an Eclipse Foundation account and sign the Publisher Agreement. Publishing fails without it.
+   3. Create a token at https://open-vsx.org/user-settings/tokens ("Generate New Token"). It is shown only once, so store it safely.
+   4. Install the CLI and claim the namespace once:
+
+      ```sh
+      npm install -g ovsx
+      ovsx create-namespace RadostIT -p <token>
+      ```
+
+   5. Build the package with `npm run package`, then publish it:
+
+      ```sh
+      ovsx publish triples-<version>.vsix -p <token>
+      ```
 
 Bump `version` in `package.json` and add a `CHANGELOG.md` entry before each release.
 
