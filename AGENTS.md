@@ -256,4 +256,4 @@ Write code a senior engineer would be happy to sign. Judges will read it.
 2. Make the smallest change that fully solves the task, with tests.
 3. Commit and push each finished task. One task, one commit. The message is short, plain, and human readable: say what changed and why (Conventional Commits format).
 4. If a rule here blocks progress or seems wrong, stop and ask. Do not work around it silently.
-5. When you need the human to do something outside the code (accounts, keys, console clicks), tell them, and update the Deploy section of `README.md` if the setup changes.
+5. When you need the human to do something outside the code (accounts, keys, console clicks), tell them.
