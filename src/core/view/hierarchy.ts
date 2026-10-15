@@ -65,6 +65,19 @@ export function buildHierarchy(model: OntologyModel, tab: HierarchyTab): Hierarc
   return { roots: roots.sort(byLabel), nodes };
 }
 
+/** The given nodes plus every ancestor, so a filtered tree still shows the path to each match. */
+export function withAncestors(hierarchy: Hierarchy, ids: Iterable<string>): Set<string> {
+  const keep = new Set<string>();
+  const stack = [...ids];
+  while (stack.length > 0) {
+    const id = stack.pop() as string;
+    if (keep.has(id)) continue;
+    keep.add(id);
+    stack.push(...(hierarchy.nodes[id]?.parents ?? []));
+  }
+  return keep;
+}
+
 function belongsTo(entity: Entity, tab: HierarchyTab): boolean {
   if (tab === 'properties') return PROPERTY_KINDS.has(entity.kind) && !entity.builtin;
   return entity.kind === 'class' && entity.iri !== owl.Thing && entity.iri !== owl.Nothing;

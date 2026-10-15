@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { diffGraphs } from '../../src/core/diff/diff';
-import { buildHierarchy } from '../../src/core/view/hierarchy';
+import { buildHierarchy, withAncestors } from '../../src/core/view/hierarchy';
 import { DEFAULT_VIEW_OPTIONS, projectGraph } from '../../src/core/view/project';
 import { modelOfFixture, parseFixture } from './helpers';
 
@@ -132,5 +132,28 @@ describe('buildHierarchy', () => {
     );
     expect(tree.roots).toEqual(['a']);
     expect(tree.nodes.a?.children).toEqual(['b']);
+  });
+});
+
+describe('withAncestors', () => {
+  it('keeps the matches and the path up to their roots', () => {
+    const node = (id: string, parents: string[], children: string[]) => ({
+      id,
+      label: id,
+      parents,
+      children,
+      instanceCount: 0,
+    });
+    const tree = {
+      roots: ['a'],
+      nodes: {
+        a: node('a', [], ['b', 'd']),
+        b: node('b', ['a'], ['c']),
+        c: node('c', ['b'], []),
+        d: node('d', ['a'], []),
+      },
+    };
+    expect([...withAncestors(tree, ['c'])].sort()).toEqual(['a', 'b', 'c']);
+    expect(withAncestors(tree, []).size).toBe(0);
   });
 });

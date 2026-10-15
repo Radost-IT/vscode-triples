@@ -1,7 +1,12 @@
 import cytoscape, { type Core, type NodeSingular } from 'cytoscape';
 import type { ChangeStatus } from '../core/diff/diff';
 import type { OntologyModel } from '../core/model/types';
-import { buildHierarchy, type Hierarchy, type HierarchyTab } from '../core/view/hierarchy';
+import {
+  buildHierarchy,
+  withAncestors,
+  type Hierarchy,
+  type HierarchyTab,
+} from '../core/view/hierarchy';
 import { h } from './dom';
 import { graphStylesheet, nodeSize } from './graphStyle';
 import { layeredLayout, type TreeDirection } from './layout';
@@ -24,6 +29,8 @@ export interface HierarchyViewEvents {
 export interface HierarchyView {
   readonly element: HTMLElement;
   setModel(model: OntologyModel, statuses: Readonly<Record<string, ChangeStatus>> | null): void;
+  /** Hides unchanged classes and properties, except the ancestors of changed ones. */
+  setOnlyChanges(onlyChanges: boolean): void;
   reveal(entityId: string | null): void;
   show(): void;
   applyTheme(): void;
@@ -53,6 +60,7 @@ export function createHierarchyView(
   const pages = new Map<string, number>();
   let selectedId: string | null = null;
   let query = '';
+  let onlyChanges = false;
   let cy: Core | null = null;
 
   const tabButtons = (['classes', 'properties'] as const).map((tab) =>
@@ -153,21 +161,17 @@ export function createHierarchyView(
   }
 
   function filterKeep(): Set<string> | null {
-    if (!query) return null;
-    const data = hierarchy();
-    const keep = new Set<string>();
-    const stack = Object.values(data.nodes)
+    if (!query && !onlyChanges) return null;
+    const matches = Object.values(hierarchy().nodes)
       .filter(
-        (node) => node.label.toLowerCase().includes(query) || node.id.toLowerCase().includes(query),
+        (node) =>
+          !query ||
+          node.label.toLowerCase().includes(query) ||
+          node.id.toLowerCase().includes(query),
       )
+      .filter((node) => !onlyChanges || (statuses?.[node.id] ?? 'unchanged') !== 'unchanged')
       .map((node) => node.id);
-    while (stack.length > 0) {
-      const id = stack.pop() as string;
-      if (keep.has(id)) continue;
-      keep.add(id);
-      stack.push(...(data.nodes[id]?.parents ?? []));
-    }
-    return keep;
+    return withAncestors(hierarchy(), matches);
   }
 
   function visibleRows(): { rows: Row[]; more: Map<string, number> } {
@@ -426,6 +430,11 @@ export function createHierarchyView(
       model = nextModel;
       statuses = nextStatuses;
       hierarchies.clear();
+      draw();
+    },
+    setOnlyChanges(next) {
+      if (next === onlyChanges) return;
+      onlyChanges = next;
       draw();
     },
     reveal(entityId) {

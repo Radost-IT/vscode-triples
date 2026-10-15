@@ -284,6 +284,7 @@ function applyResult(request: AnalysisRequest, result: AnalysisResult): void {
   if (focusNodeId && !model.entities[focusNodeId]) focusNodeId = null;
   overlay.hidden = true;
   search.setModel(model);
+  hierarchy.setOnlyChanges(state.options.onlyChanges && diff !== null);
   hierarchy.setModel(model, diff?.entityStatus ?? null);
   drawPanels();
   drawGraph(reuse);
@@ -439,6 +440,7 @@ function drawPanels(): void {
   };
   renderFilters(filtersPanel, loaded.model, filterState, (next) => {
     saveState({ options: next.options, hops: next.hops });
+    hierarchy.setOnlyChanges(next.options.onlyChanges && loaded?.diff != null);
     drawPanels();
     drawGraph(true);
   });

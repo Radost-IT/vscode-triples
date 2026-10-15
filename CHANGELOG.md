@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.0
+
+- "Show only changes" now also filters the hierarchy view: it keeps changed classes and properties and the path from each one up to its root.
+
 ## 0.3.0
 
 - The changes panel groups changes by entity: each changed class, property or individual lists its added and removed statements underneath. Short lists start expanded.
